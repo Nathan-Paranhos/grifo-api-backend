@@ -1,0 +1,28 @@
+# Configuração para deploy da API Grifo no Render
+services:
+  - type: web
+    name: grifo-api
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: CORS_ORIGIN
+        value: https://grifo-portal.onrender.com,android-app://com.grifo.vistorias
+      - key: LOG_LEVEL
+        value: info
+      - key: FIREBASE_API_KEY
+        sync: false
+      - key: FIREBASE_AUTH_DOMAIN
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_STORAGE_BUCKET
+        sync: false
+      - key: FIREBASE_APP_ID
+        sync: false

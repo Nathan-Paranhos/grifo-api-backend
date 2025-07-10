@@ -4,18 +4,31 @@ services:
     name: grifo-api
     env: node
     plan: free
-    buildCommand: npm install && npm run build
+
+    # Comando de build com instalação forçada dos @types para evitar erro no Render
+    buildCommand: |
+      npm install
+      npm install @types/node @types/express @types/cors --save
+      npm run build
+
     startCommand: npm start
+
     healthCheckPath: /api/health
+
     envVars:
       - key: NODE_ENV
         value: production
+
       - key: PORT
         value: 10000
+
       - key: CORS_ORIGIN
         value: https://grifo-portal.onrender.com,android-app://com.grifo.vistorias
+
       - key: LOG_LEVEL
         value: info
+
+      # Variáveis do Firebase (não sincronizadas no repositório)
       - key: FIREBASE_API_KEY
         sync: false
       - key: FIREBASE_AUTH_DOMAIN

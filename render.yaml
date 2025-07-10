@@ -1,34 +1,24 @@
-# Configuração para deploy da API Grifo no Render
+# render.yaml
 services:
   - type: web
     name: grifo-api
     env: node
     plan: free
-
-    # Comando de build com instalação forçada dos @types para evitar erro no Render
     buildCommand: |
       npm install
       npm install @types/node @types/express @types/cors --save
       npm run build
-
     startCommand: npm start
-
     healthCheckPath: /api/health
-
     envVars:
       - key: NODE_ENV
         value: production
-
       - key: PORT
-        value: 10000
-
+        value: 3000
       - key: CORS_ORIGIN
-        value: https://grifo-portal.onrender.com,android-app://com.grifo.vistorias
-
+        value: https://portal.grifovistorias.com,android-app://com.grifo.vistorias
       - key: LOG_LEVEL
-        value: info
-
-      # Variáveis do Firebase (não sincronizadas no repositório)
+        value: error
       - key: FIREBASE_API_KEY
         sync: false
       - key: FIREBASE_AUTH_DOMAIN
@@ -37,5 +27,15 @@ services:
         sync: false
       - key: FIREBASE_STORAGE_BUCKET
         sync: false
+      - key: FIREBASE_MESSAGING_SENDER_ID
+        sync: false
       - key: FIREBASE_APP_ID
         sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 1d
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX
+        value: 100

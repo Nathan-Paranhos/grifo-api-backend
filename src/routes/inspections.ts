@@ -5,7 +5,7 @@ interface Request extends ExpressRequest {
   user?: { id: string; role: string };
 }
 import logger from '../config/logger';
-import { validateRequest, commonQuerySchema, inspectionSchema } from '../utils/validation';
+import { validateRequest, commonQuerySchema, inspectionSchema, contestationSchema } from '../utils/validation';
 import { authMiddleware } from '../config/security';
 
 const router = Router();
@@ -282,6 +282,65 @@ router.get('/:id',
       return res.status(500).json({
         success: false,
         error: 'Erro ao processar a solicitação de inspeção'
+      });
+    }
+  }
+);
+
+/**
+ * @route POST /api/inspections/:id/contest
+ * @desc Registra uma contestação para uma vistoria específica
+ * @access Private
+ */
+router.post('/:id/contest', 
+  authMiddleware,
+  validateRequest({ body: contestationSchema }),
+  (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { empresaId, motivo, detalhes, itensContestados } = req.body;
+
+      logger.debug(`Registrando contestação para vistoria ${id} da empresa ${empresaId}`);
+
+      // Verificar se a vistoria existe
+      // Em um cenário real, você verificaria no banco de dados
+      // Simulação de verificação
+      if (id !== 'insp_001' && id !== 'insp_002') {
+        logger.warn(`Tentativa de contestar vistoria inexistente: ${id}`);
+        return res.status(404).json({
+          success: false,
+          error: 'Vistoria não encontrada'
+        });
+      }
+
+      // Criar objeto de contestação
+      const contestation = {
+        id: `contest_${Date.now()}`,
+        inspectionId: id,
+        empresaId,
+        motivo,
+        detalhes,
+        itensContestados,
+        status: 'Pendente',
+        dataContestacao: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      // Em um cenário real, você salvaria no banco de dados
+      // Também atualizaria a vistoria para indicar que possui contestação
+
+      logger.info(`Contestação ${contestation.id} registrada com sucesso para vistoria ${id}`);
+      return res.status(201).json({
+        success: true,
+        message: 'Contestação registrada com sucesso',
+        data: contestation
+      });
+    } catch (error) {
+      logger.error(`Erro ao registrar contestação: ${error}`);
+      return res.status(500).json({
+        success: false,
+        error: 'Erro ao processar a contestação da vistoria'
       });
     }
   }

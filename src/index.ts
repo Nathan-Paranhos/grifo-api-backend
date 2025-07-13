@@ -8,6 +8,7 @@ import dashboardRoutes from './routes/dashboard';
 import inspectionsRoutes from './routes/inspections';
 import propertiesRoutes from './routes/properties';
 import syncRoutes from './routes/sync';
+import contestationRoutes from './routes/contestation';
 import { configureSecurityMiddleware } from './config/security';
 import logger from './config/logger';
 
@@ -48,6 +49,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/inspections', inspectionsRoutes);
 app.use('/api/properties', propertiesRoutes);
 app.use('/api/sync', syncRoutes);
+app.use('/api/contestations', contestationRoutes);
 
 // Default route
 app.get('/', (req, res) => {
@@ -60,7 +62,8 @@ app.get('/', (req, res) => {
       '/api/dashboard',
       '/api/inspections',
       '/api/properties',
-      '/api/sync'
+      '/api/sync',
+      '/api/contestations'
     ]
   });
 });

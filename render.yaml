@@ -1,41 +1,23 @@
-# render.yaml
 services:
   - type: web
     name: grifo-api
     env: node
-    plan: free
-    buildCommand: |
-      npm install
-      npm install @types/node @types/express @types/cors --save
-      npm run build
+    buildCommand: npm install && npm run build
     startCommand: npm start
-    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 3000
       - key: CORS_ORIGIN
-        value: https://portal.grifovistorias.com,android-app://com.grifo.vistorias
+        value: https://app.grifovistorias.com,android-app://com.grifo.vistorias
       - key: LOG_LEVEL
-        value: error
-      - key: FIREBASE_API_KEY
-        sync: false
-      - key: FIREBASE_AUTH_DOMAIN
-        sync: false
-      - key: FIREBASE_PROJECT_ID
-        sync: false
-      - key: FIREBASE_STORAGE_BUCKET
-        sync: false
-      - key: FIREBASE_MESSAGING_SENDER_ID
-        sync: false
-      - key: FIREBASE_APP_ID
-        sync: false
-      - key: JWT_SECRET
-        sync: false
-      - key: JWT_EXPIRES_IN
-        value: 1d
+        value: info
       - key: RATE_LIMIT_WINDOW_MS
         value: 900000
       - key: RATE_LIMIT_MAX
         value: 100
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 1d

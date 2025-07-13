@@ -6,6 +6,48 @@ import { authMiddleware } from '../config/security';
 const router = Router();
 
 /**
+ * @route GET /api/dashboard
+ * @desc Obtém informações gerais do dashboard
+ * @access Private
+ */
+router.get('/', authMiddleware, (req: Request, res: Response) => {
+  const { empresaId, vistoriadorId } = req.query;
+  
+  logger.debug(`Solicitação de informações gerais do dashboard para empresaId: ${empresaId}${vistoriadorId ? `, vistoriadorId: ${vistoriadorId}` : ''}`);
+  
+  try {
+    // Simulação de dados gerais do dashboard
+    const dashboardInfo = {
+      summary: {
+        totalInspections: 120,
+        pendingInspections: 15,
+        completedInspections: 95,
+        inProgressInspections: 10
+      },
+      lastUpdated: new Date().toISOString(),
+      availableReports: [
+        'daily',
+        'weekly',
+        'monthly',
+        'custom'
+      ]
+    };
+
+    logger.info(`Informações gerais do dashboard retornadas com sucesso`);
+    return res.status(200).json({
+      success: true,
+      data: dashboardInfo
+    });
+  } catch (error) {
+    logger.error(`Erro ao obter informações gerais do dashboard: ${error}`);
+    return res.status(500).json({
+      success: false,
+      error: 'Erro ao processar a solicitação de informações do dashboard'
+    });
+  }
+});
+
+/**
  * @route GET /api/dashboard/stats
  * @desc Obtém estatísticas do dashboard
  * @access Private

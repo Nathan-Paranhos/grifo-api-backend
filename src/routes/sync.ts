@@ -10,6 +10,52 @@ import { authMiddleware } from '../config/security';
 
 const router = Router();
 
+/**
+ * @route GET /api/sync
+ * @desc Obtém informações de sincronização
+ * @access Private
+ */
+router.get('/', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { empresaId, vistoriadorId } = req.query as unknown as { empresaId: string, vistoriadorId?: string };
+    
+    logger.debug('Sync info request received', { empresaId, vistoriadorId });
+    
+    // Simular consulta ao banco de dados
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    const syncInfo = {
+      lastSyncTimestamp: new Date(Date.now() - Math.floor(Math.random() * 86400000)).toISOString(),
+      pendingCount: Math.floor(Math.random() * 5),
+      syncedCount: 10 + Math.floor(Math.random() * 20),
+      errorCount: Math.floor(Math.random() * 3),
+      syncSuccessRate: 95 + Math.floor(Math.random() * 5),
+      averageSyncTimeMs: 500 + Math.floor(Math.random() * 1000),
+      deviceInfo: {
+        lastDevice: 'SM-A515F',
+        appVersion: '1.2.3',
+        networkType: 'wifi'
+      }
+    };
+    
+    return res.status(200).json({
+      success: true,
+      data: syncInfo,
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error: unknown) {
+    logger.error('Error retrieving sync info', error);
+    
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error while retrieving sync info',
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // Esquemas de validação importados de ../utils/validation
 
 // Middleware de autenticação importado de ../config/security

@@ -9,6 +9,7 @@ grifo-api-backend/
 ├── src/
 │   ├── index.ts           # Ponto de entrada da aplicação
 │   └── routes/            # Rotas da API
+│       ├── contestation.ts # Rotas para contestação de vistorias
 │       ├── dashboard.ts   # Rotas para estatísticas do dashboard
 │       ├── health.ts      # Rota de health check
 │       ├── inspections.ts # Rotas para gerenciamento de vistorias
@@ -28,6 +29,10 @@ grifo-api-backend/
 - **POST /api/inspections**: Cria uma nova vistoria
 - **GET /api/properties**: Lista imóveis
 - **POST /api/sync**: Sincroniza vistorias pendentes
+- **POST /api/contestations**: Registra uma contestação para uma vistoria
+- **GET /api/contestations**: Lista contestações
+- **GET /api/contestations/:id**: Obtém detalhes de uma contestação
+- **PATCH /api/contestations/:id/status**: Atualiza o status de uma contestação
 
 ## Requisitos
 

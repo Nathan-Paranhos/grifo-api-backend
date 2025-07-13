@@ -51,6 +51,11 @@ export const configureSecurityMiddleware = (app: Express): void => {
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   // Verificar se o ambiente é de produção
   if (process.env.NODE_ENV === 'production') {
+    // Verificar se é uma requisição para a rota de saúde (health)
+    if (req.originalUrl.includes('/api/health')) {
+      return next();
+    }
+    
     const authHeader = req.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -80,5 +85,11 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     // Em ambiente de desenvolvimento, simular usuário autenticado
     req.user = { id: 'user_123', role: 'vistoriador' };
     next();
+  }
+  
+  // Para facilitar testes, adicionar um bypass para o ambiente de teste
+  if (process.env.BYPASS_AUTH === 'true') {
+    req.user = { id: 'test_user', role: 'admin' };
+    return next();
   }
 };

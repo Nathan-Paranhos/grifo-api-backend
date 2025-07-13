@@ -85,6 +85,27 @@ export const syncStatusSchema = z.object({
   vistoriadorId: z.string().optional()
 });
 
+// Esquema para validação de contestações
+export const contestationSchema = z.object({
+  empresaId: z.string().min(1, { message: 'empresaId é obrigatório' }),
+  motivo: z.string().min(1, { message: 'motivo é obrigatório' }),
+  detalhes: z.string().optional(),
+  itensContestados: z.array(
+    z.object({
+      categoria: z.string(),
+      item: z.string(),
+      motivoContestacao: z.string(),
+      evidencia: z.string().optional()
+    })
+  ).optional()
+});
+
+// Esquema para atualização de status de contestação
+export const contestationStatusSchema = z.object({
+  status: z.enum(['Pendente', 'Em Análise', 'Resolvida', 'Rejeitada']),
+  comentario: z.string().optional()
+});
+
 // Middleware para validar requisições
 export const validateRequest = ({
   body,

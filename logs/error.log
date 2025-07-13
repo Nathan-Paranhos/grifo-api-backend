@@ -1,0 +1,6 @@
+2025-07-13 20:06:27:627 [31merror[39m: [31mError retrieving sync info Cannot set headers after they are sent to the client[39m
+2025-07-13 20:06:27:627 [31merror[39m: [31mRejeição de promessa não tratada:[39m
+2025-07-13 20:06:27:627 [31merror[39m: [31mPromessa: [object Promise], Razão: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client[39m
+2025-07-13 20:06:27:627 [31merror[39m: [31mError retrieving sync status Cannot set headers after they are sent to the client[39m
+2025-07-13 20:06:27:627 [31merror[39m: [31mRejeição de promessa não tratada:[39m
+2025-07-13 20:06:27:627 [31merror[39m: [31mPromessa: [object Promise], Razão: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client[39m

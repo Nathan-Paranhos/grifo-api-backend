@@ -2,3 +2,63 @@
 2025-07-09 23:21:20:2120 [32minfo[39m: [32mServidor rodando na porta 3000[39m
 2025-07-09 23:23:57:2357 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
 2025-07-09 23:39:50:3950 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-07-11 16:21:50:2150 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-11 16:21:50:2150 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-13 20:05:39:539 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-13 20:05:39:539 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-13 20:06:16:616 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-13 20:06:16:616 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/health[39m
+2025-07-13 20:06:27:627 [34mdebug[39m: [34mVerificação de saúde da API solicitada[39m
+2025-07-13 20:06:27:627 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET / 200 - 14ms[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/dashboard?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [34mdebug[39m: [34mSolicitação de informações gerais do dashboard para empresaId: emp_001[39m
+2025-07-13 20:06:27:627 [32minfo[39m: [32mInformações gerais do dashboard retornadas com sucesso[39m
+2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/dashboard?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/dashboard?empresaId=emp_001 404 - 17ms[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/dashboard/stats?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [34mdebug[39m: [34mSolicitação de estatísticas do dashboard para empresaId: emp_001[39m
+2025-07-13 20:06:27:627 [32minfo[39m: [32mEstatísticas do dashboard retornadas com sucesso[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /stats?empresaId=emp_001 200 - 8ms[39m
+2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/dashboard/stats?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/inspections?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [34mdebug[39m: [34mSolicitação de inspeções para empresaId: emp_001[39m
+2025-07-13 20:06:27:627 [32minfo[39m: [32mRetornando 2 inspeções[39m
+2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/inspections?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/inspections?empresaId=emp_001 404 - 9ms[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/inspections/insp_001?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [34mdebug[39m: [34mBuscando inspeção com id: insp_001 para empresaId: emp_001[39m
+2025-07-13 20:06:27:627 [32minfo[39m: [32mInspeção insp_001 encontrada e retornada com sucesso[39m
+2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/inspections/insp_001?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/inspections/insp_001?empresaId=emp_001 404 - 10ms[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/sync?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [34mdebug[39m: [34mSync info request received[39m
+2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/sync?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/sync?empresaId=emp_001 404 - 10ms[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/sync/status?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [34mdebug[39m: [34mSync status request received[39m
+2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/sync/status?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/sync/status?empresaId=emp_001 404 - 7ms[39m
+2025-07-13 20:06:27:627 [31merror[39m: [31mError retrieving sync info Cannot set headers after they are sent to the client[39m
+2025-07-13 20:06:27:627 [31merror[39m: [31mRejeição de promessa não tratada:[39m
+2025-07-13 20:06:27:627 [31merror[39m: [31mPromessa: [object Promise], Razão: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/properties?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [34mdebug[39m: [34mSolicitação de propriedades para empresaId: emp_001[39m
+2025-07-13 20:06:27:627 [32minfo[39m: [32mRetornando 3 propriedades[39m
+2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/properties?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/properties?empresaId=emp_001 404 - 9ms[39m
+2025-07-13 20:06:27:627 [32minfo[39m: [32mRetrieving company-wide sync status[39m
+2025-07-13 20:06:27:627 [31merror[39m: [31mError retrieving sync status Cannot set headers after they are sent to the client[39m
+2025-07-13 20:06:27:627 [31merror[39m: [31mRejeição de promessa não tratada:[39m
+2025-07-13 20:06:27:627 [31merror[39m: [31mPromessa: [object Promise], Razão: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/contestations?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [34mdebug[39m: [34mListando contestações para empresa emp_001[39m
+2025-07-13 20:06:27:627 [32minfo[39m: [32mRetornando 2 contestações[39m
+2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/contestations?empresaId=emp_001[39m
+2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/contestations?empresaId=emp_001 404 - 11ms[39m
+2025-07-13 20:06:28:628 [35mhttp[39m: [35mPOST /api/inspections/insp_001/contest[39m
+2025-07-13 20:06:28:628 [34mdebug[39m: [34mRegistrando contestação para vistoria insp_001 da empresa emp_001[39m
+2025-07-13 20:06:28:628 [32minfo[39m: [32mContestação contest_1752447988225 registrada com sucesso para vistoria insp_001[39m
+2025-07-13 20:06:28:628 [35mhttp[39m: [35mPOST /insp_001/contest 201 - 9ms[39m
+2025-07-13 20:06:28:628 [33mwarn[39m: [33mRota não encontrada: POST /api/inspections/insp_001/contest[39m

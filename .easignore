@@ -1,0 +1,28 @@
+# Ignorar arquivos do AppData que estão causando problemas de casing
+AppData/
+
+# Ignorar arquivos temporários e de build
+node_modules/
+.expo/
+dist/
+web-build/
+
+# Ignorar arquivos de configuração local
+.env*.local
+.env
+
+# Ignorar arquivos de sistema
+.DS_Store
+*.pem
+
+# Ignorar arquivos de debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Ignorar arquivos de credenciais
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision

@@ -1,0 +1,27 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /empresas/{empresaId} {
+      allow read: if request.auth.token.empresaId == empresaId;
+
+      match /imoveis/{imovelId} {
+        allow read, write: if request.auth.token.empresaId == empresaId;
+
+        match /vistorias/{vistoriaId} {
+          allow read, write: if request.auth.token.empresaId == empresaId;
+        }
+      }
+    }
+
+    match /usuarios/{userId} {
+      allow read: if request.auth.uid == userId;
+    }
+
+    match /contests/{contestId} {
+      allow create: if request.auth != null;
+      allow read, update: if request.auth.token.empresaId == resource.data.empresaId;
+    }
+  }
+}

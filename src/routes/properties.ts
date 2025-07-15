@@ -49,9 +49,9 @@ router.get('/',
 
       if (search) {
         const searchTerm = (search as string).toLowerCase();
-        propertiesData = propertiesData.filter(prop => 
+        propertiesData = propertiesData.filter((prop: any) => 
           prop.enderecoCompleto?.toLowerCase().includes(searchTerm) ||
-          prop.proprietario?.nome.toLowerCase().includes(searchTerm)
+          prop.proprietario?.nome?.toLowerCase().includes(searchTerm)
         );
       }
 

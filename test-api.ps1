@@ -1,11 +1,31 @@
 # Script para testar as rotas da API localmente
 
+# Parametro para o token de autenticação
+param (
+    [string]$Token
+)
+
 Write-Host "Iniciando testes das rotas da API..." -ForegroundColor Green
+
+# Se o token não for passado como parâmetro, solicitar
+if ([string]::IsNullOrEmpty($Token)) {
+    $Token = Read-Host -Prompt "Por favor, insira o Firebase ID Token para autenticação"
+}
+
+if ([string]::IsNullOrEmpty($Token)) {
+    Write-Host "Erro: O token de autenticação é obrigatório para os testes." -ForegroundColor Red
+    exit 1
+}
 
 # Definir URL base (local ou remota)
 $baseUrl = "http://localhost:3000"
 # Para testar a versão em produção, descomente a linha abaixo
 # $baseUrl = "https://grifo-api.onrender.com"
+
+# Headers de autenticação
+$authHeaders = @{
+    "Authorization" = "Bearer $Token"
+}
 
 # Função para fazer requisições HTTP e exibir resultados formatados
 function Invoke-ApiRequest {
@@ -66,32 +86,32 @@ function Invoke-ApiRequest {
     }
 }
 
-# Testar rota de saúde (health)
+# Testar rota de saúde (health) - não requer autenticação
 Invoke-ApiRequest -Method "GET" -Endpoint "/api/health" -Description "Verificar status da API"
 
 # Testar rota do dashboard
-Invoke-ApiRequest -Method "GET" -Endpoint "/api/dashboard?empresaId=emp_001" -Description "Obter informações do dashboard"
+Invoke-ApiRequest -Method "GET" -Endpoint "/api/dashboard?empresaId=emp_001" -Description "Obter informações do dashboard" -Headers $authHeaders
 
 # Testar rota de estatísticas do dashboard
-Invoke-ApiRequest -Method "GET" -Endpoint "/api/dashboard/stats?empresaId=emp_001" -Description "Obter estatísticas do dashboard"
+Invoke-ApiRequest -Method "GET" -Endpoint "/api/dashboard/stats?empresaId=emp_001" -Description "Obter estatísticas do dashboard" -Headers $authHeaders
 
 # Testar rota de inspeções
-Invoke-ApiRequest -Method "GET" -Endpoint "/api/inspections?empresaId=emp_001" -Description "Listar inspeções"
+Invoke-ApiRequest -Method "GET" -Endpoint "/api/inspections?empresaId=emp_001" -Description "Listar inspeções" -Headers $authHeaders
 
 # Testar rota de detalhes de inspeção
-Invoke-ApiRequest -Method "GET" -Endpoint "/api/inspections/insp_001?empresaId=emp_001" -Description "Obter detalhes de uma inspeção"
+Invoke-ApiRequest -Method "GET" -Endpoint "/api/inspections/insp_001?empresaId=emp_001" -Description "Obter detalhes de uma inspeção" -Headers $authHeaders
 
 # Testar rota de sincronização
-Invoke-ApiRequest -Method "GET" -Endpoint "/api/sync?empresaId=emp_001" -Description "Obter informações de sincronização"
+Invoke-ApiRequest -Method "GET" -Endpoint "/api/sync?empresaId=emp_001" -Description "Obter informações de sincronização" -Headers $authHeaders
 
 # Testar rota de status de sincronização
-Invoke-ApiRequest -Method "GET" -Endpoint "/api/sync/status?empresaId=emp_001" -Description "Obter status de sincronização"
+Invoke-ApiRequest -Method "GET" -Endpoint "/api/sync/status?empresaId=emp_001" -Description "Obter status de sincronização" -Headers $authHeaders
 
 # Testar rota de propriedades
-Invoke-ApiRequest -Method "GET" -Endpoint "/api/properties?empresaId=emp_001" -Description "Listar propriedades"
+Invoke-ApiRequest -Method "GET" -Endpoint "/api/properties?empresaId=emp_001" -Description "Listar propriedades" -Headers $authHeaders
 
 # Testar rota de contestações
-Invoke-ApiRequest -Method "GET" -Endpoint "/api/contestations?empresaId=emp_001" -Description "Listar contestações"
+Invoke-ApiRequest -Method "GET" -Endpoint "/api/contestations?empresaId=emp_001" -Description "Listar contestações" -Headers $authHeaders
 
 # Testar criação de contestação para uma inspeção
 $contestationBody = @{
@@ -108,6 +128,6 @@ $contestationBody = @{
     )
 }
 
-Invoke-ApiRequest -Method "POST" -Endpoint "/api/inspections/insp_001/contest" -Description "Contestar uma inspeção" -Body $contestationBody
+Invoke-ApiRequest -Method "POST" -Endpoint "/api/inspections/insp_001/contest" -Description "Contestar uma inspeção" -Body $contestationBody -Headers $authHeaders
 
 Write-Host "\nTestes concluídos!" -ForegroundColor Green

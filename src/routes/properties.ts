@@ -1,11 +1,18 @@
 import { Router, Request as ExpressRequest, Response } from 'express';
+import { sendSuccess, sendError } from '../utils/response';
+import * as admin from 'firebase-admin';
+import { db } from '../config/firebase';
 
 // Extend the Express Request interface to include user property
 interface Request extends ExpressRequest {
-  user?: { id: string; role: string };
+  user?: { 
+    id: string; 
+    role: string; 
+    empresaId: string; 
+  };
 }
 import logger from '../config/logger';
-import { validateRequest, commonQuerySchema } from '../utils/validation';
+import { validateRequest, commonQuerySchema, propertySchema } from '../utils/validation';
 import { authMiddleware } from '../config/security';
 
 const router = Router();
@@ -18,128 +25,41 @@ const router = Router();
 router.get('/', 
   authMiddleware,
   validateRequest({ query: commonQuerySchema }),
-  (req: Request, res: Response) => {
-    const { empresaId, search, limit = '10' } = req.query;
+  async (req: Request, res: Response) => {
+    const { search, limit = '10' } = req.query;
+    const empresaId = req.user?.empresaId;
+
+    if (!empresaId) {
+      return sendError(res, 'Acesso negado: empresa não identificada.', 403);
+    }
 
     logger.debug(`Solicitação de propriedades para empresaId: ${empresaId}${search ? `, termo de busca: ${search}` : ''}`);
 
     try {
-      // Simulação de dados de propriedades
-      const propertiesData = [
-        {
-          id: 'prop_001',
-          empresaId: 'emp_001',
-          endereco: 'Rua das Flores, 123',
-          bairro: 'Centro',
-          cidade: 'São Paulo',
-          estado: 'SP',
-          cep: '01234-567',
-          tipo: 'Apartamento',
-          areaTotal: 75,
-          areaConstruida: 68,
-          proprietario: {
-            nome: 'João Silva',
-            telefone: '(11) 98765-4321',
-            email: 'joao.silva@email.com'
-          },
-          inquilino: {
-            nome: 'Maria Oliveira',
-            telefone: '(11) 91234-5678',
-            email: 'maria.oliveira@email.com'
-          },
-          ultimaVistoria: {
-            id: 'insp_001',
-            data: '2023-05-10T14:30:00Z',
-            tipo: 'Entrada',
-            status: 'Concluída'
-          }
-        },
-        {
-          id: 'prop_002',
-          empresaId: 'emp_001',
-          endereco: 'Av. Principal, 456',
-          bairro: 'Jardins',
-          cidade: 'São Paulo',
-          estado: 'SP',
-          cep: '04567-890',
-          tipo: 'Casa',
-          areaTotal: 150,
-          areaConstruida: 120,
-          proprietario: {
-            nome: 'Carlos Pereira',
-            telefone: '(11) 97777-8888',
-            email: 'carlos.pereira@email.com'
-          },
-          inquilino: {
-            nome: 'Ana Santos',
-            telefone: '(11) 96666-5555',
-            email: 'ana.santos@email.com'
-          },
-          ultimaVistoria: {
-            id: 'insp_002',
-            data: '2023-05-15T10:00:00Z',
-            tipo: 'Saída',
-            status: 'Pendente'
-          }
-        },
-        {
-          id: 'prop_003',
-          empresaId: 'emp_001',
-          endereco: 'Rua dos Pinheiros, 789',
-          bairro: 'Pinheiros',
-          cidade: 'São Paulo',
-          estado: 'SP',
-          cep: '05422-030',
-          tipo: 'Comercial',
-          areaTotal: 200,
-          areaConstruida: 180,
-          proprietario: {
-            nome: 'Empresa XYZ Ltda',
-            telefone: '(11) 3333-4444',
-            email: 'contato@xyz.com'
-          },
-          ultimaVistoria: {
-            id: 'insp_003',
-            data: '2023-05-05T09:00:00Z',
-            tipo: 'Periódica',
-            status: 'Concluída'
-          }
-        }
-      ];
+      const propertiesRef = db!.collection('imoveis');
+      let query: admin.firestore.Query = propertiesRef.where('empresaId', '==', empresaId);
 
-      // Filtrar por termo de busca se fornecido
-      let filteredProperties = [...propertiesData];
-      
+      const snapshot = await query.limit(parseInt(limit as string)).get();
+
+      if (snapshot.empty) {
+        return sendSuccess(res, [], 200, { total: 0, page: 1, limit: parseInt(limit as string) });
+      }
+
+      let propertiesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
       if (search) {
-        logger.debug(`Filtrando propriedades pelo termo: ${search}`);
         const searchTerm = (search as string).toLowerCase();
-        filteredProperties = filteredProperties.filter(prop => 
-          prop.endereco.toLowerCase().includes(searchTerm) ||
-          prop.bairro.toLowerCase().includes(searchTerm) ||
-          prop.cidade.toLowerCase().includes(searchTerm) ||
-          prop.proprietario?.nome.toLowerCase().includes(searchTerm) ||
-          prop.inquilino?.nome.toLowerCase().includes(searchTerm)
+        propertiesData = propertiesData.filter(prop => 
+          prop.enderecoCompleto?.toLowerCase().includes(searchTerm) ||
+          prop.proprietario?.nome.toLowerCase().includes(searchTerm)
         );
       }
 
-      // Limitar o número de resultados
-      const limitNum = parseInt(limit as string);
-      filteredProperties = filteredProperties.slice(0, limitNum);
-
-      logger.info(`Retornando ${filteredProperties.length} propriedades`);
-      return res.status(200).json({
-        success: true,
-        data: filteredProperties,
-        total: filteredProperties.length,
-        page: 1,
-        limit: limitNum
-      });
+      logger.info(`Retornando ${propertiesData.length} propriedades`);
+      return sendSuccess(res, propertiesData, 200, { total: propertiesData.length, page: 1, limit: parseInt(limit as string) });
     } catch (error) {
       logger.error(`Erro ao buscar propriedades: ${error}`);
-      return res.status(500).json({
-        success: false,
-        error: 'Erro ao processar a solicitação de propriedades'
-      });
+      return sendError(res, 'Erro ao processar a solicitação de propriedades');
     }
   }
 );
@@ -151,63 +71,60 @@ router.get('/',
  */
 router.get('/:id', 
   authMiddleware,
-  (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const { empresaId } = req.query;
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const empresaId = req.user?.empresaId;
 
-      if (!empresaId) {
-        logger.warn('Tentativa de acessar propriedade sem fornecer empresaId');
-        return res.status(400).json({
-          success: false,
-          error: 'empresaId é obrigatório'
-        });
+    if (!empresaId) {
+      return sendError(res, 'Acesso negado: empresa não identificada.', 403);
+    }
+
+    try {
+      const doc = await db!.collection('imoveis').doc(id).get();
+
+      if (!doc.exists || doc.data()?.empresaId !== empresaId) {
+        return sendError(res, 'Propriedade não encontrada', 404);
       }
 
-      logger.debug(`Buscando propriedade com id: ${id} para empresaId: ${empresaId}`);
+      return sendSuccess(res, { id: doc.id, ...doc.data() });
+    } catch (error) {
+      logger.error(`Erro ao buscar propriedade ${id}: ${error}`);
+      return sendError(res, 'Erro ao buscar a propriedade');
+    }
+  }
+);
 
-      // Simulação de busca de propriedade por ID
-      // Em um cenário real, você buscaria no banco de dados
-      const property = {
-        id,
-        empresaId: empresaId as string,
-        endereco: 'Rua das Flores, 123',
-        bairro: 'Centro',
-        cidade: 'São Paulo',
-        estado: 'SP',
-        cep: '01234-567',
-        tipo: 'Apartamento',
-        areaTotal: 75,
-        areaConstruida: 68,
-        proprietario: {
-          nome: 'João Silva',
-          telefone: '(11) 98765-4321',
-          email: 'joao.silva@email.com'
-        },
-        inquilino: {
-          nome: 'Maria Oliveira',
-          telefone: '(11) 91234-5678',
-          email: 'maria.oliveira@email.com'
-        },
-        ultimaVistoria: {
-          id: 'insp_001',
-          data: '2023-05-10T14:30:00Z',
-          tipo: 'Entrada',
-          status: 'Concluída'
-        }
+/**
+ * @route POST /api/properties
+ * @desc Cadastra uma nova propriedade
+ * @access Private
+ */
+router.post('/', 
+  authMiddleware, 
+  validateRequest({ body: propertySchema }), 
+  async (req: Request, res: Response) => {
+    const newPropertyData = req.body;
+    const empresaId = req.user?.empresaId;
+
+    if (!empresaId) {
+      return sendError(res, 'Acesso negado: empresa não identificada.', 403);
+    }
+
+    try {
+      const propertyWithOwner = {
+        ...newPropertyData,
+        empresaId,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       };
 
-      logger.info(`Propriedade ${id} encontrada e retornada com sucesso`);
-      return res.status(200).json({
-        success: true,
-        data: property
-      });
+      const docRef = await db!.collection('imoveis').add(propertyWithOwner);
+      
+      logger.info(`Nova propriedade cadastrada com id: ${docRef.id} para empresa: ${empresaId}`);
+      sendSuccess(res, { id: docRef.id, ...propertyWithOwner }, 201, { message: 'Propriedade cadastrada com sucesso.' });
     } catch (error) {
-      logger.error(`Erro ao buscar propriedade por ID: ${error}`);
-      return res.status(500).json({
-        success: false,
-        error: 'Erro ao processar a solicitação de propriedade'
-      });
+      logger.error(`Erro ao cadastrar nova propriedade: ${error}`);
+      return sendError(res, 'Erro ao cadastrar a propriedade.');
     }
   }
 );

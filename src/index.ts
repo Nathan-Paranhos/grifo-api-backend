@@ -1,16 +1,28 @@
 import express from 'express';
 import cors from 'cors';
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import path from 'path';
+
+// Carregar variáveis de ambiente com base no NODE_ENV
+const envPath = process.env.NODE_ENV === 'production' 
+    ? path.resolve(__dirname, '../.env.production') 
+    : path.resolve(__dirname, '../.env.development');
+
+dotenv.config({ path: envPath });
 import fs from 'fs';
 import healthRoutes from './routes/health';
 import dashboardRoutes from './routes/dashboard';
-import inspectionsRoutes from './routes/inspections';
+import inspectionsRouter from './routes/inspections';
+import { setupSwagger } from './config/swagger';
 import propertiesRoutes from './routes/properties';
 import syncRoutes from './routes/sync';
+import usersRoutes from './routes/users';
+import companiesRoutes from './routes/companies';
 import contestationRoutes from './routes/contestation';
 import { configureSecurityMiddleware } from './config/security';
 import logger from './config/logger';
+// Importar Firebase Admin SDK para inicialização
+import { initializeFirebase } from './config/firebase';
 
 // Criar diretório de logs se não existir
 const logDir = path.join(__dirname, '../logs');
@@ -45,11 +57,27 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api/health', healthRoutes);
-app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/inspections', inspectionsRoutes);
-app.use('/api/properties', propertiesRoutes);
-app.use('/api/sync', syncRoutes);
-app.use('/api/contestations', contestationRoutes);
+
+// Version 1 Routes
+const apiV1 = express.Router();
+
+// Apply auth middleware to all v1 routes
+import { authMiddleware } from './config/security';
+apiV1.use(authMiddleware);
+
+apiV1.use('/dashboard', dashboardRoutes);
+apiV1.use('/inspections', inspectionsRouter);
+apiV1.use('/properties', propertiesRoutes);
+apiV1.use('/sync', syncRoutes);
+apiV1.use('/users', usersRoutes);
+apiV1.use('/empresas', companiesRoutes);
+apiV1.use('/contestations', contestationRoutes);
+
+app.use('/api/v1', apiV1);
+
+// Setup Swagger
+setupSwagger(app);
+
 
 // Default route
 app.get('/', (req, res) => {
@@ -89,10 +117,20 @@ app.use((req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  logger.info(`Servidor iniciado no ambiente ${NODE_ENV}`);
-  logger.info(`Servidor rodando na porta ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await initializeFirebase();
+    app.listen(PORT, () => {
+      logger.info(`Servidor iniciado no ambiente ${NODE_ENV}`);
+      logger.info(`Servidor rodando na porta ${PORT}`);
+    });
+  } catch (error) {
+    logger.error('Falha ao iniciar o servidor:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {

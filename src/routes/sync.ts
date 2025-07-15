@@ -1,4 +1,5 @@
 import { Router, Request as ExpressRequest, Response, NextFunction } from 'express';
+import { sendSuccess, sendError } from '../utils/response';
 
 // Extend the Express Request interface to include user property
 interface Request extends ExpressRequest {
@@ -38,21 +39,12 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
       }
     };
     
-    return res.status(200).json({
-      success: true,
-      data: syncInfo,
-      timestamp: new Date().toISOString()
-    });
+    return sendSuccess(res, syncInfo, 200, { timestamp: new Date().toISOString() });
     
   } catch (error: unknown) {
     logger.error('Error retrieving sync info', error);
     
-    return res.status(500).json({
-      success: false,
-      message: 'Internal server error while retrieving sync info',
-      error: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
-    });
+    return sendError(res, 'Internal server error while retrieving sync info');
   }
 });
 
@@ -282,52 +274,15 @@ router.post('/sync', authMiddleware, validateRequest({ body: syncSchema }), asyn
       }
     }
 
-    // Calcular métricas de sincronização
-    const syncDuration = Date.now() - startTime;
-    const successRate = pendingInspections.length > 0 
-      ? (syncResults.length / pendingInspections.length) * 100 
-      : 0;
-    
-    // Agrupar erros por tipo para análise
-    const errorTypes: Record<string, number> = {};
-    errors.forEach(err => {
-      const type = err.error || 'unknown';
-      errorTypes[type] = (errorTypes[type] || 0) + 1;
-    });
-    
-    const response = {
-      success: errors.length === 0,
-      synced: syncResults.length,
-      failed: errors.length,
-      total: pendingInspections.length,
-      successRate: `${successRate.toFixed(2)}%`,
-      processingTimeMs: syncDuration,
-      batchesProcessed: Math.ceil(pendingInspections.length / 5),
-      results: syncResults,
-      errors: errors,
-      errorSummary: Object.keys(errorTypes).length > 0 ? errorTypes : null,
-      timestamp: new Date().toISOString()
-    };
+    // Finalizar e retornar resposta
+    const durationMs = Date.now() - startTime;
+    logger.info('Sync process completed', { durationMs, successCount: syncResults.length, errorCount: errors.length });
 
-    logger.info('Sync process completed', { 
-      synced: syncResults.length, 
-      failed: errors.length,
-      duration: syncDuration,
-      successRate
-    });
-
-    return res.status(200).json(response);
+    return sendSuccess(res, { syncResults, errors, durationMs }, 200, { message: 'Sincronização concluída' });
 
   } catch (error: unknown) {
-    logger.error('Critical error in sync process', error);
-    
-    // Enviar resposta de erro detalhada
-    return res.status(500).json({
-      success: false,
-      message: 'Internal server error during sync process',
-      error: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString()
-    });
+    logger.error('Error during sync process', { error: error instanceof Error ? error.message : 'Unknown error' });
+    return sendError(res, 'Erro interno no servidor durante a sincronização');
     
     // Em produção, você poderia adicionar:
     // 1. Notificação para equipe de suporte

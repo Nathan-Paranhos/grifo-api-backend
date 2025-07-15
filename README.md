@@ -1,6 +1,6 @@
 # Grifo API Backend
 
-API backend para o aplicativo Grifo Vistorias, desenvolvida com Node.js, Express e TypeScript.
+API backend para o aplicativo Grifo Vistorias, desenvolvida com Node.js, Express e TypeScript. Integrada com Firebase Authentication para autenticação segura.
 
 ## Estrutura do Projeto
 
@@ -8,13 +8,19 @@ API backend para o aplicativo Grifo Vistorias, desenvolvida com Node.js, Express
 grifo-api-backend/
 ├── src/
 │   ├── index.ts           # Ponto de entrada da aplicação
-│   └── routes/            # Rotas da API
-│       ├── contestation.ts # Rotas para contestação de vistorias
-│       ├── dashboard.ts   # Rotas para estatísticas do dashboard
-│       ├── health.ts      # Rota de health check
-│       ├── inspections.ts # Rotas para gerenciamento de vistorias
-│       ├── properties.ts  # Rotas para gerenciamento de imóveis
-│       └── sync.ts        # Rota para sincronização de dados offline
+│   ├── config/            # Configurações da aplicação
+│   │   ├── firebaseAdmin.ts # Configuração do Firebase Admin SDK
+│   │   ├── logger.ts      # Configuração de logs
+│   │   └── security.ts    # Middlewares de segurança
+│   ├── routes/            # Rotas da API
+│   │   ├── contestation.ts # Rotas para contestação de vistorias
+│   │   ├── dashboard.ts   # Rotas para estatísticas do dashboard
+│   │   ├── health.ts      # Rota de health check
+│   │   ├── inspections.ts # Rotas para gerenciamento de vistorias
+│   │   ├── properties.ts  # Rotas para gerenciamento de imóveis
+│   │   └── sync.ts        # Rota para sincronização de dados offline
+│   └── utils/             # Utilitários
+│       └── validation.ts  # Validação de requisições
 ├── .gitignore
 ├── package.json
 ├── tsconfig.json
@@ -70,5 +76,51 @@ Esta API pode ser facilmente implantada no Render.com:
    - Build Command: `npm run build`
    - Start Command: `npm start`
    - Environment: Node.js
+5. Configure as variáveis de ambiente necessárias (veja abaixo)
 
 A API estará disponível em `https://grifo-api.onrender.com`.
+
+## Autenticação
+
+A API suporta dois métodos de autenticação:
+
+1. **Firebase Authentication**: Tokens JWT gerados pelo Firebase Authentication são verificados usando o Firebase Admin SDK.
+2. **JWT Padrão**: Como fallback, a API também suporta tokens JWT padrão.
+
+### Fluxo de Autenticação
+
+1. O cliente (app móvel ou portal web) autentica com Firebase Authentication
+2. O cliente obtém um token ID do Firebase
+3. O cliente inclui o token no cabeçalho de autorização das requisições: `Authorization: Bearer <token>`
+4. A API verifica o token usando o Firebase Admin SDK
+5. Se a verificação falhar, a API tenta verificar como um JWT padrão
+
+### Variáveis de Ambiente
+
+Crie os arquivos `.env.development` e `.env.production` com as seguintes variáveis:
+
+```
+# Server Configuration
+PORT=3000
+NODE_ENV=development|production
+
+# CORS Configuration
+CORS_ORIGIN=https://portal.grifovistorias.com,android-app://com.grifo.vistorias
+
+# Firebase Configuration
+FIREBASE_API_KEY=
+FIREBASE_AUTH_DOMAIN=
+FIREBASE_PROJECT_ID=
+FIREBASE_STORAGE_BUCKET=
+FIREBASE_MESSAGING_SENDER_ID=
+FIREBASE_APP_ID=
+
+# Firebase Admin SDK (para verificação de tokens)
+FIREBASE_CLIENT_EMAIL=
+FIREBASE_PRIVATE_KEY=
+
+# Security
+JWT_SECRET=
+JWT_EXPIRES_IN=1d
+BYPASS_AUTH=false  # Definir como true apenas em desenvolvimento
+```

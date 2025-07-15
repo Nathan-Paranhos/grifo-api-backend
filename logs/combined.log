@@ -62,3 +62,108 @@
 2025-07-13 20:06:28:628 [32minfo[39m: [32mContestação contest_1752447988225 registrada com sucesso para vistoria insp_001[39m
 2025-07-13 20:06:28:628 [35mhttp[39m: [35mPOST /insp_001/contest 201 - 9ms[39m
 2025-07-13 20:06:28:628 [33mwarn[39m: [33mRota não encontrada: POST /api/inspections/insp_001/contest[39m
+2025-07-14 00:31:05:315 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:31:05:315 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:31:14:3114 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-07-14 00:33:15:3315 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-07-14 00:33:33:3333 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:33:33:3333 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:34:29:3429 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:34:29:3429 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:35:12:3512 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:35:12:3512 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:35:42:3542 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:35:42:3542 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:36:14:3614 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-07-14 00:36:37:3637 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:36:37:3637 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:37:14:3714 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:37:14:3714 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:39:50:3950 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:39:50:3950 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:41:06:416 [33mwarn[39m: [33mFirebase Admin SDK: Variáveis de ambiente ausentes: FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY[39m
+2025-07-14 00:41:06:416 [33mwarn[39m: [33mFirebase Admin SDK não foi inicializado. A autenticação usará apenas JWT.[39m
+2025-07-14 00:41:06:416 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:41:06:416 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:42:55:4255 [33mwarn[39m: [33mFirebase Admin SDK: Variáveis de ambiente ausentes: FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY[39m
+2025-07-14 00:42:55:4255 [33mwarn[39m: [33mFirebase Admin SDK não foi inicializado. A autenticação usará apenas JWT.[39m
+2025-07-14 00:42:55:4255 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:42:55:4255 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:43:50:4350 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK: Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-07-14 00:43:50:4350 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 00:43:50:4350 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:43:50:4350 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:44:19:4419 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK: Failed to parse private key: Error: Invalid PEM formatted message.[39m
+2025-07-14 00:44:19:4419 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 00:44:19:4419 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:44:19:4419 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:46:46:4646 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK: Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-07-14 00:46:46:4646 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 00:46:46:4646 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:46:46:4646 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:50:51:5051 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK: Failed to parse private key: Error: Invalid PEM formatted message.[39m
+2025-07-14 00:50:51:5051 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 00:50:51:5051 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:50:51:5051 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:51:56:5156 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK: Failed to parse private key: Error: Invalid PEM formatted message.[39m
+2025-07-14 00:51:56:5156 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 00:51:56:5156 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:51:56:5156 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:52:12:5212 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK: Failed to parse private key: Error: Invalid PEM formatted message.[39m
+2025-07-14 00:52:12:5212 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 00:52:12:5212 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:52:12:5212 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:52:26:5226 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK: Failed to parse private key: Error: Invalid PEM formatted message.[39m
+2025-07-14 00:52:26:5226 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 00:52:26:5226 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:52:26:5226 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 00:55:39:5539 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-07-14 00:55:39:5539 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 00:55:39:5539 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 00:55:39:5539 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 01:00:16:016 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse service account json file: Error: Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-07-14 01:00:16:016 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 01:00:16:016 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 01:00:16:016 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 01:00:36:036 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse service account json file: Error: Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-07-14 01:00:36:036 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 01:00:36:036 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 01:00:36:036 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 01:07:04:74 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse service account json file: Error: Failed to parse private key: Error: Invalid PEM formatted message.[39m
+2025-07-14 01:07:04:74 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 01:07:04:74 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 01:07:04:74 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 01:08:15:815 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir das variáveis de ambiente. Failed to parse private key: Error: Invalid PEM formatted message.[39m
+2025-07-14 01:08:15:815 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 01:08:15:815 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 01:08:15:815 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 01:09:26:926 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse service account json file: Error: Failed to parse private key: Error: Unparsed DER bytes remain after ASN.1 parsing.[39m
+2025-07-14 01:09:26:926 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 01:09:26:926 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 01:09:26:926 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 08:50:17:5017 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse service account json file: Error: Failed to parse private key: Error: Unparsed DER bytes remain after ASN.1 parsing.[39m
+2025-07-14 08:50:17:5017 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 08:50:18:5018 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-14 08:50:18:5018 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 08:54:13:5413 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse service account json file: Error: Failed to parse private key: Error: Unparsed DER bytes remain after ASN.1 parsing.[39m
+2025-07-14 08:54:13:5413 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 08:54:13:5413 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-14 08:54:13:5413 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 08:55:28:5528 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir das variáveis de ambiente. Failed to parse private key: Error: Unparsed DER bytes remain after ASN.1 parsing.[39m
+2025-07-14 08:55:28:5528 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 08:55:28:5528 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-14 08:55:28:5528 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 09:29:25:2925 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse service account json file: Error: Failed to parse private key: Error: Unparsed DER bytes remain after ASN.1 parsing.[39m
+2025-07-14 09:29:25:2925 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
+2025-07-14 09:29:25:2925 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 09:29:25:2925 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 09:54:03:543 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-07-14 12:56:52:5652 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso a partir do arquivo de credenciais.[39m
+2025-07-14 12:56:55:5655 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
+2025-07-14 12:56:55:5655 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-14 12:57:47:5747 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-07-14 12:57:51:5751 [31merror[39m: [31mErro ao verificar token Firebase: Decoding Firebase ID token failed. Make sure you passed the entire string JWT which represents an ID token. See https://firebase.google.com/docs/auth/admin/verify-id-tokens for details on how to retrieve an ID token.[39m
+2025-07-14 22:24:42:2442 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-07-14 22:24:53:2453 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso a partir do arquivo de credenciais.[39m
+2025-07-14 22:25:08:258 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-14 22:25:08:258 [32minfo[39m: [32mServidor rodando na porta 3000[39m

@@ -88,16 +88,30 @@ export const syncStatusSchema = z.object({
 // Esquema para validação de contestações
 export const contestationSchema = z.object({
   empresaId: z.string().min(1, { message: 'empresaId é obrigatório' }),
+  laudoId: z.string().min(1, { message: 'laudoId é obrigatório' }),
   motivo: z.string().min(1, { message: 'motivo é obrigatório' }),
   detalhes: z.string().optional(),
-  itensContestados: z.array(
+  evidencias: z.array(
     z.object({
-      categoria: z.string(),
-      item: z.string(),
-      motivoContestacao: z.string(),
-      evidencia: z.string().optional()
+      tipo: z.enum(['foto', 'documento']),
+      url: z.string().url(),
     })
-  ).optional()
+  ).optional(),
+});
+
+// Esquema para validação de usuários
+export const userSchema = z.object({
+  nome: z.string(),
+  email: z.string().email(),
+  empresaId: z.string(),
+  role: z.enum(['admin', 'gerente', 'vistoriador']),
+});
+
+// Esquema para validação de imóveis
+export const propertySchema = z.object({
+  empresaId: z.string(),
+  endereco: z.string(),
+  descricao: z.string(),
 });
 
 // Esquema para atualização de status de contestação

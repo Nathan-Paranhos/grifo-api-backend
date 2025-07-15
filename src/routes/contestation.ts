@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import { sendSuccess, sendError } from '../utils/response';
 import { authMiddleware } from '../config/security';
 import { validateRequest, contestationSchema, contestationStatusSchema } from '../utils/validation';
 import { z } from 'zod';
@@ -21,10 +22,7 @@ router.post('/',
 
       if (!inspectionId) {
         logger.warn('Tentativa de criar contestação sem fornecer inspectionId');
-        return res.status(400).json({
-          success: false,
-          error: 'inspectionId é obrigatório'
-        });
+        return sendError(res, 'inspectionId é obrigatório', 400);
       }
 
       logger.debug(`Registrando contestação para vistoria ${inspectionId} da empresa ${empresaId}`);
@@ -50,17 +48,10 @@ router.post('/',
       // Em produção: await db.collection('inspections').doc(inspectionId).update({ hasContestation: true });
 
       logger.info(`Contestação ${contestation.id} registrada com sucesso para vistoria ${inspectionId}`);
-      return res.status(201).json({
-        success: true,
-        message: 'Contestação registrada com sucesso',
-        data: contestation
-      });
+      return sendSuccess(res, contestation, 201, { message: 'Contestação registrada com sucesso' });
     } catch (error) {
       logger.error(`Erro ao registrar contestação: ${error}`);
-      return res.status(500).json({
-        success: false,
-        error: 'Erro ao processar a contestação da vistoria'
-      });
+      return sendError(res, 'Erro ao processar a contestação da vistoria');
     }
   }
 );
@@ -82,10 +73,7 @@ router.get('/',
 
       if (!empresaId) {
         logger.warn('Tentativa de listar contestações sem fornecer empresaId');
-        return res.status(400).json({
-          success: false,
-          error: 'empresaId é obrigatório'
-        });
+        return sendError(res, 'empresaId é obrigatório', 400);
       }
 
       logger.debug(`Listando contestações para empresa ${empresaId}`);
@@ -144,16 +132,10 @@ router.get('/',
       }
 
       logger.info(`Retornando ${filteredContestations.length} contestações`);
-      return res.status(200).json({
-        success: true,
-        data: filteredContestations
-      });
+      return sendSuccess(res, filteredContestations);
     } catch (error) {
       logger.error(`Erro ao listar contestações: ${error}`);
-      return res.status(500).json({
-        success: false,
-        error: 'Erro ao processar a solicitação'
-      });
+      return sendError(res, 'Erro ao processar a solicitação');
     }
   }
 );
@@ -172,10 +154,7 @@ router.get('/:id',
 
       if (!empresaId) {
         logger.warn('Tentativa de acessar contestação sem fornecer empresaId');
-        return res.status(400).json({
-          success: false,
-          error: 'empresaId é obrigatório'
-        });
+        return sendError(res, 'empresaId é obrigatório', 400);
       }
 
       logger.debug(`Buscando contestação ${id} para empresa ${empresaId}`);
@@ -211,16 +190,10 @@ router.get('/:id',
       };
 
       logger.info(`Contestação ${id} encontrada`);
-      return res.status(200).json({
-        success: true,
-        data: contestation
-      });
+      return sendSuccess(res, contestation);
     } catch (error) {
       logger.error(`Erro ao buscar contestação: ${error}`);
-      return res.status(500).json({
-        success: false,
-        error: 'Erro ao processar a solicitação'
-      });
+      return sendError(res, 'Erro ao processar a solicitação');
     }
   }
 );
@@ -243,10 +216,7 @@ router.patch('/:id/status',
 
       if (!empresaId) {
         logger.warn('Tentativa de atualizar contestação sem fornecer empresaId');
-        return res.status(400).json({
-          success: false,
-          error: 'empresaId é obrigatório'
-        });
+        return sendError(res, 'empresaId é obrigatório', 400);
       }
 
       logger.debug(`Atualizando status da contestação ${id} para ${status}`);
@@ -264,21 +234,10 @@ router.patch('/:id/status',
       // });
 
       logger.info(`Status da contestação ${id} atualizado para ${status}`);
-      return res.status(200).json({
-        success: true,
-        message: 'Status da contestação atualizado com sucesso',
-        data: {
-          id,
-          status,
-          updatedAt: new Date().toISOString()
-        }
-      });
+      return sendSuccess(res, { id, status, updatedAt: new Date().toISOString() }, 200, { message: 'Status da contestação atualizado com sucesso' });
     } catch (error) {
       logger.error(`Erro ao atualizar status da contestação: ${error}`);
-      return res.status(500).json({
-        success: false,
-        error: 'Erro ao processar a solicitação'
-      });
+      return sendError(res, 'Erro ao processar a solicitação');
     }
   }
 );

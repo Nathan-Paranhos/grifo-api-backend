@@ -85,14 +85,26 @@ app.get('/', (req, res) => {
     message: 'Grifo API Backend',
     version: '1.0.0',
     environment: NODE_ENV,
-    endpoints: [
-      '/api/health',
-      '/api/dashboard',
-      '/api/inspections',
-      '/api/properties',
-      '/api/sync',
-      '/api/contestations'
-    ]
+    endpoints: {
+      public: [
+        '/api/health'
+      ],
+      protected: [
+        '/api/v1/dashboard',
+        '/api/v1/inspections',
+        '/api/v1/properties',
+        '/api/v1/sync',
+        '/api/v1/contestations',
+        '/api/v1/users',
+        '/api/v1/empresas'
+      ]
+    },
+    authentication: {
+      required: 'Firebase Auth Token',
+      header: 'Authorization: Bearer <token>',
+      note: 'All /api/v1/* endpoints require authentication'
+    },
+    documentation: '/api-docs'
   });
 });
 

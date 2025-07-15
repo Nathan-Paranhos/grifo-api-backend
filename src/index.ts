@@ -79,12 +79,12 @@ app.use('/api/v1', apiV1);
 setupSwagger(app);
 
 
-// Default route
+// Rota raiz com informações da API
 app.get('/', (req, res) => {
   res.json({
     message: 'Grifo API Backend',
     version: '1.0.0',
-    environment: NODE_ENV,
+    environment: process.env.NODE_ENV || 'development',
     endpoints: {
       public: [
         '/api/health'

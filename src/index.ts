@@ -58,11 +58,25 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/health', healthRoutes);
 
-// Version 1 Routes
-const apiV1 = express.Router();
+// Legacy routes for mobile app compatibility (without /v1 prefix)
+const apiLegacy = express.Router();
 
-// Apply auth middleware to all v1 routes
+// Apply auth middleware to all legacy routes
 import { authMiddleware } from './config/security';
+apiLegacy.use(authMiddleware);
+
+apiLegacy.use('/dashboard', dashboardRoutes);
+apiLegacy.use('/inspections', inspectionsRouter);
+apiLegacy.use('/properties', propertiesRoutes);
+apiLegacy.use('/sync', syncRoutes);
+apiLegacy.use('/users', usersRoutes);
+apiLegacy.use('/empresas', companiesRoutes);
+apiLegacy.use('/contestations', contestationRoutes);
+
+app.use('/api', apiLegacy);
+
+// Version 1 Routes (for future use and portal)
+const apiV1 = express.Router();
 apiV1.use(authMiddleware);
 
 apiV1.use('/dashboard', dashboardRoutes);
@@ -89,7 +103,16 @@ app.get('/', (req, res) => {
       public: [
         '/api/health'
       ],
-      protected: [
+      legacy: [
+        '/api/dashboard',
+        '/api/inspections',
+        '/api/properties',
+        '/api/sync',
+        '/api/contestations',
+        '/api/users',
+        '/api/empresas'
+      ],
+      v1: [
         '/api/v1/dashboard',
         '/api/v1/inspections',
         '/api/v1/properties',
@@ -102,7 +125,11 @@ app.get('/', (req, res) => {
     authentication: {
       required: 'Firebase Auth Token',
       header: 'Authorization: Bearer <token>',
-      note: 'All /api/v1/* endpoints require authentication'
+      note: 'All protected endpoints require authentication'
+    },
+    compatibility: {
+      mobile: 'Uses /api/* endpoints (legacy)',
+      portal: 'Uses /api/v1/* endpoints (versioned)'
     },
     documentation: '/api-docs'
   });

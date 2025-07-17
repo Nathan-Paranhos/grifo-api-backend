@@ -109,9 +109,52 @@ export const userSchema = z.object({
 
 // Esquema para validação de imóveis
 export const propertySchema = z.object({
-  empresaId: z.string(),
-  endereco: z.string(),
-  descricao: z.string(),
+  endereco: z.string().min(1, { message: 'Endereço é obrigatório' }),
+  bairro: z.string().min(1, { message: 'Bairro é obrigatório' }),
+  cidade: z.string().min(1, { message: 'Cidade é obrigatória' }),
+  estado: z.string().min(1, { message: 'Estado é obrigatório' }),
+  cep: z.string().min(8, { message: 'CEP deve ter pelo menos 8 caracteres' }),
+  tipo: z.string().min(1, { message: 'Tipo é obrigatório' }),
+  areaTotal: z.number().positive().optional(),
+  areaConstruida: z.number().positive().optional(),
+  descricao: z.string().optional(),
+  enderecoCompleto: z.string().optional(),
+  proprietario: z.object({
+    nome: z.string().min(1, { message: 'Nome do proprietário é obrigatório' }),
+    telefone: z.string().optional(),
+    email: z.string().email().optional(),
+    cpf: z.string().optional(),
+    rg: z.string().optional(),
+  }).optional(),
+  inquilino: z.object({
+    nome: z.string().optional(),
+    telefone: z.string().optional(),
+    email: z.string().email().optional(),
+    cpf: z.string().optional(),
+    rg: z.string().optional(),
+  }).optional(),
+  valorAluguel: z.number().positive().optional(),
+  valorIptu: z.number().positive().optional(),
+  observacoes: z.string().optional(),
+  ativo: z.boolean().default(true),
+});
+
+// Esquema para criação de usuários
+export const createUserSchema = z.object({
+  nome: z.string().min(1, { message: 'Nome é obrigatório' }),
+  email: z.string().email({ message: 'Email inválido' }),
+  role: z.enum(['admin', 'gerente', 'vistoriador'], { message: 'Role deve ser admin, gerente ou vistoriador' }),
+  telefone: z.string().optional(),
+  ativo: z.boolean().default(true),
+});
+
+// Esquema para atualização de usuários
+export const updateUserSchema = z.object({
+  nome: z.string().min(1, { message: 'Nome é obrigatório' }).optional(),
+  email: z.string().email({ message: 'Email inválido' }).optional(),
+  role: z.enum(['admin', 'gerente', 'vistoriador'], { message: 'Role deve ser admin, gerente ou vistoriador' }).optional(),
+  telefone: z.string().optional(),
+  ativo: z.boolean().optional(),
 });
 
 // Esquema para atualização de status de contestação

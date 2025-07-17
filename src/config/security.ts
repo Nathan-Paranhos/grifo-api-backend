@@ -68,6 +68,31 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
   const token = authHeader.split(' ')[1];
 
+  // Em desenvolvimento, verificar se é um token de desenvolvimento
+  if (process.env.NODE_ENV === 'development') {
+    // Token de desenvolvimento
+    if (token === process.env.DEV_TOKEN || token === 'dev-token-123') {
+      req.user = {
+        id: '4YDC4naAFnWituMELMef0Sd',
+        role: 'admin',
+        empresaId: 'empresa-teste-123'
+      };
+      logger.info('🧪 Usando token de desenvolvimento para testes');
+      return next();
+    }
+    
+    // Se BYPASS_AUTH estiver habilitado, pular autenticação
+    if (process.env.BYPASS_AUTH === 'true') {
+      req.user = {
+        id: '4YDC4naAFnWituMELMef0Sd',
+        role: 'admin',
+        empresaId: 'empresa-teste-123'
+      };
+      logger.info('🔓 Autenticação bypassed para desenvolvimento');
+      return next();
+    }
+  }
+
   try {
     if (!firebase.firebaseInitialized) {
       logger.error('Firebase Admin SDK não inicializado. A autenticação não pode prosseguir.');

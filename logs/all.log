@@ -1,169 +1,97 @@
-2025-07-09 23:21:20:2120 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-09 23:21:20:2120 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-09 23:23:57:2357 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
-2025-07-09 23:39:50:3950 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
-2025-07-11 16:21:50:2150 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-11 16:21:50:2150 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-13 20:05:39:539 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
-2025-07-13 20:05:39:539 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-13 20:06:16:616 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
-2025-07-13 20:06:16:616 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/health[39m
-2025-07-13 20:06:27:627 [34mdebug[39m: [34mVerificação de saúde da API solicitada[39m
-2025-07-13 20:06:27:627 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET / 200 - 14ms[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/dashboard?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [34mdebug[39m: [34mSolicitação de informações gerais do dashboard para empresaId: emp_001[39m
-2025-07-13 20:06:27:627 [32minfo[39m: [32mInformações gerais do dashboard retornadas com sucesso[39m
-2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/dashboard?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/dashboard?empresaId=emp_001 404 - 17ms[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/dashboard/stats?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [34mdebug[39m: [34mSolicitação de estatísticas do dashboard para empresaId: emp_001[39m
-2025-07-13 20:06:27:627 [32minfo[39m: [32mEstatísticas do dashboard retornadas com sucesso[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /stats?empresaId=emp_001 200 - 8ms[39m
-2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/dashboard/stats?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/inspections?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [34mdebug[39m: [34mSolicitação de inspeções para empresaId: emp_001[39m
-2025-07-13 20:06:27:627 [32minfo[39m: [32mRetornando 2 inspeções[39m
-2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/inspections?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/inspections?empresaId=emp_001 404 - 9ms[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/inspections/insp_001?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [34mdebug[39m: [34mBuscando inspeção com id: insp_001 para empresaId: emp_001[39m
-2025-07-13 20:06:27:627 [32minfo[39m: [32mInspeção insp_001 encontrada e retornada com sucesso[39m
-2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/inspections/insp_001?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/inspections/insp_001?empresaId=emp_001 404 - 10ms[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/sync?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [34mdebug[39m: [34mSync info request received[39m
-2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/sync?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/sync?empresaId=emp_001 404 - 10ms[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/sync/status?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [34mdebug[39m: [34mSync status request received[39m
-2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/sync/status?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/sync/status?empresaId=emp_001 404 - 7ms[39m
-2025-07-13 20:06:27:627 [31merror[39m: [31mError retrieving sync info Cannot set headers after they are sent to the client[39m
-2025-07-13 20:06:27:627 [31merror[39m: [31mRejeição de promessa não tratada:[39m
-2025-07-13 20:06:27:627 [31merror[39m: [31mPromessa: [object Promise], Razão: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/properties?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [34mdebug[39m: [34mSolicitação de propriedades para empresaId: emp_001[39m
-2025-07-13 20:06:27:627 [32minfo[39m: [32mRetornando 3 propriedades[39m
-2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/properties?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/properties?empresaId=emp_001 404 - 9ms[39m
-2025-07-13 20:06:27:627 [32minfo[39m: [32mRetrieving company-wide sync status[39m
-2025-07-13 20:06:27:627 [31merror[39m: [31mError retrieving sync status Cannot set headers after they are sent to the client[39m
-2025-07-13 20:06:27:627 [31merror[39m: [31mRejeição de promessa não tratada:[39m
-2025-07-13 20:06:27:627 [31merror[39m: [31mPromessa: [object Promise], Razão: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/contestations?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [34mdebug[39m: [34mListando contestações para empresa emp_001[39m
-2025-07-13 20:06:27:627 [32minfo[39m: [32mRetornando 2 contestações[39m
-2025-07-13 20:06:27:627 [33mwarn[39m: [33mRota não encontrada: GET /api/contestations?empresaId=emp_001[39m
-2025-07-13 20:06:27:627 [35mhttp[39m: [35mGET /api/contestations?empresaId=emp_001 404 - 11ms[39m
-2025-07-13 20:06:28:628 [35mhttp[39m: [35mPOST /api/inspections/insp_001/contest[39m
-2025-07-13 20:06:28:628 [34mdebug[39m: [34mRegistrando contestação para vistoria insp_001 da empresa emp_001[39m
-2025-07-13 20:06:28:628 [32minfo[39m: [32mContestação contest_1752447988225 registrada com sucesso para vistoria insp_001[39m
-2025-07-13 20:06:28:628 [35mhttp[39m: [35mPOST /insp_001/contest 201 - 9ms[39m
-2025-07-13 20:06:28:628 [33mwarn[39m: [33mRota não encontrada: POST /api/inspections/insp_001/contest[39m
-2025-07-14 00:31:05:315 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:31:05:315 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:31:14:3114 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
-2025-07-14 00:33:15:3315 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
-2025-07-14 00:33:33:3333 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:33:33:3333 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:34:29:3429 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:34:29:3429 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:35:12:3512 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:35:12:3512 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:35:42:3542 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:35:42:3542 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:36:14:3614 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
-2025-07-14 00:36:37:3637 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:36:37:3637 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:37:14:3714 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:37:14:3714 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:39:50:3950 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:39:50:3950 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:41:06:416 [33mwarn[39m: [33mFirebase Admin SDK: Variáveis de ambiente ausentes: FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY[39m
-2025-07-14 00:41:06:416 [33mwarn[39m: [33mFirebase Admin SDK não foi inicializado. A autenticação usará apenas JWT.[39m
-2025-07-14 00:41:06:416 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:41:06:416 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:42:55:4255 [33mwarn[39m: [33mFirebase Admin SDK: Variáveis de ambiente ausentes: FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY[39m
-2025-07-14 00:42:55:4255 [33mwarn[39m: [33mFirebase Admin SDK não foi inicializado. A autenticação usará apenas JWT.[39m
-2025-07-14 00:42:55:4255 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:42:55:4255 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:43:50:4350 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK: Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
-2025-07-14 00:43:50:4350 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 00:43:50:4350 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:43:50:4350 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:44:19:4419 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK: Failed to parse private key: Error: Invalid PEM formatted message.[39m
-2025-07-14 00:44:19:4419 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 00:44:19:4419 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:44:19:4419 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:46:46:4646 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK: Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
-2025-07-14 00:46:46:4646 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 00:46:46:4646 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:46:46:4646 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:50:51:5051 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK: Failed to parse private key: Error: Invalid PEM formatted message.[39m
-2025-07-14 00:50:51:5051 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 00:50:51:5051 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:50:51:5051 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:51:56:5156 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK: Failed to parse private key: Error: Invalid PEM formatted message.[39m
-2025-07-14 00:51:56:5156 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 00:51:56:5156 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:51:56:5156 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:52:12:5212 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK: Failed to parse private key: Error: Invalid PEM formatted message.[39m
-2025-07-14 00:52:12:5212 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 00:52:12:5212 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:52:12:5212 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:52:26:5226 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK: Failed to parse private key: Error: Invalid PEM formatted message.[39m
-2025-07-14 00:52:26:5226 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 00:52:26:5226 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:52:26:5226 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 00:55:39:5539 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
-2025-07-14 00:55:39:5539 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 00:55:39:5539 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 00:55:39:5539 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 01:00:16:016 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse service account json file: Error: Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
-2025-07-14 01:00:16:016 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 01:00:16:016 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 01:00:16:016 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 01:00:36:036 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse service account json file: Error: Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
-2025-07-14 01:00:36:036 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 01:00:36:036 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 01:00:36:036 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 01:07:04:74 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse service account json file: Error: Failed to parse private key: Error: Invalid PEM formatted message.[39m
-2025-07-14 01:07:04:74 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 01:07:04:74 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 01:07:04:74 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 01:08:15:815 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir das variáveis de ambiente. Failed to parse private key: Error: Invalid PEM formatted message.[39m
-2025-07-14 01:08:15:815 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 01:08:15:815 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 01:08:15:815 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 01:09:26:926 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse service account json file: Error: Failed to parse private key: Error: Unparsed DER bytes remain after ASN.1 parsing.[39m
-2025-07-14 01:09:26:926 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 01:09:26:926 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 01:09:26:926 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 08:50:17:5017 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse service account json file: Error: Failed to parse private key: Error: Unparsed DER bytes remain after ASN.1 parsing.[39m
-2025-07-14 08:50:17:5017 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 08:50:18:5018 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
-2025-07-14 08:50:18:5018 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 08:54:13:5413 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse service account json file: Error: Failed to parse private key: Error: Unparsed DER bytes remain after ASN.1 parsing.[39m
-2025-07-14 08:54:13:5413 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 08:54:13:5413 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
-2025-07-14 08:54:13:5413 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 08:55:28:5528 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir das variáveis de ambiente. Failed to parse private key: Error: Unparsed DER bytes remain after ASN.1 parsing.[39m
-2025-07-14 08:55:28:5528 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 08:55:28:5528 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
-2025-07-14 08:55:28:5528 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 09:29:25:2925 [31merror[39m: [31mErro ao inicializar Firebase Admin SDK a partir do arquivo de credenciais. Verifique se o arquivo "firebase-credentials.json" existe e está no formato correto. Failed to parse service account json file: Error: Failed to parse private key: Error: Unparsed DER bytes remain after ASN.1 parsing.[39m
-2025-07-14 09:29:25:2925 [33mwarn[39m: [33mA autenticação usará apenas JWT.[39m
-2025-07-14 09:29:25:2925 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 09:29:25:2925 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 09:54:03:543 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
-2025-07-14 12:56:52:5652 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso a partir do arquivo de credenciais.[39m
-2025-07-14 12:56:55:5655 [32minfo[39m: [32mServidor iniciado no ambiente production[39m
-2025-07-14 12:56:55:5655 [32minfo[39m: [32mServidor rodando na porta 3000[39m
-2025-07-14 12:57:47:5747 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
-2025-07-14 12:57:51:5751 [31merror[39m: [31mErro ao verificar token Firebase: Decoding Firebase ID token failed. Make sure you passed the entire string JWT which represents an ID token. See https://firebase.google.com/docs/auth/admin/verify-id-tokens for details on how to retrieve an ID token.[39m
-2025-07-14 22:24:42:2442 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
-2025-07-14 22:24:53:2453 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso a partir do arquivo de credenciais.[39m
-2025-07-14 22:25:08:258 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
-2025-07-14 22:25:08:258 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-17 16:05:03:53 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-07-17 16:05:03:53 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-07-17 16:05:06:56 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-17 16:05:06:56 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-17 16:20:47:2047 [35mhttp[39m: [35mGET /api/v1/health[39m
+2025-07-17 16:20:47:2047 [35mhttp[39m: [35mGET /health 401 - 22ms[39m
+2025-07-17 16:21:16:2116 [35mhttp[39m: [35mGET /api/health[39m
+2025-07-17 16:21:16:2116 [34mdebug[39m: [34mVerificação de saúde da API solicitada[39m
+2025-07-17 16:21:16:2116 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-07-17 16:21:16:2116 [35mhttp[39m: [35mGET / 200 - 5ms[39m
+2025-07-17 16:21:23:2123 [35mhttp[39m: [35mGET /api/v1/users[39m
+2025-07-17 16:21:29:2129 [31merror[39m: [31mErro ao verificar token Firebase: Decoding Firebase ID token failed. Make sure you passed the entire string JWT which represents an ID token. See https://firebase.google.com/docs/auth/admin/verify-id-tokens for details on how to retrieve an ID token.[39m
+2025-07-17 16:21:29:2129 [35mhttp[39m: [35mGET /users 401 - 5522ms[39m
+2025-07-17 16:22:09:229 [35mhttp[39m: [35mGET /api/v1/users[39m
+2025-07-17 16:22:09:229 [31merror[39m: [31mErro ao verificar token Firebase: Decoding Firebase ID token failed. Make sure you passed the entire string JWT which represents an ID token. See https://firebase.google.com/docs/auth/admin/verify-id-tokens for details on how to retrieve an ID token.[39m
+2025-07-17 16:22:09:229 [35mhttp[39m: [35mGET /users 401 - 3ms[39m
+2025-07-17 16:23:53:2353 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-07-17 16:23:53:2353 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-07-17 16:23:53:2353 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-17 16:23:53:2353 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-17 16:24:01:241 [35mhttp[39m: [35mGET /api/v1/users[39m
+2025-07-17 16:24:01:241 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:24:01:241 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:24:01:241 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:24:01:241 [32minfo[39m: [32mBuscando usuários para empresa empresa-teste-123[39m
+2025-07-17 16:24:01:241 [35mhttp[39m: [35mGET / 200 - 17ms[39m
+2025-07-17 16:24:08:248 [35mhttp[39m: [35mGET /api/v1/properties[39m
+2025-07-17 16:24:08:248 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:24:08:248 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:24:08:248 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:24:08:248 [33mwarn[39m: [33mValidação falhou: [{"code":"invalid_type","expected":"string","received":"undefined","path":["empresaId"],"message":"Required"}][39m
+2025-07-17 16:24:08:248 [35mhttp[39m: [35mGET / 400 - 12ms[39m
+2025-07-17 16:24:15:2415 [35mhttp[39m: [35mGET /api/v1/properties?empresaId=empresa-teste-123[39m
+2025-07-17 16:24:15:2415 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:24:15:2415 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:24:15:2415 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:24:15:2415 [34mdebug[39m: [34mSolicitação de propriedades para empresaId: empresa-teste-123[39m
+2025-07-17 16:24:21:2421 [31merror[39m: [31mErro ao buscar propriedades: Error: 7 PERMISSION_DENIED: Cloud Firestore API has not been used in project grifo-465922 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=grifo-465922 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.[39m
+2025-07-17 16:24:21:2421 [35mhttp[39m: [35mGET /?empresaId=empresa-teste-123 500 - 5864ms[39m
+2025-07-17 16:24:27:2427 [35mhttp[39m: [35mGET /api/v1/inspections?empresaId=empresa-teste-123[39m
+2025-07-17 16:24:27:2427 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:24:27:2427 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:24:27:2427 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:24:27:2427 [34mdebug[39m: [34mSolicitação de inspeções para empresaId: empresa-teste-123[39m
+2025-07-17 16:24:27:2427 [31merror[39m: [31mErro ao buscar inspeções: Error: 7 PERMISSION_DENIED: Cloud Firestore API has not been used in project grifo-465922 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=grifo-465922 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.[39m
+2025-07-17 16:24:27:2427 [35mhttp[39m: [35mGET /?empresaId=empresa-teste-123 500 - 84ms[39m
+2025-07-17 16:30:49:3049 [35mhttp[39m: [35mGET /api/v1/inspections?empresaId=empresa-teste-123[39m
+2025-07-17 16:30:49:3049 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:30:49:3049 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:30:49:3049 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:30:49:3049 [34mdebug[39m: [34mSolicitação de inspeções para empresaId: empresa-teste-123[39m
+2025-07-17 16:30:50:3050 [31merror[39m: [31mErro ao buscar inspeções: Error: 7 PERMISSION_DENIED: Cloud Firestore API has not been used in project grifo-465922 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=grifo-465922 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.[39m
+2025-07-17 16:30:50:3050 [35mhttp[39m: [35mGET /?empresaId=empresa-teste-123 500 - 381ms[39m
+2025-07-17 16:30:55:3055 [35mhttp[39m: [35mGET /api/v1/inspections?empresaId=empresa-teste-123[39m
+2025-07-17 16:30:55:3055 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:30:55:3055 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:30:55:3055 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:30:55:3055 [34mdebug[39m: [34mSolicitação de inspeções para empresaId: empresa-teste-123[39m
+2025-07-17 16:30:56:3056 [31merror[39m: [31mErro ao buscar inspeções: Error: 7 PERMISSION_DENIED: Cloud Firestore API has not been used in project grifo-465922 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=grifo-465922 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.[39m
+2025-07-17 16:30:56:3056 [35mhttp[39m: [35mGET /?empresaId=empresa-teste-123 500 - 75ms[39m
+2025-07-17 16:31:29:3129 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-07-17 16:31:29:3129 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-07-17 16:31:30:3130 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-17 16:31:30:3130 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-17 16:31:43:3143 [35mhttp[39m: [35mGET /api/v1/inspections?empresaId=empresa-teste-123[39m
+2025-07-17 16:31:43:3143 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:31:43:3143 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:31:43:3143 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:31:43:3143 [34mdebug[39m: [34mSolicitação de inspeções para empresaId: empresa-teste-123[39m
+2025-07-17 16:31:45:3145 [31merror[39m: [31mErro ao buscar inspeções: Error: 7 PERMISSION_DENIED: Cloud Firestore API has not been used in project grifo-465922 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=grifo-465922 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.[39m
+2025-07-17 16:31:45:3145 [35mhttp[39m: [35mGET /?empresaId=empresa-teste-123 500 - 1665ms[39m
+2025-07-17 16:33:14:3314 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-07-17 16:33:14:3314 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-07-17 16:33:15:3315 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-17 16:33:15:3315 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-17 16:33:32:3332 [35mhttp[39m: [35mGET /api/v1/inspections?empresaId=empresa-teste-123[39m
+2025-07-17 16:33:32:3332 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:33:32:3332 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:33:32:3332 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:33:32:3332 [34mdebug[39m: [34mSolicitação de inspeções para empresaId: empresa-teste-123[39m
+2025-07-17 16:33:33:3333 [33mwarn[39m: [33mFirebase Firestore não está acessível, usando dados mock[39m
+2025-07-17 16:33:33:3333 [32minfo[39m: [32mRetornando 2 inspeções (dados mock)[39m
+2025-07-17 16:33:33:3333 [35mhttp[39m: [35mGET /?empresaId=empresa-teste-123 200 - 1227ms[39m
+2025-07-17 16:33:40:3340 [35mhttp[39m: [35mGET /api/v1/properties?empresaId=empresa-teste-123[39m
+2025-07-17 16:33:40:3340 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:33:40:3340 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:33:40:3340 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:33:40:3340 [34mdebug[39m: [34mSolicitação de propriedades para empresaId: empresa-teste-123[39m
+2025-07-17 16:33:41:3341 [33mwarn[39m: [33mFirebase Firestore não está acessível, usando dados mock[39m
+2025-07-17 16:33:41:3341 [32minfo[39m: [32mRetornando 2 propriedades (dados mock)[39m
+2025-07-17 16:33:41:3341 [35mhttp[39m: [35mGET /?empresaId=empresa-teste-123 200 - 61ms[39m
+2025-07-17 16:33:49:3349 [35mhttp[39m: [35mGET /api/v1/users[39m
+2025-07-17 16:33:49:3349 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:33:49:3349 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:33:49:3349 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:33:49:3349 [32minfo[39m: [32mBuscando usuários para empresa empresa-teste-123[39m
+2025-07-17 16:33:49:3349 [35mhttp[39m: [35mGET / 200 - 8ms[39m

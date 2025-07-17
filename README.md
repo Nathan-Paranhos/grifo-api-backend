@@ -1,126 +1,115 @@
 # Grifo API Backend
 
-API backend para o aplicativo Grifo Vistorias, desenvolvida com Node.js, Express e TypeScript. Integrada com Firebase Authentication para autenticação segura.
+API backend para o sistema de vistorias Grifo, desenvolvida em Node.js com TypeScript e Express.
 
-## Estrutura do Projeto
+## 🚀 Tecnologias
+
+- **Node.js** - Runtime JavaScript
+- **TypeScript** - Linguagem tipada
+- **Express** - Framework web
+- **Firebase Admin SDK** - Autenticação e banco de dados
+- **Winston** - Sistema de logs
+- **Swagger** - Documentação da API
+
+## 📁 Estrutura do Projeto
 
 ```
-grifo-api-backend/
-├── src/
-│   ├── index.ts           # Ponto de entrada da aplicação
-│   ├── config/            # Configurações da aplicação
-│   │   ├── firebaseAdmin.ts # Configuração do Firebase Admin SDK
-│   │   ├── logger.ts      # Configuração de logs
-│   │   └── security.ts    # Middlewares de segurança
-│   ├── routes/            # Rotas da API
-│   │   ├── contestation.ts # Rotas para contestação de vistorias
-│   │   ├── dashboard.ts   # Rotas para estatísticas do dashboard
-│   │   ├── health.ts      # Rota de health check
-│   │   ├── inspections.ts # Rotas para gerenciamento de vistorias
-│   │   ├── properties.ts  # Rotas para gerenciamento de imóveis
-│   │   └── sync.ts        # Rota para sincronização de dados offline
-│   └── utils/             # Utilitários
-│       └── validation.ts  # Validação de requisições
-├── .gitignore
-├── package.json
-├── tsconfig.json
-└── README.md
+src/
+├── config/          # Configurações (Firebase, Logger, Swagger)
+├── middleware/      # Middlewares de autenticação
+├── routes/          # Rotas da API
+├── types/           # Definições de tipos TypeScript
+├── utils/           # Utilitários (validação, resposta)
+└── index.ts         # Arquivo principal
 ```
 
-## Endpoints da API
+## 🔧 Configuração
 
-- **GET /api/health**: Verifica o status da API
-- **GET /api/dashboard/stats**: Obtém estatísticas para o dashboard
-- **GET /api/inspections**: Lista vistorias
-- **POST /api/inspections**: Cria uma nova vistoria
-- **GET /api/properties**: Lista imóveis
-- **POST /api/sync**: Sincroniza vistorias pendentes
-- **POST /api/contestations**: Registra uma contestação para uma vistoria
-- **GET /api/contestations**: Lista contestações
-- **GET /api/contestations/:id**: Obtém detalhes de uma contestação
-- **PATCH /api/contestations/:id/status**: Atualiza o status de uma contestação
+### Variáveis de Ambiente
 
-## Requisitos
+Crie um arquivo `.env.development` baseado no `.env.example`:
 
-- Node.js 14+
-- npm ou yarn
+```env
+NODE_ENV=development
+PORT=3000
+FIREBASE_PROJECT_ID=seu-projeto-id
+DEV_TOKEN=seu-token-dev
+```
 
-## Instalação
+### Instalação
 
 ```bash
 # Instalar dependências
 npm install
 
-# Iniciar em modo desenvolvimento
+# Desenvolvimento
 npm run dev
 
-# Compilar para produção
+# Build para produção
 npm run build
 
-# Iniciar em modo produção
+# Executar em produção
 npm start
 ```
 
-## Desenvolvimento
+## 📚 API Endpoints
 
-A API estará disponível em `http://localhost:3000`.
+### Público
+- `GET /health` - Status da API
 
-## Deployment
+### Protegidos (Requer autenticação)
+- `GET /api/v1/dashboard` - Estatísticas do dashboard
+- `GET /api/v1/inspections` - Lista de inspeções
+- `POST /api/v1/inspections` - Criar inspeção
+- `GET /api/v1/properties` - Lista de propriedades
+- `GET /api/v1/users` - Lista de usuários
+- `POST /api/v1/sync` - Sincronização de dados
+- `GET /api/v1/contestations` - Contestações
+- `GET /api/v1/companies` - Empresas
 
-Esta API pode ser facilmente implantada no Render.com:
+## 🔐 Autenticação
 
-1. Faça upload do código para um repositório GitHub
-2. No Render.com, crie um novo Web Service
-3. Conecte ao repositório GitHub
-4. Configure:
-   - Build Command: `npm run build`
-   - Start Command: `npm start`
-   - Environment: Node.js
-5. Configure as variáveis de ambiente necessárias (veja abaixo)
+A API utiliza Firebase Authentication com ID Tokens:
 
-A API estará disponível em `https://grifo-api.onrender.com`.
-
-## Autenticação
-
-A API suporta dois métodos de autenticação:
-
-1. **Firebase Authentication**: Tokens JWT gerados pelo Firebase Authentication são verificados usando o Firebase Admin SDK.
-2. **JWT Padrão**: Como fallback, a API também suporta tokens JWT padrão.
-
-### Fluxo de Autenticação
-
-1. O cliente (app móvel ou portal web) autentica com Firebase Authentication
-2. O cliente obtém um token ID do Firebase
-3. O cliente inclui o token no cabeçalho de autorização das requisições: `Authorization: Bearer <token>`
-4. A API verifica o token usando o Firebase Admin SDK
-5. Se a verificação falhar, a API tenta verificar como um JWT padrão
-
-### Variáveis de Ambiente
-
-Crie os arquivos `.env.development` e `.env.production` com as seguintes variáveis:
-
+```javascript
+// Cabeçalho de autorização
+Authorization: Bearer <ID_TOKEN>
 ```
-# Server Configuration
-PORT=3000
-NODE_ENV=development|production
 
-# CORS Configuration
-CORS_ORIGIN=https://portal.grifovistorias.com,android-app://com.grifo.vistorias
+## 🌐 Deploy
 
-# Firebase Configuration
-FIREBASE_API_KEY=
-FIREBASE_AUTH_DOMAIN=
-FIREBASE_PROJECT_ID=
-FIREBASE_STORAGE_BUCKET=
-FIREBASE_MESSAGING_SENDER_ID=
-FIREBASE_APP_ID=
+### Render.com
 
-# Firebase Admin SDK (para verificação de tokens)
-FIREBASE_CLIENT_EMAIL=
-FIREBASE_PRIVATE_KEY=
+O projeto está configurado para deploy automático no Render.com através do arquivo `render.yaml`.
 
-# Security
-JWT_SECRET=
-JWT_EXPIRES_IN=1d
-BYPASS_AUTH=false  # Definir como true apenas em desenvolvimento
-```
+### Variáveis de Ambiente de Produção
+
+- `NODE_ENV=production`
+- `PORT=10000`
+- `FIREBASE_PROJECT_ID`
+- Credenciais do Firebase Admin SDK
+
+## 📝 Logs
+
+Os logs são gerenciados pelo Winston e salvos em:
+- `logs/error.log` - Apenas erros
+- `logs/combined.log` - Todos os logs
+- `logs/all.log` - Backup completo
+
+## 🔍 Documentação da API
+
+A documentação Swagger está disponível em:
+- Desenvolvimento: `http://localhost:3000/api-docs`
+- Produção: `https://grifo-api.onrender.com/api-docs`
+
+## 🛠️ Scripts Disponíveis
+
+- `npm run dev` - Executa em modo desenvolvimento
+- `npm run dev:win` - Executa em modo desenvolvimento (Windows)
+- `npm run build` - Compila TypeScript para JavaScript
+- `npm start` - Executa em modo produção
+- `npm run start:win` - Executa em modo produção (Windows)
+
+## 📞 Suporte
+
+Para dúvidas ou problemas, consulte os logs da aplicação ou verifique o status dos endpoints através do health check.

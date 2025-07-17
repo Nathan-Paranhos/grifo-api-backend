@@ -95,3 +95,74 @@
 2025-07-17 16:33:49:3349 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
 2025-07-17 16:33:49:3349 [32minfo[39m: [32mBuscando usuários para empresa empresa-teste-123[39m
 2025-07-17 16:33:49:3349 [35mhttp[39m: [35mGET / 200 - 8ms[39m
+2025-07-17 16:53:55:5355 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-07-17 16:53:55:5355 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-07-17 16:53:55:5355 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-17 16:53:55:5355 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-17 16:54:05:545 [35mhttp[39m: [35mGET /api/v1/users[39m
+2025-07-17 16:54:05:545 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:54:05:545 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:54:05:545 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:54:05:545 [32minfo[39m: [32mBuscando usuários para empresa empresa-teste-123[39m
+2025-07-17 16:54:05:545 [35mhttp[39m: [35mGET / 200 - 11ms[39m
+2025-07-17 16:54:12:5412 [35mhttp[39m: [35mGET /api/v1/inspections?empresaId=empresa-teste-123[39m
+2025-07-17 16:54:12:5412 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:54:12:5412 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:54:12:5412 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:54:12:5412 [34mdebug[39m: [34mSolicitação de inspeções para empresaId: empresa-teste-123[39m
+2025-07-17 16:54:13:5413 [33mwarn[39m: [33mFirebase Firestore não está acessível, usando dados mock[39m
+2025-07-17 16:54:13:5413 [32minfo[39m: [32mRetornando 2 inspeções (dados mock)[39m
+2025-07-17 16:54:13:5413 [35mhttp[39m: [35mGET /?empresaId=empresa-teste-123 200 - 1198ms[39m
+2025-07-17 16:54:24:5424 [35mhttp[39m: [35mGET /api/v1/properties?empresaId=empresa-teste-123[39m
+2025-07-17 16:54:24:5424 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:54:24:5424 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:54:24:5424 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:54:24:5424 [34mdebug[39m: [34mSolicitação de propriedades para empresaId: empresa-teste-123[39m
+2025-07-17 16:54:24:5424 [33mwarn[39m: [33mFirebase Firestore não está acessível, usando dados mock[39m
+2025-07-17 16:54:24:5424 [32minfo[39m: [32mRetornando 2 propriedades (dados mock)[39m
+2025-07-17 16:54:24:5424 [35mhttp[39m: [35mGET /?empresaId=empresa-teste-123 200 - 59ms[39m
+2025-07-17 16:54:30:5430 [35mhttp[39m: [35mGET /api/v1/dashboard?empresaId=empresa-teste-123[39m
+2025-07-17 16:54:30:5430 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:54:30:5430 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:54:30:5430 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:54:30:5430 [34mdebug[39m: [34mSolicitação de informações gerais do dashboard para empresaId: empresa-teste-123[39m
+2025-07-17 16:54:30:5430 [31merror[39m: [31mErro ao obter informações gerais do dashboard: Error: 7 PERMISSION_DENIED: Cloud Firestore API has not been used in project grifo-465922 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=grifo-465922 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.[39m
+2025-07-17 16:54:30:5430 [35mhttp[39m: [35mGET /?empresaId=empresa-teste-123 500 - 72ms[39m
+2025-07-17 16:55:23:5523 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-07-17 16:55:23:5523 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-07-17 16:55:24:5524 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-17 16:55:24:5524 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-17 16:55:37:5537 [35mhttp[39m: [35mGET /api/v1/dashboard?empresaId=empresa-teste-123[39m
+2025-07-17 16:55:37:5537 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:55:37:5537 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:55:37:5537 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:55:37:5537 [34mdebug[39m: [34mSolicitação de informações gerais do dashboard para empresaId: empresa-teste-123[39m
+2025-07-17 16:55:38:5538 [33mwarn[39m: [33mFirebase Firestore não está acessível, usando dados mock[39m
+2025-07-17 16:55:38:5538 [32minfo[39m: [32mRetornando estatísticas do dashboard (dados mock): 5 inspeções[39m
+2025-07-17 16:55:38:5538 [32minfo[39m: [32mInformações gerais do dashboard retornadas com sucesso[39m
+2025-07-17 16:55:38:5538 [35mhttp[39m: [35mGET /?empresaId=empresa-teste-123 200 - 861ms[39m
+2025-07-17 16:55:45:5545 [35mhttp[39m: [35mGET /api/v1/health[39m
+2025-07-17 16:55:45:5545 [35mhttp[39m: [35mGET /v1/health 401 - 2ms[39m
+2025-07-17 16:55:52:5552 [35mhttp[39m: [35mGET /api/v1/health[39m
+2025-07-17 16:55:52:5552 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:55:52:5552 [32minfo[39m: [32m🧪 Usando token de desenvolvimento para testes[39m
+2025-07-17 16:55:52:5552 [33mwarn[39m: [33mRota não encontrada: GET /api/v1/health[39m
+2025-07-17 16:55:52:5552 [35mhttp[39m: [35mGET /api/v1/health 404 - 3ms[39m
+2025-07-17 17:03:28:328 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-07-17 17:03:28:328 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-07-17 17:03:29:329 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-17 17:03:29:329 [32minfo[39m: [32mServidor rodando na porta 3000[39m
+2025-07-17 17:03:37:337 [35mhttp[39m: [35mGET /robots.txt[39m
+2025-07-17 17:03:37:337 [33mwarn[39m: [33mRota não encontrada: GET /robots.txt[39m
+2025-07-17 17:03:37:337 [35mhttp[39m: [35mGET /robots.txt 404 - 5ms[39m
+2025-07-17 17:03:37:337 [35mhttp[39m: [35mGET /health[39m
+2025-07-17 17:03:37:337 [35mhttp[39m: [35mGET /health 200 - 1ms[39m
+2025-07-17 17:03:45:345 [35mhttp[39m: [35mGET /robots.txt[39m
+2025-07-17 17:03:45:345 [33mwarn[39m: [33mRota não encontrada: GET /robots.txt[39m
+2025-07-17 17:03:45:345 [35mhttp[39m: [35mGET /robots.txt 404 - 1ms[39m
+2025-07-17 17:03:46:346 [35mhttp[39m: [35mGET /api/health[39m
+2025-07-17 17:03:46:346 [34mdebug[39m: [34mVerificação de saúde da API solicitada[39m
+2025-07-17 17:03:46:346 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-07-17 17:03:46:346 [35mhttp[39m: [35mGET / 200 - 2ms[39m
+2025-07-17 17:21:06:216 [35mhttp[39m: [35mGET /[39m
+2025-07-17 17:21:06:216 [35mhttp[39m: [35mGET / 200 - 17ms[39m

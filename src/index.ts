@@ -55,6 +55,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Simple health check for Render
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Routes
 app.use('/api/health', healthRoutes);
 

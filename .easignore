@@ -26,3 +26,7 @@ yarn-error.*
 *.p12
 *.key
 *.mobileprovision
+
+# Ignorar diretórios nativos para usar o prebuild do EAS
+/android
+/ios

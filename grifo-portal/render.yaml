@@ -10,13 +10,25 @@ services:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 8080
+        value: 3000
+      - key: CORS_ORIGIN
+        value: https://app.grifovistorias.com,android-app://com.grifo.vistorias
+      - key: LOG_LEVEL
+        value: info
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX
+        value: 100
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 1d
+      - key: BYPASS_AUTH
+        value: false
       # Variáveis de ambiente do Firebase
       - key: FIREBASE_API_KEY
         sync: false
       - key: FIREBASE_AUTH_DOMAIN
-        sync: false
-      - key: FIREBASE_DATABASE_URL
         sync: false
       - key: FIREBASE_PROJECT_ID
         sync: false
@@ -25,13 +37,6 @@ services:
       - key: FIREBASE_MESSAGING_SENDER_ID
         sync: false
       - key: FIREBASE_APP_ID
-        sync: false
-      - key: FIREBASE_MEASUREMENT_ID
-        sync: false
-      # Outras variáveis de ambiente necessárias para a API
-      - key: JWT_SECRET
-        sync: false
-      - key: DATABASE_URL
         sync: false
 
   # Serviço do frontend

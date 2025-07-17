@@ -23,7 +23,8 @@ const Contato = () => {
 
     try {
       // Simulando envio para API
-      console.log('Dados do formulário:', data);
+      // Processar dados do formulário
+       // Implementar envio do formulário de contato
 
       // Em produção, aqui seria feita uma chamada para a API
       // await api.post('/contato', data);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Chrome as Home, Building, ClipboardList, User, Plus, FileText, Cog, ClipboardPlus } from 'lucide-react-native';
-import { colors } from '../../../src/theme/colors';
+import { colors } from '@/theme/colors';
 import { Platform } from 'react-native';
 
 export default function TabLayout() {

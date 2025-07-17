@@ -1,12 +1,10 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { Inspection, Photo } from '../types/inspection';
-import { PDFService } from '../services/pdfService';
-import { GoogleDriveService } from '../services/googleDriveService';
-import * as Sharing from 'expo-sharing';
-import { ApiService } from '../services/apiService';
 import { useAuth } from './AuthContext';
 import { StorageService } from '../services/storageService';
+import { ApiService } from '../services/apiService';
+import { PDFService } from '../services/pdfService';
+import { GoogleDriveService } from '../services/googleDriveService';
+import { Inspection, Photo } from '../types/inspection';
 
 interface InspectionContextData {
   inspections: Inspection[];
@@ -20,10 +18,11 @@ interface InspectionContextData {
 const InspectionContext = createContext<InspectionContextData>({} as InspectionContextData);
 
 export const InspectionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { userData, isOffline } = useAuth();
+  const { userData } = useAuth();
   const [inspections, setInspections] = useState<Inspection[]>([]);
   const [pendingSync, setPendingSync] = useState<Inspection[]>([]);
   const [googleDriveFolderId, setGoogleDriveFolderId] = useState<string | null>(null);
+  const [isOffline, setIsOffline] = useState(false);
 
   useEffect(() => {
     loadInspections();
@@ -117,8 +116,7 @@ export const InspectionProvider: React.FC<{ children: ReactNode }> = ({ children
     if (googleDriveFolderId) {
       const uploadResult = await GoogleDriveService.uploadFile(pdfResult.pdfPath, googleDriveFolderId);
       if (uploadResult.success) {
-        console.log('PDF enviado com sucesso para o Google Drive!');
-        // Opcional: compartilhar o link do Drive
+        // PDF enviado com sucesso para o Google Drive!
       } else {
         console.error('Falha ao enviar o PDF para o Google Drive.');
       }
@@ -126,8 +124,8 @@ export const InspectionProvider: React.FC<{ children: ReactNode }> = ({ children
       console.warn('ID da pasta do Google Drive não configurado. Pulando upload.');
     }
 
-    // 4. Permitir compartilhamento local
-    await Sharing.shareAsync(pdfResult.pdfPath);
+    // 4. PDF gerado com sucesso
+    console.log('PDF gerado com sucesso:', pdfResult.pdfPath);
   };
 
   const setupGoogleDrive = async (accessToken: string, folderName: string) => {
@@ -136,7 +134,7 @@ export const InspectionProvider: React.FC<{ children: ReactNode }> = ({ children
       const folderId = await GoogleDriveService.getOrCreateFolder(folderName);
       if (folderId) {
         setGoogleDriveFolderId(folderId);
-        console.log(`Pasta do Google Drive configurada com ID: ${folderId}`);
+        // Pasta do Google Drive configurada
       } else {
         console.error('Não foi possível obter ou criar a pasta no Google Drive.');
       }

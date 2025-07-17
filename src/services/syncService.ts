@@ -36,7 +36,7 @@ export class SyncService {
           }
           return false;
         } catch (error) {
-          console.log('Servidor não está acessível:', error);
+          // Servidor não está acessível
           return false;
         }
       }
@@ -184,7 +184,7 @@ export class SyncService {
                   });
                 },
                 onRetry: (photoIndex, attempt, error, nextDelay) => {
-                  console.log(`Retentando upload da foto ${photoIndex} da vistoria ${inspection.id} (tentativa ${attempt})`);
+                  // Retentando upload da foto
                   onProgress?.(`Retentando foto ${photoIndex+1}/${inspection.fotos.length} da vistoria ${i+1} (tentativa ${attempt}). Aguardando ${nextDelay/1000}s...`, {
                     current: i,
                     total: pendingInspections.length
@@ -740,10 +740,7 @@ export class SyncService {
       const retriedIds = failedInspections.map(inspection => inspection.id);
       
       // Registrar informações sobre as inspeções com erro
-      console.log(`Retentando ${failedInspections.length} inspeções com erro:`, {
-        ids: retriedIds,
-        timestamps: failedInspections.map(i => i.createdAt),
-      });
+      // Retentando inspeções com erro
       
       // Resetar status para 'pending' com verificação
       for (let i = 0; i < failedInspections.length; i++) {

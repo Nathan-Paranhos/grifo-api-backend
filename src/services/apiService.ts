@@ -106,7 +106,7 @@ export class ApiService {
             'Authorization': `Bearer ${token}`
           };
         } catch (error) {
-          console.error('Error getting auth token:', error);
+          // Error getting auth token
         }
       }
       
@@ -129,7 +129,7 @@ export class ApiService {
 
       return data;
     } catch (error) {
-      console.error(`API request failed for ${endpoint}:`, error);
+      // API request failed
       
       // Tratamento específico para erros de timeout
       if (error instanceof FetchTimeoutError) {
@@ -287,7 +287,7 @@ export class ApiService {
         data: uploadResult.urls || [],
       };
     } catch (error) {
-      console.error('Error in uploadPhotos:', error);
+      // Error in uploadPhotos
       return {
         success: false,
         partialSuccess: false,

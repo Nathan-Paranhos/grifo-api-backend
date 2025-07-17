@@ -72,7 +72,7 @@ export const PhotoCapture: React.FC<PhotoCaptureProps> = ({
         setCommentModalVisible(true);
       }
     } catch (error) {
-      console.error('Error taking photo:', error);
+      // Error taking photo
       Alert.alert('Erro', 'Não foi possível tirar a foto. Tente novamente.');
     } finally {
       setLoading(false);
@@ -98,7 +98,7 @@ export const PhotoCapture: React.FC<PhotoCaptureProps> = ({
       }
       setRetryPhoto(null);
     } catch (error) {
-      console.error('Error retaking photo:', error);
+      // Error retaking photo
       Alert.alert('Erro', 'Não foi possível tirar a foto. Tente novamente.');
     } finally {
       setLoading(false);

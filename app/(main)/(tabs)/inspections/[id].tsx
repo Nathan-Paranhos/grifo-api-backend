@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TextInput, Button, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams } from 'expo-router';
-import { ApiService } from '@/src/services/apiService';
+import { ApiService } from '@/services/apiService';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { LoadingOverlay } from '@/src/components/LoadingOverlay';
-import { colors } from '@/src/theme/colors';
-import { globalStyles } from '@/src/theme/styles';
+import { LoadingOverlay } from '@/components/LoadingOverlay';
+import { colors } from '@/theme/colors';
+import { globalStyles } from '@/theme/styles';
 
 export default function InspectionDetailsScreen() {
   const { id } = useLocalSearchParams();
@@ -79,13 +79,23 @@ export default function InspectionDetailsScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Comentários</Text>
-        {/* TODO: Display comments */}
+        {inspection.comentarios && inspection.comentarios.length > 0 ? (
+          inspection.comentarios.map((comentario: any, index: number) => (
+            <View key={index} style={styles.comment}>
+              <Text style={styles.commentText}>{comentario.texto}</Text>
+              <Text style={styles.commentDate}>
+                {new Date(comentario.data).toLocaleDateString('pt-BR')}
+              </Text>
+            </View>
+          ))
+        ) : (
+          <Text style={styles.noComments}>Nenhum comentário ainda</Text>
+        )}
         <TextInput
           style={styles.commentInput}
           placeholder="Adicionar um comentário"
           value={newComment}
           onChangeText={setNewComment}
-        />
         />
         <Button title="Adicionar Comentário" onPress={handleAddComment} />
       </View>
@@ -100,7 +110,6 @@ async function uploadImageAsync(uri: string) {
       resolve(xhr.response);
     };
     xhr.onerror = function (e) {
-      console.log(e);
       reject(new TypeError("Network request failed"));
     };
     xhr.responseType = "blob";
@@ -157,5 +166,29 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 12,
     minHeight: 100,
+  },
+  comment: {
+    backgroundColor: colors.background,
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.primary,
+  },
+  commentText: {
+    fontSize: 16,
+    color: colors.text,
+    marginBottom: 4,
+  },
+  commentDate: {
+    fontSize: 12,
+    color: colors.textSecondary,
+  },
+  noComments: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    padding: 16,
   },
 });

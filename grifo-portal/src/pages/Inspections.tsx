@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
-import { firestore } from '../config/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import Layout from '../components/Layout';
 import { getFileUrl } from '../services/storageService';
 import { saveAs } from 'file-saver';
+import inspectionService, { Inspection } from '../services/inspectionService';
 
 const Inspections = () => {
-  const handleViewPdf = async (inspection: any) => {
-    // @ts-ignore
+  const handleViewPdf = async (inspection: Inspection) => {
     const path = `${inspection.empresaId}/${inspection.imovelId}/${inspection.id}/laudo.pdf`;
     try {
       const url = await getFileUrl(path);
@@ -19,15 +17,14 @@ const Inspections = () => {
     }
   };
 
-  const handleDownloadZip = async (inspection: any) => {
-    // @ts-ignore
+  const handleDownloadZip = async (inspection: Inspection) => {
     const path = `${inspection.empresaId}/${inspection.imovelId}/${inspection.id}/fotos.zip`;
     try {
       const url = await getFileUrl(path);
       // Fetching the blob and saving it avoids potential CORS issues with direct download links
       const response = await fetch(url);
       const blob = await response.blob();
-      saveAs(blob, `fotos-${inspection.imovelEndereco}-${inspection.id}.zip`);
+      saveAs(blob, `fotos-${inspection.imovel?.endereco || 'imovel'}-${inspection.id}.zip`);
     } catch (error) {
       console.error('Error downloading ZIP:', error);
       alert('Não foi possível baixar o arquivo ZIP. Verifique se o arquivo existe no armazenamento.');
@@ -35,25 +32,32 @@ const Inspections = () => {
   };
 
   const { currentUser } = useAuth();
-  const [inspections, setInspections] = useState<any[]>([]);
+  const [inspections, setInspections] = useState<Inspection[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // @ts-ignore
-    if (!currentUser || !currentUser.empresaId) return;
+    if (!currentUser) return;
 
     const fetchInspections = async () => {
-      setLoading(true);
-      const inspectionsQuery = query(
-        collection(firestore, 'vistorias'),
-        // @ts-ignore
-        where('empresaId', '==', currentUser.empresaId),
-        orderBy('dataConclusao', 'desc')
-      );
-      const querySnapshot = await getDocs(inspectionsQuery);
-      const inspectionsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setInspections(inspectionsData);
-      setLoading(false);
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const inspectionsData = await inspectionService.getInspections();
+        
+        // Ordena por data de criação (mais recentes primeiro)
+        const sortedInspections = inspectionsData.sort((a, b) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        
+        setInspections(sortedInspections);
+      } catch (error) {
+        console.error('Erro ao carregar inspeções:', error);
+        setError('Erro ao carregar inspeções. Tente novamente.');
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchInspections();
@@ -63,7 +67,17 @@ const Inspections = () => {
     <Layout>
       <h1 className="text-2xl font-bold text-white mb-6">Vistorias</h1>
       {loading ? (
-        <p className="text-white">Carregando...</p>
+        <div className="flex justify-center items-center h-32">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-dourado"></div>
+        </div>
+      ) : error ? (
+        <div className="bg-red-900 border border-red-700 text-red-300 px-4 py-3 rounded">
+          {error}
+        </div>
+      ) : inspections.length === 0 ? (
+        <div className="text-center text-gray-500 py-8">
+          Nenhuma inspeção encontrada
+        </div>
       ) : (
         <div className="bg-black shadow-md rounded-lg overflow-hidden border border-gray-700">
           <table className="min-w-full leading-normal">
@@ -93,22 +107,26 @@ const Inspections = () => {
               {inspections.map(inspection => (
                 <tr key={inspection.id} className="border-b border-gray-700 hover:bg-gray-800">
                   <td className="px-5 py-5 text-sm">
-                    <p className="whitespace-no-wrap">{inspection.tipoVistoria}</p>
+                    <p className="whitespace-no-wrap">{inspection.tipo}</p>
                   </td>
                   <td className="px-5 py-5 text-sm">
                     <p className="whitespace-no-wrap">
-                      {new Date(inspection.dataConclusao.seconds * 1000).toLocaleDateString()}
+                      {new Date(inspection.dataVistoria).toLocaleDateString()}
                     </p>
                   </td>
                   <td className="px-5 py-5 text-sm">
-                    <p className="whitespace-no-wrap">{inspection.imovelEndereco}</p>
+                    <p className="whitespace-no-wrap">{inspection.imovel?.endereco || 'Endereço não informado'}</p>
                   </td>
                   <td className="px-5 py-5 text-sm">
-                    <p className="whitespace-no-wrap">{inspection.vistoriadorNome || 'N/A'}</p>
+                    <p className="whitespace-no-wrap">{inspection.vistoriadorId || 'N/A'}</p>
                   </td>
                   <td className="px-5 py-5 text-sm">
                     <span
-                      className={`relative inline-block px-3 py-1 font-semibold leading-tight ${inspection.status === 'concluida' ? 'text-green-300 bg-green-900' : 'text-yellow-300 bg-yellow-900'} rounded-full`}>
+                      className={`relative inline-block px-3 py-1 font-semibold leading-tight ${
+                        inspection.status === 'Finalizado' ? 'text-green-300 bg-green-900' : 
+                        inspection.status === 'Em Andamento' ? 'text-blue-300 bg-blue-900' :
+                        'text-yellow-300 bg-yellow-900'
+                      } rounded-full`}>
                       <span className="relative">{inspection.status}</span>
                     </span>
                   </td>

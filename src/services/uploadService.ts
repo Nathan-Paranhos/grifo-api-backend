@@ -38,7 +38,7 @@ export class UploadService {
         clearTimeout(timeoutId);
         return response.status === 204; // Google retorna 204 quando há conectividade
       } catch (fetchError) {
-        console.log('Verificação avançada de conectividade falhou:', fetchError);
+        // Verificação avançada de conectividade falhou
         // Se a verificação avançada falhar mas a básica passou, ainda consideramos online
         // pois pode ser apenas o serviço específico que está indisponível
         return true;
@@ -93,13 +93,13 @@ export class UploadService {
           onRetry?.(attempt, lastError?.message || 'Erro desconhecido', currentDelay);
           
           await new Promise(resolve => setTimeout(resolve, currentDelay));
-          console.log(`Retry attempt ${attempt} for ${path} (delay: ${currentDelay}ms)`);
+          // Tentativa de retry
           
           // Verificar conectividade novamente antes de cada retry
           const stillConnected = await this.isOnline();
           if (!stillConnected) {
             // Tentar reconectar antes de desistir
-            console.log('Conexão perdida. Tentando reconectar...');
+            // Conexão perdida. Tentando reconectar...
             
             // Esperar 3 segundos e tentar novamente
             await new Promise(resolve => setTimeout(resolve, 3000));
@@ -111,7 +111,7 @@ export class UploadService {
                 error: 'Conexão com a internet perdida durante o retry. Tente novamente quando estiver online.',
               };
             } else {
-              console.log('Conexão restabelecida. Continuando upload...');
+              // Conexão restabelecida. Continuando upload...
             }
           }
         }
@@ -190,7 +190,7 @@ export class UploadService {
           if (!isOnline) {
             // Se não estiver online e não for a última tentativa, continuar tentando
             if (attempt < maxRetries) {
-              console.log('Erro de rede detectado. Aguardando reconexão...');
+              // Erro de rede detectado. Aguardando reconexão...
               continue;
             }
           }

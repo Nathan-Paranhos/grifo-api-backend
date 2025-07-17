@@ -37,7 +37,7 @@ export function PropertySelectionModal({ visible, onClose, onSelect }: Props) {
         setProperties(response.data);
       }
     } catch (error) {
-      console.error(error);
+      // Error loading properties
     } finally {
       setLoading(false);
     }

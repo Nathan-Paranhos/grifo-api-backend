@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, Alert } from 'react-native';
-import { useInspection } from '../../src/contexts/InspectionContext';
+import { useInspection } from '@/contexts/InspectionContext';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 export default function SettingsScreen() {

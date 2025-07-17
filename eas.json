@@ -63,6 +63,22 @@
         "withoutCredentials": true,
         "image": "latest"
       }
+    },
+    "debug": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "ENVIRONMENT": "development"
+      },
+      "channel": "development",
+      "ios": {
+        "resourceClass": "m-medium"
+      },
+      "android": {
+        "gradleCommand": ":app:assembleDebug",
+        "resourceClass": "medium",
+        "withoutCredentials": true
+      }
     }
   },
   "submit": {

@@ -1,72 +1,111 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
-import { firestore } from '../config/firebase';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
+import Layout from '../components/Layout';
+import propertyService, { Property } from '../services/propertyService';
 
 const Properties = () => {
-  const { user } = useAuth();
-  const [properties, setProperties] = useState<any[]>([]);
+  const { currentUser } = useAuth();
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user || !user.empresaId) return;
+    if (!currentUser) return;
 
     const fetchProperties = async () => {
-      setLoading(true);
-      const propertiesQuery = query(
-        collection(firestore, 'imoveis'),
-        where('empresaId', '==', user.empresaId),
-        orderBy('dataCriacao', 'desc')
-      );
-      const querySnapshot = await getDocs(propertiesQuery);
-      const propertiesData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setProperties(propertiesData);
-      setLoading(false);
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await propertyService.getProperties();
+        setProperties(response.data);
+      } catch (err) {
+        console.error('Erro ao buscar propriedades:', err);
+        setError('Erro ao carregar propriedades');
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProperties();
-  }, [user]);
+  }, [currentUser]);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-primary mb-6">Imóveis</h1>
+    <Layout>
+      <h2 className="text-2xl font-bold mb-6">Propriedades</h2>
       {loading ? (
-        <p>Carregando...</p>
+        <div className="flex justify-center items-center h-32">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-dourado"></div>
+        </div>
+      ) : error ? (
+        <div className="bg-red-900 border border-red-700 text-red-100 px-4 py-3 rounded">
+          {error}
+        </div>
       ) : (
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
-          <table className="min-w-full leading-normal">
+        <div className="bg-black rounded-lg border border-gray-700 overflow-hidden">
+          <table className="min-w-full">
             <thead>
-              <tr className="bg-primary text-secondary">
-                <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
+              <tr className="bg-gray-800">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Endereço
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Bairro
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Cidade
                 </th>
-                <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Tipo
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Proprietário
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Ações
                 </th>
               </tr>
             </thead>
-            <tbody>
-              {properties.map(property => (
-                <tr key={property.id} className="text-primary">
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="whitespace-no-wrap">{property.endereco}</p>
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p className="whitespace-no-wrap">{property.cidade}</p>
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <button className="text-indigo-600 hover:text-indigo-900">Ver</button>
+            <tbody className="divide-y divide-gray-700">
+              {properties.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-4 text-center text-gray-400">
+                    Nenhuma propriedade encontrada
                   </td>
                 </tr>
-              ))}
+              ) : (
+                properties.map(property => (
+                  <tr key={property.id} className="hover:bg-gray-800">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      {property.endereco}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      {property.bairro}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      {property.cidade}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      {property.tipo}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      {property.proprietario?.nome || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button className="text-dourado hover:text-yellow-300 mr-3">
+                        Ver
+                      </button>
+                      <button className="text-blue-400 hover:text-blue-300">
+                        Editar
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       )}
-    </div>
+    </Layout>
   );
 };
 

@@ -1,4 +1,4 @@
-import DebugSyncScreen from '../src/screens/debug-sync';
+import DebugSyncScreen from '@/screens/debug-sync';
 
 export default function DebugSync() {
   return <DebugSyncScreen />;

@@ -25,7 +25,7 @@ export class StorageService {
       const updated = [...existing, inspection];
       await AsyncStorage.setItem(STORAGE_KEYS.PENDING_INSPECTIONS, JSON.stringify(updated));
     } catch (error) {
-      console.error('Error saving pending inspection:', error);
+      // Error saving pending inspection
       throw error;
     }
   }
@@ -35,7 +35,7 @@ export class StorageService {
       const data = await AsyncStorage.getItem(STORAGE_KEYS.PENDING_INSPECTIONS);
       return data ? JSON.parse(data) : [];
     } catch (error) {
-      console.error('Error getting pending inspections:', error);
+      // Error getting pending inspections
       return [];
     }
   }
@@ -46,7 +46,7 @@ export class StorageService {
       const updated = existing.filter(item => item.id !== id);
       await AsyncStorage.setItem(STORAGE_KEYS.PENDING_INSPECTIONS, JSON.stringify(updated));
     } catch (error) {
-      console.error('Error removing pending inspection:', error);
+      // Error removing pending inspection
       throw error;
     }
   }
@@ -59,7 +59,7 @@ export class StorageService {
       );
       await AsyncStorage.setItem(STORAGE_KEYS.PENDING_INSPECTIONS, JSON.stringify(updated));
     } catch (error) {
-      console.error('Error updating pending inspection status:', error);
+      // Error updating pending inspection status
       throw error;
     }
   }
@@ -68,7 +68,7 @@ export class StorageService {
     try {
       await AsyncStorage.removeItem(STORAGE_KEYS.PENDING_INSPECTIONS);
     } catch (error) {
-      console.error('Error clearing pending inspections:', error);
+      // Error clearing pending inspections
       throw error;
     }
   }
@@ -77,7 +77,7 @@ export class StorageService {
     try {
       await AsyncStorage.setItem(`${STORAGE_KEYS.OFFLINE_DATA}_${key}`, JSON.stringify(data));
     } catch (error) {
-      console.error('Error saving offline data:', error);
+      // Error saving offline data
       throw error;
     }
   }
@@ -87,7 +87,7 @@ export class StorageService {
       const data = await AsyncStorage.getItem(`${STORAGE_KEYS.OFFLINE_DATA}_${key}`);
       return data ? JSON.parse(data) : null;
     } catch (error) {
-      console.error('Error getting offline data:', error);
+      // Error getting offline data
       return null;
     }
   }
@@ -96,7 +96,7 @@ export class StorageService {
     try {
       await AsyncStorage.removeItem(`${STORAGE_KEYS.OFFLINE_DATA}_${key}`);
     } catch (error) {
-      console.error('Error clearing offline data:', error);
+      // Error clearing offline data
       throw error;
     }
   }

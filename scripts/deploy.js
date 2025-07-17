@@ -39,23 +39,23 @@ if (!fs.existsSync(path.join(process.cwd(), envFile))) {
 }
 
 // Copy environment file to .env
-console.log(`Setting up environment for deployment: ${environment}`);
+// Setting up environment for deployment
 fs.copyFileSync(path.join(process.cwd(), envFile), path.join(process.cwd(), '.env'));
 
 // Deploy function
 const deployApp = (deployPlatform) => {
-  console.log(`Deploying to ${deployPlatform} in ${environment} environment...`);
+  // Deploying to platform in environment
   try {
     // Build the app first
     execSync(`npm run build:${deployPlatform}:${environment}`, { stdio: 'inherit' });
     
     // Submit to store if in production environment
     if (environment === 'production') {
-      console.log(`Submitting ${deployPlatform} build to store...`);
+      // Submitting build to store
       execSync(`eas submit --platform ${deployPlatform} --profile ${environment}`, { stdio: 'inherit' });
     }
     
-    console.log(`✅ ${deployPlatform.toUpperCase()} deployment completed successfully!`);
+    // Deployment completed successfully
   } catch (error) {
     console.error(`❌ ${deployPlatform.toUpperCase()} deployment failed:`, error.message);
     process.exit(1);
@@ -71,4 +71,4 @@ if (platform === 'all' || platform === 'ios') {
   deployApp('ios');
 }
 
-console.log('\n🚀 Deployment process completed!');
+// Deployment process completed

@@ -30,10 +30,10 @@ export default function ImoveisScreen() {
         setProperties(response.data);
       } else {
         // Handle error
-        console.error(response.error);
+        // Error in response
       }
     } catch (error) {
-      console.error(error);
+      // Error loading properties
     } finally {
       setLoading(false);
     }

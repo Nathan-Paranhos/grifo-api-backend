@@ -3,12 +3,12 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndi
 import { Stack } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FileText, Share2, Trash2, Download, FileJson } from 'lucide-react-native';
-import { StorageService, PendingInspection } from '../../src/services/storageService';
-import { PDFService } from '../../src/services/pdfService';
-import { ZipService } from '../../src/services/zipService';
-import { ExportService } from '../../src/services/exportService';
-import { colors } from '../../src/theme/colors';
-import { globalStyles } from '../../src/theme/styles';
+import { StorageService, PendingInspection } from '@/services/storageService';
+import { PDFService } from '@/services/pdfService';
+import { ZipService } from '@/services/zipService';
+import { ExportService } from '@/services/exportService';
+import { colors } from '@/theme/colors';
+import { globalStyles } from '@/theme/styles';
 
 export default function RelatoriosScreen() {
   const [inspections, setInspections] = useState<PendingInspection[]>([]);
@@ -30,7 +30,7 @@ export default function RelatoriosScreen() {
       });
       setInspections(sortedInspections);
     } catch (error) {
-      console.error('Erro ao carregar inspeções:', error);
+      // Erro ao carregar inspeções
       Alert.alert('Erro', 'Não foi possível carregar as vistorias.');
     } finally {
       setLoading(false);
@@ -65,7 +65,7 @@ export default function RelatoriosScreen() {
       }
       
     } catch (error) {
-      console.error('Erro ao gerar e compartilhar PDF:', error);
+      // Erro ao gerar e compartilhar PDF
       Alert.alert('Erro', error instanceof Error ? error.message : 'Erro ao gerar relatório');
     } finally {
       setProcessingId(null);
@@ -97,7 +97,7 @@ export default function RelatoriosScreen() {
       }
       
     } catch (error) {
-      console.error('Erro ao compartilhar fotos:', error);
+      // Erro ao compartilhar fotos
       Alert.alert('Erro', error instanceof Error ? error.message : 'Erro ao compartilhar fotos');
     } finally {
       setProcessingId(null);
@@ -123,7 +123,7 @@ export default function RelatoriosScreen() {
       }
       
     } catch (error) {
-      console.error('Erro ao exportar dados da vistoria:', error);
+      // Erro ao exportar dados da vistoria
       Alert.alert('Erro', error instanceof Error ? error.message : 'Erro ao exportar dados');
     } finally {
       setProcessingId(null);
@@ -157,7 +157,7 @@ export default function RelatoriosScreen() {
       Alert.alert('Sucesso', 'Dados de todas as vistorias exportados com sucesso!');
       
     } catch (error) {
-      console.error('Erro ao exportar todas as vistorias:', error);
+      // Erro ao exportar todas as vistorias
       Alert.alert('Erro', error instanceof Error ? error.message : 'Erro ao exportar dados');
     } finally {
       setIsExporting(false);

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Dimensions, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuth } from '../../src/contexts/AuthContext';
-import { colors } from '../../../src/theme/colors';
-import { globalStyles } from '../../src/theme/styles';
-import { LoadingOverlay } from '../../src/components/LoadingOverlay';
-import { Toast } from '../../src/components/Toast';
-import { StorageService } from '../../src/services/storageService';
-import { SyncService } from '../../src/services/syncService';
-import { ApiService } from '../../src/services/apiService';
+import { useAuth } from '@/contexts/AuthContext';
+import { colors } from '@/theme/colors';
+import { globalStyles } from '@/theme/styles';
+import { LoadingOverlay } from '@/components/LoadingOverlay';
+import { Toast } from '@/components/Toast';
+import { StorageService } from '@/services/storageService';
+import { SyncService } from '@/services/syncService';
+import { ApiService } from '@/services/apiService';
 import { Building, ClipboardList, Clock, CircleCheck as CheckCircle, CircleAlert as AlertCircle, Plus, TrendingUp, Users, Calendar, ExternalLink, RefreshCw } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -61,7 +61,7 @@ export default function DashboardScreen() {
         }
       }
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
+      // Error loading dashboard data
     } finally {
       setLoading(false);
     }
@@ -75,7 +75,7 @@ export default function DashboardScreen() {
         hasErrors: status.hasErrors
       });
     } catch (error) {
-      console.error('Error loading sync status:', error);
+      // Error loading sync status
     }
   };
   
@@ -104,7 +104,7 @@ export default function DashboardScreen() {
         showToast('Sincronização concluída com sucesso!', 'success');
       }
     } catch (error) {
-      console.error('Error syncing data:', error);
+      // Error syncing data
       showToast('Erro na sincronização. Tente novamente.', 'error');
     }
   };
@@ -146,7 +146,7 @@ export default function DashboardScreen() {
         );
       }
     } catch (error) {
-      console.error('Error opening web dashboard:', error);
+      // Error opening web dashboard
       Alert.alert(
         'Erro',
         'Ocorreu um erro ao tentar abrir o dashboard web.'
@@ -614,7 +614,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-  },
+
+const headerStyles = StyleSheet.create({
   avatarText: {
     fontSize: 24,
     fontWeight: '700',

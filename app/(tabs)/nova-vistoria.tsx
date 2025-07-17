@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuth } from '../../src/contexts/AuthContext';
-import { colors } from '../../src/theme/colors';
-import { globalStyles } from '../../src/theme/styles';
-import { LoadingOverlay } from '../../src/components/LoadingOverlay';
-import { CustomButton } from '../../src/components/CustomButton';
-import { PhotoCapture } from '../../src/components/PhotoCapture';
-import { StorageService } from '../../src/services/storageService';
+import { useAuth } from '@/contexts/AuthContext';
+import { colors } from '@/theme/colors';
+import { globalStyles } from '@/theme/styles';
+import { LoadingOverlay } from '@/components/LoadingOverlay';
+import { CustomButton } from '@/components/CustomButton';
+import { PhotoCapture } from '@/components/PhotoCapture';
+import { StorageService } from '@/services/storageService';
+import { InspectionData } from '@/types/inspection';
 import { Building, FileText, CircleCheck as CheckCircle, CircleAlert as AlertCircle } from 'lucide-react-native';
-import { PropertySelectionModal } from '../../src/components/PropertySelectionModal';
+import { PropertySelectionModal } from '@/components/PropertySelectionModal';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
@@ -95,7 +96,7 @@ export default function NovaVistoriaScreen() {
       );
 
     } catch (error) {
-      console.error('Error saving inspection:', error);
+      // Error saving inspection
       Alert.alert('Erro', 'Não foi possível salvar a vistoria. Tente novamente.');
     } finally {
       setLoading(false);

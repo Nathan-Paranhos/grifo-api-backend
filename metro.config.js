@@ -8,4 +8,17 @@ config.resolver.alias = {
   '@': path.resolve(__dirname, 'src'),
 };
 
+// Resolver configuration
+config.resolver.resolverMainFields = ['react-native', 'browser', 'main'];
+config.resolver.platforms = ['ios', 'android', 'native', 'web'];
+
+// Transformer configuration
+config.transformer.minifierPath = 'metro-minify-terser';
+config.transformer.minifierConfig = {
+  keep_fnames: true,
+  mangle: {
+    keep_fnames: true,
+  },
+};
+
 module.exports = config;

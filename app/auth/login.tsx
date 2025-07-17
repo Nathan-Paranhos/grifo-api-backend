@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { useAuth } from '../../src/contexts/AuthContext';
-import { colors } from '../../src/theme/colors';
-import { globalStyles } from '../../src/theme/styles';
-import { CustomButton } from '../../src/components/CustomButton';
-import { LoadingOverlay } from '../../src/components/LoadingOverlay';
+import { useAuth } from '@/contexts/AuthContext';
+import { colors } from '@/theme/colors';
+import { globalStyles } from '@/theme/styles';
+import { CustomButton } from '@/components/CustomButton';
+import { LoadingOverlay } from '@/components/LoadingOverlay';
 import { Building, Mail, Lock } from 'lucide-react-native';
 
 export default function LoginScreen() {
@@ -26,7 +26,7 @@ export default function LoginScreen() {
       await signIn(email, password);
       router.replace('/(tabs)');
     } catch (error: any) {
-      console.error('Login error:', error);
+      // Login error
       Alert.alert('Erro', 'Email ou senha incorretos. Tente novamente.');
     } finally {
       setLoading(false);

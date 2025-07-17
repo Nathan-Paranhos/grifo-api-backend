@@ -31,7 +31,7 @@ export default function VistoriasScreen() {
       const completed = await ApiService.getInspections(company.id, userData.id, 'Concluída');
       setCompletedInspections(completed);
     } catch (error) {
-      console.error('Error loading inspections:', error);
+      // Error loading inspections
     } finally {
       setLoading(false);
     }
@@ -134,6 +134,7 @@ export default function VistoriasScreen() {
       </View>
     </TouchableOpacity>
   );
+ };
 
   return (
     <SafeAreaView style={globalStyles.safeArea}>

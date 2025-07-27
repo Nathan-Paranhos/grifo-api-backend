@@ -23,60 +23,26 @@ const router = Router();
  * @access Private
  */
 const getDashboardStats = async (empresaId: string, vistoriadorId?: string) => {
-  try {
-    // Verifica se o Firebase está acessível
-    if (db) {
-      await db.collection('test').limit(1).get();
-      
-      const inspectionsRef = db.collection('inspections');
-      let query: admin.firestore.Query = inspectionsRef.where('empresaId', '==', empresaId);
-
-      if (vistoriadorId) {
-        query = query.where('vistoriadorId', '==', vistoriadorId);
-      }
-
-      const snapshot = await query.get();
-      const inspections = snapshot.docs.map(doc => doc.data());
-
-      const total = inspections.length;
-      const pendentes = inspections.filter(i => i.status === 'Pendente').length;
-      const concluidas = inspections.filter(i => i.status === 'Finalizado').length;
-      const emAndamento = inspections.filter(i => i.status === 'Em Andamento').length;
-
-      return {
-        overview: {
-          total,
-          pendentes,
-          concluidas,
-          emAndamento
-        }
-      };
-    }
-  } catch (error) {
-    logger.warn('Firebase Firestore não está acessível, usando dados mock');
+  if (!db) {
+    throw new Error('Serviço de banco de dados indisponível');
   }
 
-  // Dados mock para desenvolvimento
-  const mockInspections = [
-    { id: 'insp_001', empresaId: 'empresa-teste-123', vistoriadorId: 'vistoriador_001', status: 'Concluída' },
-    { id: 'insp_002', empresaId: 'empresa-teste-123', vistoriadorId: 'vistoriador_002', status: 'Pendente' },
-    { id: 'insp_003', empresaId: 'empresa-teste-123', vistoriadorId: 'vistoriador_001', status: 'Em Andamento' },
-    { id: 'insp_004', empresaId: 'empresa-teste-123', vistoriadorId: 'vistoriador_003', status: 'Concluída' },
-    { id: 'insp_005', empresaId: 'empresa-teste-123', vistoriadorId: 'vistoriador_002', status: 'Pendente' }
-  ];
+  const inspectionsQuery = db.collection('vistorias').where('empresaId', '==', empresaId);
+  const inspectionsSnapshot = await inspectionsQuery.get();
+  const inspections = inspectionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-  // Filtra por empresaId e vistoriadorId se fornecido
-  let filteredInspections = mockInspections.filter(i => i.empresaId === empresaId);
+  // Filtra por vistoriadorId se fornecido
+  let filteredInspections = inspections;
   if (vistoriadorId) {
-    filteredInspections = filteredInspections.filter(i => i.vistoriadorId === vistoriadorId);
+    filteredInspections = inspections.filter((i: any) => i.vistoriadorId === vistoriadorId);
   }
 
   const total = filteredInspections.length;
-  const pendentes = filteredInspections.filter(i => i.status === 'Pendente').length;
-  const concluidas = filteredInspections.filter(i => i.status === 'Concluída').length;
-  const emAndamento = filteredInspections.filter(i => i.status === 'Em Andamento').length;
+  const pendentes = filteredInspections.filter((i: any) => i.status === 'Pendente').length;
+  const concluidas = filteredInspections.filter((i: any) => i.status === 'Concluída').length;
+  const emAndamento = filteredInspections.filter((i: any) => i.status === 'Em Andamento').length;
 
-  logger.info(`Retornando estatísticas do dashboard (dados mock): ${total} inspeções`);
+  logger.info(`Retornando estatísticas do dashboard: ${total} inspeções`);
 
   return {
     overview: {
@@ -91,7 +57,7 @@ const getDashboardStats = async (empresaId: string, vistoriadorId?: string) => {
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
   const { empresaId, vistoriadorId } = req.query;
   
-  logger.debug(`Solicitação de informações gerais do dashboard para empresaId: ${empresaId}${vistoriadorId ? `, vistoriadorId: ${vistoriadorId}` : ''}`);
+  logger.info(`Solicitação de informações gerais do dashboard para empresaId: ${empresaId}${vistoriadorId ? `, vistoriadorId: ${vistoriadorId}` : ''}`);
   
   try {
     const empresaId = req.user?.empresaId;
@@ -118,7 +84,7 @@ router.get('/stats',
   async (req: Request, res: Response) => {
     const { empresaId, vistoriadorId } = req.query;
     
-    logger.debug(`Solicitação de estatísticas do dashboard para empresaId: ${empresaId}${vistoriadorId ? `, vistoriadorId: ${vistoriadorId}` : ''}`);
+    logger.info(`Solicitação de estatísticas do dashboard para empresaId: ${empresaId}${vistoriadorId ? `, vistoriadorId: ${vistoriadorId}` : ''}`);
     
     try {
       const empresaId = req.user?.empresaId;

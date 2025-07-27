@@ -20,7 +20,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
   try {
     const { empresaId, vistoriadorId } = req.query as unknown as { empresaId: string, vistoriadorId?: string };
     
-    logger.debug('Sync info request received', { empresaId, vistoriadorId });
+    logger.info('Sync info request received', { empresaId, vistoriadorId });
     
     // Simular consulta ao banco de dados
     await new Promise(resolve => setTimeout(resolve, 50));
@@ -101,10 +101,7 @@ const simulateDbTransaction = async (): Promise<DbTransaction> => {
       // Simular salvamento no banco de dados
       await new Promise(resolve => setTimeout(resolve, 20));
       
-      // Simular falha aleatória (10% de chance) para testar mecanismo de retry
-      if (Math.random() < 0.1) {
-        throw new Error('Simulated database error');
-      }
+
       
       return `cloud_${inspection.id}`;
     },
@@ -161,7 +158,7 @@ router.post('/sync', authMiddleware, validateRequest({ body: syncSchema }), asyn
     // A validação já foi feita pelo middleware validateRequest
     const { pendingInspections, vistoriadorId, empresaId } = req.body;
     
-    logger.debug('Sync request received', { count: pendingInspections.length, vistoriadorId, empresaId });
+    logger.info('Sync request received', { count: pendingInspections.length, vistoriadorId, empresaId });
 
     // Estrutura para armazenar resultados e erros
     const syncResults = [];
@@ -297,7 +294,7 @@ router.get('/status', authMiddleware, validateRequest({ query: syncStatusSchema 
   try {
     const { empresaId, vistoriadorId } = req.query as unknown as { empresaId: string, vistoriadorId?: string };
     
-    logger.debug('Sync status request received', { empresaId, vistoriadorId });
+    logger.info('Sync status request received', { empresaId, vistoriadorId });
     
     // Em produção, consultaria o banco de dados para obter estatísticas reais
     // Aqui estamos simulando dados de sincronização

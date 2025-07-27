@@ -44,7 +44,7 @@ const startTime = Date.now();
  *                       example: connected
  */
 router.get('/', (req, res) => {
-  logger.debug('Verificação de saúde da API solicitada');
+  logger.info('Verificação de saúde da API solicitada');
   
   const uptime = Math.floor((Date.now() - startTime) / 1000);
   

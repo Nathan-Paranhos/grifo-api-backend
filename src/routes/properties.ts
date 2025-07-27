@@ -33,15 +33,15 @@ router.get('/',
       return sendError(res, 'Acesso negado: empresa não identificada.', 403);
     }
 
-    logger.debug(`Solicitação de propriedades para empresaId: ${empresaId}${search ? `, termo de busca: ${search}` : ''}`);
+    logger.info(`Solicitação de propriedades para empresaId: ${empresaId}${search ? `, termo de busca: ${search}` : ''}`);
 
     try {
       // Verificar se o Firebase está disponível e funcionando
       let useFirebase = false;
       if (db) {
         try {
-          // Teste simples para verificar se o Firestore está acessível
-          await db.collection('_test').limit(1).get();
+          // Verificar se o Firestore está acessível
+    await db.collection('empresas').limit(1).get();
           useFirebase = true;
         } catch (error) {
           logger.warn('Firebase Firestore não está acessível, usando dados mock');
@@ -50,61 +50,8 @@ router.get('/',
       }
 
       if (!useFirebase) {
-        // Usar dados mock em desenvolvimento
-        const mockProperties = [
-          {
-            id: 'imovel_001',
-            empresaId,
-            enderecoCompleto: 'Rua das Flores, 123 - Centro - São Paulo/SP',
-            proprietario: {
-              nome: 'João Silva',
-              email: 'joao@email.com',
-              telefone: '(11) 99999-9999'
-            },
-            tipo: 'Apartamento',
-            quartos: 2,
-            banheiros: 1,
-            area: 65,
-            valorAluguel: 1500,
-            status: 'Ocupado',
-            createdAt: '2025-01-15T10:00:00Z',
-            updatedAt: '2025-01-15T10:00:00Z'
-          },
-          {
-            id: 'imovel_002',
-            empresaId,
-            enderecoCompleto: 'Av. Paulista, 456 - Bela Vista - São Paulo/SP',
-            proprietario: {
-              nome: 'Maria Santos',
-              email: 'maria@email.com',
-              telefone: '(11) 88888-8888'
-            },
-            tipo: 'Casa',
-            quartos: 3,
-            banheiros: 2,
-            area: 120,
-            valorAluguel: 2500,
-            status: 'Disponível',
-            createdAt: '2025-01-16T14:00:00Z',
-            updatedAt: '2025-01-16T14:00:00Z'
-          }
-        ];
-
-        let propertiesData = mockProperties;
-
-        if (search) {
-          const searchTerm = (search as string).toLowerCase();
-          propertiesData = propertiesData.filter((prop: any) => 
-            prop.enderecoCompleto?.toLowerCase().includes(searchTerm) ||
-            prop.proprietario?.nome?.toLowerCase().includes(searchTerm)
-          );
-        }
-
-        const limitNum = parseInt(limit as string);
-        const paginatedProperties = propertiesData.slice(0, limitNum);
-
-        logger.info(`Retornando ${paginatedProperties.length} propriedades (dados mock)`);
-        return sendSuccess(res, paginatedProperties, 200, { total: paginatedProperties.length, page: 1, limit: limitNum });
+        logger.error('Firebase Firestore não está disponível');
+        return sendError(res, 'Serviço temporariamente indisponível', 503);
       }
 
       const propertiesRef = db!.collection('imoveis');

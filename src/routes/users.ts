@@ -4,6 +4,8 @@ import { validateRequest, userSchema } from '../utils/validation';
 import { sendSuccess, sendError } from '../utils/response';
 import logger from '../config/logger';
 import { z } from 'zod';
+import * as admin from 'firebase-admin';
+import { getDb } from '../config/firebase';
 
 const router = Router();
 
@@ -59,59 +61,40 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
     
     logger.info(`Buscando usuários para empresa ${empresaId}`, { role, ativo, limit });
     
-    // Simula busca no banco de dados
-    const mockUsers = [
-      {
-        id: '1',
-        empresaId,
-        nome: 'Nathan Silva',
-        email: 'nathan@empresa.com',
-        role: 'admin',
-        ativo: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      },
-      {
-        id: '2',
-        empresaId,
-        nome: 'João Vistoriador',
-        email: 'joao@empresa.com',
-        role: 'vistoriador',
-        ativo: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      },
-      {
-        id: '3',
-        empresaId,
-        nome: 'Maria Vistoriadora',
-        email: 'maria@empresa.com',
-        role: 'vistoriador',
-        ativo: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-    ];
+    // Buscar usuários no Firestore
+    const db = getDb();
+    let query: admin.firestore.Query = db.collection('users').where('empresaId', '==', empresaId);
     
-    let filteredUsers = mockUsers;
-    
-    // Aplica filtros
+    // Aplicar filtros
     if (role) {
-      filteredUsers = filteredUsers.filter(user => user.role === role);
+      query = query.where('role', '==', role);
     }
     
     if (ativo !== undefined) {
       const isActive = ativo === 'true';
-      filteredUsers = filteredUsers.filter(user => user.ativo === isActive);
+      query = query.where('ativo', '==', isActive);
     }
     
-    // Aplica limite
+    // Aplicar limite
     if (limit) {
       const limitNum = parseInt(limit as string);
-      filteredUsers = filteredUsers.slice(0, limitNum);
+      query = query.limit(limitNum);
     }
     
-    sendSuccess(res, filteredUsers);
+    const snapshot = await query.get();
+    
+    if (snapshot.empty) {
+      logger.info('Nenhum usuário encontrado');
+      return sendSuccess(res, []);
+    }
+    
+    const users = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    logger.info(`Encontrados ${users.length} usuários`);
+    sendSuccess(res, users);
   } catch (error) {
     logger.error('Erro ao buscar usuários:', error);
     sendError(res, 'Erro interno do servidor', 500);
@@ -147,19 +130,29 @@ router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
     
     logger.info(`Buscando usuário ${id} para empresa ${empresaId}`);
     
-    // Simula busca no banco de dados
-    const mockUser = {
-      id,
-      empresaId,
-      nome: 'Nathan Silva',
-      email: 'nathan@empresa.com',
-      role: 'admin',
-      ativo: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+    // Buscar usuário no Firestore
+    const db = getDb();
+    const userDoc = await db.collection('users').doc(id).get();
+    
+    if (!userDoc.exists) {
+      logger.warn(`Usuário ${id} não encontrado`);
+      return sendError(res, 'Usuário não encontrado', 404);
+    }
+    
+    const userData = userDoc.data();
+    
+    // Verificar se o usuário pertence à empresa
+    if (userData?.empresaId !== empresaId) {
+      logger.warn(`Usuário ${id} não pertence à empresa ${empresaId}`);
+      return sendError(res, 'Acesso negado', 403);
+    }
+    
+    const user = {
+      id: userDoc.id,
+      ...userData
     };
     
-    sendSuccess(res, mockUser);
+    sendSuccess(res, user);
   } catch (error) {
     logger.error('Erro ao buscar usuário:', error);
     sendError(res, 'Erro interno do servidor', 500);
@@ -199,18 +192,44 @@ router.post('/', authMiddleware, validateRequest({ body: createUserSchema }), as
   try {
     const userData = req.body;
     const empresaId = (req as any).user.empresaId;
+    const currentUser = (req as any).user;
+    
+    // Verificar se o usuário atual tem permissão para criar usuários
+    if (currentUser.role !== 'admin') {
+      return sendError(res, 'Acesso negado: apenas administradores podem criar usuários', 403);
+    }
     
     logger.info('Criando novo usuário', { userData, empresaId });
     
-    // Simula criação no banco de dados
-    const newUser = {
-      id: Date.now().toString(),
+    // Verificar se já existe um usuário com o mesmo email
+    const db = getDb();
+    const existingUserQuery = await db.collection('users')
+      .where('email', '==', userData.email)
+      .where('empresaId', '==', empresaId)
+      .get();
+    
+    if (!existingUserQuery.empty) {
+      return sendError(res, 'Já existe um usuário com este email', 400);
+    }
+    
+    // Criar usuário no Firestore
+    const newUserData = {
       empresaId,
       ...userData,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    };
+    
+    const docRef = await db.collection('users').add(newUserData);
+    
+    const newUser = {
+      id: docRef.id,
+      ...newUserData,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
     
+    logger.info(`Usuário criado com sucesso: ${docRef.id}`);
     sendSuccess(res, newUser, 201);
   } catch (error) {
     logger.error('Erro ao criar usuário:', error);
@@ -258,13 +277,60 @@ router.put('/:id', authMiddleware, validateRequest({ body: updateUserSchema }), 
     const { id } = req.params;
     const updateData = req.body;
     const empresaId = (req as any).user.empresaId;
+    const currentUser = (req as any).user;
     
     logger.info(`Atualizando usuário ${id}`, { updateData, empresaId });
     
-    // Simula atualização no banco de dados
-    // Aqui você faria a validação se o usuário pertence à empresa
+    // Verificar se o usuário existe e pertence à empresa
+    const db = getDb();
+    const userDoc = await db.collection('users').doc(id).get();
     
-    sendSuccess(res, null, 200);
+    if (!userDoc.exists) {
+      logger.warn(`Usuário ${id} não encontrado`);
+      return sendError(res, 'Usuário não encontrado', 404);
+    }
+    
+    const userData = userDoc.data();
+    
+    if (userData?.empresaId !== empresaId) {
+      logger.warn(`Usuário ${id} não pertence à empresa ${empresaId}`);
+      return sendError(res, 'Acesso negado', 403);
+    }
+    
+    // Verificar permissões: admin pode atualizar qualquer usuário, outros só podem atualizar a si mesmos
+    if (currentUser.role !== 'admin' && currentUser.id !== id) {
+      return sendError(res, 'Acesso negado: você só pode atualizar seu próprio perfil', 403);
+    }
+    
+    // Se está alterando o email, verificar se já existe outro usuário com o mesmo email
+    if (updateData.email && updateData.email !== userData?.email) {
+      const existingUserQuery = await getDb().collection('users')
+        .where('email', '==', updateData.email)
+        .where('empresaId', '==', empresaId)
+        .get();
+      
+      if (!existingUserQuery.empty) {
+        return sendError(res, 'Já existe um usuário com este email', 400);
+      }
+    }
+    
+    // Atualizar usuário no Firestore
+    const updatePayload = {
+      ...updateData,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    };
+    
+    await getDb().collection('users').doc(id).update(updatePayload);
+    
+    // Buscar usuário atualizado
+    const updatedUserDoc = await getDb().collection('users').doc(id).get();
+    const updatedUser = {
+      id: updatedUserDoc.id,
+      ...updatedUserDoc.data()
+    };
+    
+    logger.info(`Usuário ${id} atualizado com sucesso`);
+    sendSuccess(res, updatedUser);
   } catch (error) {
     logger.error('Erro ao atualizar usuário:', error);
     sendError(res, 'Erro interno do servidor', 500);

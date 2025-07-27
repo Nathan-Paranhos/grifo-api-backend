@@ -7,14 +7,11 @@ const levels = {
   warn: 1,
   info: 2,
   http: 3,
-  debug: 4,
 };
 
 // Determinar o nível de log com base no ambiente
 const level = () => {
-  const env = process.env.NODE_ENV || 'development';
-  const isDevelopment = env === 'development';
-  return isDevelopment ? 'debug' : process.env.LOG_LEVEL || 'info';
+  return process.env.LOG_LEVEL || 'info';
 };
 
 // Definir cores para cada nível de log
@@ -23,7 +20,6 @@ const colors = {
   warn: 'yellow',
   info: 'green',
   http: 'magenta',
-  debug: 'blue',
 };
 
 // Adicionar cores ao winston

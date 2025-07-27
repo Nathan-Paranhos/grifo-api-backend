@@ -19,6 +19,8 @@ import syncRoutes from './routes/sync';
 import usersRoutes from './routes/users';
 import companiesRoutes from './routes/companies';
 import contestationRoutes from './routes/contestation';
+
+import authRoutes from './routes/auth';
 import { configureSecurityMiddleware } from './config/security';
 import logger from './config/logger';
 // Importar Firebase Admin SDK para inicialização
@@ -31,7 +33,7 @@ if (!fs.existsSync(logDir)) {
 }
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3006;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
 
@@ -62,6 +64,7 @@ app.get('/health', (req, res) => {
 
 // Routes
 app.use('/api/health', healthRoutes);
+app.use('/api/auth', authRoutes);
 
 // Legacy routes for mobile app compatibility (without /v1 prefix)
 const apiLegacy = express.Router();
@@ -78,6 +81,7 @@ apiLegacy.use('/users', usersRoutes);
 apiLegacy.use('/empresas', companiesRoutes);
 apiLegacy.use('/contestations', contestationRoutes);
 
+
 app.use('/api', apiLegacy);
 
 // Version 1 Routes (for future use and portal)
@@ -91,6 +95,7 @@ apiV1.use('/sync', syncRoutes);
 apiV1.use('/users', usersRoutes);
 apiV1.use('/empresas', companiesRoutes);
 apiV1.use('/contestations', contestationRoutes);
+
 
 app.use('/api/v1', apiV1);
 
@@ -163,7 +168,13 @@ app.use((req, res) => {
 // Start server
 const startServer = async () => {
   try {
-    await initializeFirebase();
+    const firebaseDb = await initializeFirebase();
+    if (firebaseDb) {
+      logger.info('Firebase inicializado com sucesso');
+    } else {
+      logger.warn('Servidor iniciando sem Firebase (modo desenvolvimento)');
+    }
+    
     app.listen(PORT, () => {
       logger.info(`Servidor iniciado no ambiente ${NODE_ENV}`);
       logger.info(`Servidor rodando na porta ${PORT}`);

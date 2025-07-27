@@ -5,7 +5,7 @@ import logger from './logger';
 let db: admin.firestore.Firestore | undefined;
 let firebaseInitialized = false;
 
-export const initializeFirebase = (): Promise<admin.firestore.Firestore> => {
+export const initializeFirebase = (): Promise<admin.firestore.Firestore | null> => {
   return new Promise((resolve, reject) => {
     if (firebaseInitialized && db) {
       return resolve(db);
@@ -15,28 +15,50 @@ export const initializeFirebase = (): Promise<admin.firestore.Firestore> => {
       if (admin.apps.length === 0) {
         const credentialsJson = process.env.FIREBASE_CREDENTIALS;
         if (!credentialsJson) {
-          throw new Error('Variável de ambiente FIREBASE_CREDENTIALS não definida.');
+          logger.warn('Firebase credentials não configuradas. Continuando sem Firebase.');
+          firebaseInitialized = false;
+          return resolve(null);
         }
 
-        const serviceAccount = JSON.parse(credentialsJson);
+        try {
+          const serviceAccount = JSON.parse(credentialsJson);
 
-        admin.initializeApp({
-          credential: admin.credential.cert(serviceAccount),
-          storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-        });
+          admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount),
+            storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+          });
 
-        logger.info('Firebase Admin SDK inicializado com sucesso via variável de ambiente.');
+          logger.info('Firebase Admin SDK inicializado com sucesso via variável de ambiente.');
+          
+          db = admin.firestore();
+          firebaseInitialized = true;
+          resolve(db);
+        } catch (firebaseError) {
+          if (process.env.NODE_ENV === 'development') {
+            logger.warn('Erro ao inicializar Firebase em desenvolvimento. Continuando sem Firebase:', firebaseError);
+            firebaseInitialized = false;
+            return resolve(null);
+          }
+          throw firebaseError;
+        }
+      } else {
+        db = admin.firestore();
+        firebaseInitialized = true;
+        resolve(db);
       }
-
-      db = admin.firestore();
-      firebaseInitialized = true;
-      resolve(db);
     } catch (error) {
       logger.error(
         'Erro ao inicializar Firebase Admin SDK. Verifique a variável FIREBASE_CREDENTIALS.',
         error
       );
       logger.warn('A autenticação usará apenas JWT.');
+      
+      if (process.env.NODE_ENV === 'development') {
+        logger.warn('Continuando em modo desenvolvimento sem Firebase.');
+        firebaseInitialized = false;
+        return resolve(null);
+      }
+      
       reject(error);
     }
   });
@@ -52,12 +74,40 @@ export const verifyFirebaseToken = async (
   }
 
   try {
-    const decodedToken = await admin.auth().verifyIdToken(token);
+    // Verificar se o token não está vazio
+    if (!token || token.trim() === '') {
+      logger.warn('Token vazio fornecido para verificação');
+      return null;
+    }
+
+    // Verificar o token com o Firebase Admin SDK
+    const decodedToken = await admin.auth().verifyIdToken(token, true); // checkRevoked = true
+    
+    logger.debug('Token Firebase verificado com sucesso:', {
+      uid: decodedToken.uid,
+      email: decodedToken.email,
+      exp: new Date(decodedToken.exp * 1000).toISOString()
+    });
+    
     return decodedToken;
-  } catch (error) {
-    logger.error('Erro ao verificar token Firebase:', error);
-    return null;
+  } catch (error: any) {
+    logger.error('Erro ao verificar token Firebase:', {
+      error: error.message,
+      code: error.code,
+      tokenPrefix: token.substring(0, 20) + '...'
+    });
+    
+    // Re-throw o erro para que o middleware possa tratá-lo adequadamente
+    throw error;
   }
+};
+
+// Função para obter a instância do Firestore
+export const getDb = (): admin.firestore.Firestore => {
+  if (!db) {
+    throw new Error('Firestore não foi inicializado. Chame initializeFirebase() primeiro.');
+  }
+  return db;
 };
 
 export { admin, db, firebaseInitialized };

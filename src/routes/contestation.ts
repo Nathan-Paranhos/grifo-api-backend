@@ -1,51 +1,71 @@
-import { Router, Request, Response } from 'express';
-import { sendSuccess, sendError } from '../utils/response';
+import { Router, Request as ExpressRequest, Response } from 'express';
+
+// Extend the Express Request interface to include user property
+interface Request extends ExpressRequest {
+  user?: { 
+    id: string; 
+    uid: string;
+    role: string; 
+    empresaId: string; 
+  };
+}
 import { authMiddleware } from '../config/security';
-import { validateRequest, contestationSchema, contestationStatusSchema } from '../utils/validation';
-import { z } from 'zod';
+import { sendSuccess, sendError } from '../utils/response';
 import logger from '../config/logger';
+import { validateRequest, contestationSchema, contestationStatusSchema } from '../utils/validation';
+import { db } from '../config/firebase';
 
 const router = Router();
 
 /**
  * @route POST /api/contestations
  * @desc Registra uma nova contestação para uma vistoria
- * @access Private
  */
-router.post('/', 
+router.post('/',
   authMiddleware,
   validateRequest({ body: contestationSchema }),
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     try {
-      const { empresaId, motivo, detalhes, itensContestados } = req.body;
-      const { inspectionId } = req.query as { inspectionId?: string };
-
+      const { empresaId, inspectionId, motivo, detalhes, clienteId } = req.body;
+      
       if (!inspectionId) {
         logger.warn('Tentativa de criar contestação sem fornecer inspectionId');
-        return sendError(res, 'inspectionId é obrigatório', 400);
+        return sendError(res, 'ID da vistoria é obrigatório', 400);
       }
 
-      logger.debug(`Registrando contestação para vistoria ${inspectionId} da empresa ${empresaId}`);
+      logger.info(`Registrando contestação para vistoria ${inspectionId} da empresa ${empresaId}`);
 
-      // Simular verificação se a vistoria existe
-      // Em produção: const inspection = await db.collection('inspections').doc(inspectionId).get();
-      
+      // Verificar se a vistoria existe
+      if (!db) {
+        return sendError(res, 'Serviço de banco de dados indisponível', 503);
+      }
+      const inspectionDoc = await db.collection('vistorias').doc(inspectionId).get();
+      if (!inspectionDoc.exists) {
+        return sendError(res, 'Vistoria não encontrada', 404);
+      }
+
       // Criar objeto de contestação
       const contestation = {
         id: `contest_${Date.now()}`,
         inspectionId,
         empresaId,
+        clienteId: clienteId || req.user?.uid,
         motivo,
         detalhes,
-        itensContestados,
-        status: 'Pendente',
+        status: 'pendente',
         dataContestacao: new Date().toISOString(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
 
-      // Em produção: await db.collection('contestations').doc(contestation.id).set(contestation);
-      // Em produção: await db.collection('inspections').doc(inspectionId).update({ hasContestation: true });
+      // Salvar contestação no Firestore
+      await db.collection('contestations').doc(contestation.id).set(contestation);
+      
+      // Atualizar vistoria para indicar que possui contestação
+      await db.collection('vistorias').doc(inspectionId).update({ 
+        hasContestation: true,
+        updatedAt: new Date().toISOString()
+      });
 
       logger.info(`Contestação ${contestation.id} registrada com sucesso para vistoria ${inspectionId}`);
       return sendSuccess(res, contestation, 201, { message: 'Contestação registrada com sucesso' });
@@ -59,83 +79,76 @@ router.post('/',
 /**
  * @route GET /api/contestations
  * @desc Lista todas as contestações para uma empresa
- * @access Private
  */
 router.get('/',
   authMiddleware,
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     try {
-      const { empresaId, inspectionId, status } = req.query as { 
+      const { empresaId, inspectionId, status, clienteId } = req.query as {
         empresaId?: string;
         inspectionId?: string;
         status?: string;
+        clienteId?: string;
       };
 
       if (!empresaId) {
         logger.warn('Tentativa de listar contestações sem fornecer empresaId');
-        return sendError(res, 'empresaId é obrigatório', 400);
+        return sendError(res, 'ID da empresa é obrigatório', 400);
       }
 
-      logger.debug(`Listando contestações para empresa ${empresaId}`);
+      logger.info(`Listando contestações para empresa ${empresaId}`);
 
-      // Simular busca de contestações
-      const contestations = [
-        {
-          id: 'contest_1',
-          inspectionId: 'insp_1',
-          empresaId,
-          motivo: 'Informações incorretas',
-          detalhes: 'Metragem do imóvel está incorreta',
-          itensContestados: [
-            {
-              categoria: 'Características',
-              item: 'Metragem',
-              motivoContestacao: 'Valor incorreto',
-              evidencia: 'https://example.com/evidence1.jpg'
-            }
-          ],
-          status: 'Pendente',
-          dataContestacao: '2023-10-15T14:30:00.000Z',
-          createdAt: '2023-10-15T14:30:00.000Z',
-          updatedAt: '2023-10-15T14:30:00.000Z'
-        },
-        {
-          id: 'contest_2',
-          inspectionId: 'insp_2',
-          empresaId,
-          motivo: 'Fotos insuficientes',
-          detalhes: 'Faltam fotos do banheiro',
-          itensContestados: [
-            {
-              categoria: 'Fotos',
-              item: 'Banheiro',
-              motivoContestacao: 'Ausência de fotos',
-              evidencia: null
-            }
-          ],
-          status: 'Resolvida',
-          dataContestacao: '2023-10-10T09:15:00.000Z',
-          createdAt: '2023-10-10T09:15:00.000Z',
-          updatedAt: '2023-10-12T11:20:00.000Z'
-        }
-      ];
-
-      // Filtrar por inspectionId se fornecido
-      let filteredContestations = contestations;
+      // Construir query do Firestore
+      if (!db) {
+        return sendError(res, 'Serviço de banco de dados indisponível', 503);
+      }
+      let query = db.collection('contestations').where('empresaId', '==', empresaId);
+      
       if (inspectionId) {
-        filteredContestations = filteredContestations.filter(c => c.inspectionId === inspectionId);
+        query = query.where('inspectionId', '==', inspectionId);
       }
-
-      // Filtrar por status se fornecido
+      
       if (status) {
-        filteredContestations = filteredContestations.filter(c => c.status === status);
+        query = query.where('status', '==', status);
+      }
+      
+      if (clienteId) {
+        query = query.where('clienteId', '==', clienteId);
       }
 
-      logger.info(`Retornando ${filteredContestations.length} contestações`);
-      return sendSuccess(res, filteredContestations);
+      // Ordenar por data de criação (mais recentes primeiro)
+      query = query.orderBy('createdAt', 'desc');
+
+      const snapshot = await query.get();
+      const contestations = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      // Buscar informações das vistorias relacionadas
+      const contestationsWithInspections = await Promise.all(
+        contestations.map(async (contestation: any) => {
+          try {
+            if (!db) return contestation;
+            const inspectionDoc = await db.collection('vistorias').doc(contestation.inspectionId).get();
+            if (inspectionDoc.exists) {
+              contestation.inspection = {
+                id: inspectionDoc.id,
+                ...inspectionDoc.data()
+              };
+            }
+          } catch (error) {
+            logger.warn(`Erro ao buscar vistoria ${contestation.inspectionId}: ${error}`);
+          }
+          return contestation;
+        })
+      );
+
+      logger.info(`Retornando ${contestationsWithInspections.length} contestações`);
+      return sendSuccess(res, contestationsWithInspections);
     } catch (error) {
       logger.error(`Erro ao listar contestações: ${error}`);
-      return sendError(res, 'Erro ao processar a solicitação');
+      return sendError(res, 'Erro ao buscar contestações');
     }
   }
 );
@@ -143,101 +156,161 @@ router.get('/',
 /**
  * @route GET /api/contestations/:id
  * @desc Obtém detalhes de uma contestação específica
- * @access Private
  */
 router.get('/:id',
   authMiddleware,
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const { empresaId } = req.query as { empresaId?: string };
 
       if (!empresaId) {
         logger.warn('Tentativa de acessar contestação sem fornecer empresaId');
-        return sendError(res, 'empresaId é obrigatório', 400);
+        return sendError(res, 'ID da empresa é obrigatório', 400);
       }
 
-      logger.debug(`Buscando contestação ${id} para empresa ${empresaId}`);
+      logger.info(`Buscando contestação ${id} para empresa ${empresaId}`);
 
-      // Simular busca de contestação
+      if (!db) {
+        return sendError(res, 'Serviço de banco de dados indisponível', 503);
+      }
+      const contestationDoc = await db.collection('contestations').doc(id).get();
+      
+      if (!contestationDoc.exists) {
+        return sendError(res, 'Contestação não encontrada', 404);
+      }
+
       const contestation = {
-        id,
-        inspectionId: 'insp_1',
-        empresaId,
-        motivo: 'Informações incorretas',
-        detalhes: 'Metragem do imóvel está incorreta',
-        itensContestados: [
-          {
-            categoria: 'Características',
-            item: 'Metragem',
-            motivoContestacao: 'Valor incorreto',
-            evidencia: 'https://example.com/evidence1.jpg'
-          }
-        ],
-        status: 'Pendente',
-        dataContestacao: '2023-10-15T14:30:00.000Z',
-        createdAt: '2023-10-15T14:30:00.000Z',
-        updatedAt: '2023-10-15T14:30:00.000Z',
-        // Incluir histórico de atualizações
-        historico: [
-          {
-            data: '2023-10-15T14:30:00.000Z',
-            status: 'Pendente',
-            comentario: 'Contestação registrada',
-            usuario: 'sistema'
-          }
-        ]
+        id: contestationDoc.id,
+        ...contestationDoc.data()
       };
+
+      // Verificar se a contestação pertence à empresa
+      if ((contestation as any).empresaId !== empresaId) {
+        return sendError(res, 'Acesso negado', 403);
+      }
+
+      // Buscar informações da vistoria relacionada
+      try {
+        if (db) {
+          const inspectionDoc = await db.collection('vistorias').doc((contestation as any).inspectionId).get();
+          if (inspectionDoc.exists) {
+            (contestation as any).inspection = {
+              id: inspectionDoc.id,
+              ...inspectionDoc.data()
+            };
+          }
+        }
+      } catch (error) {
+        logger.warn(`Erro ao buscar vistoria relacionada: ${error}`);
+      }
 
       logger.info(`Contestação ${id} encontrada`);
       return sendSuccess(res, contestation);
     } catch (error) {
       logger.error(`Erro ao buscar contestação: ${error}`);
-      return sendError(res, 'Erro ao processar a solicitação');
+      return sendError(res, 'Erro ao buscar contestação');
     }
   }
 );
 
 /**
- * @route PATCH /api/contestations/:id/status
+ * @route PUT /api/contestations/:id/status
  * @desc Atualiza o status de uma contestação
- * @access Private
  */
-router.patch('/:id/status',
+router.put('/:id/status',
   authMiddleware,
   validateRequest({
     body: contestationStatusSchema
   }),
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const { status, comentario } = req.body;
+      const { status, resposta } = req.body;
       const { empresaId } = req.query as { empresaId?: string };
 
       if (!empresaId) {
         logger.warn('Tentativa de atualizar contestação sem fornecer empresaId');
-        return sendError(res, 'empresaId é obrigatório', 400);
+        return sendError(res, 'ID da empresa é obrigatório', 400);
       }
 
-      logger.debug(`Atualizando status da contestação ${id} para ${status}`);
+      logger.info(`Atualizando status da contestação ${id} para ${status}`);
 
-      // Simular atualização de contestação
-      // Em produção: await db.collection('contestations').doc(id).update({ 
-      //   status, 
-      //   updatedAt: new Date().toISOString(),
-      //   historico: admin.firestore.FieldValue.arrayUnion({
-      //     data: new Date().toISOString(),
-      //     status,
-      //     comentario,
-      //     usuario: req.user.id
-      //   })
-      // });
+      // Verificar se a contestação existe
+      if (!db) {
+        return sendError(res, 'Serviço de banco de dados indisponível', 503);
+      }
+      const contestationDoc = await db.collection('contestations').doc(id).get();
+      
+      if (!contestationDoc.exists) {
+        return sendError(res, 'Contestação não encontrada', 404);
+      }
+
+      // Verificar se a contestação pertence à empresa
+      const contestationData = contestationDoc.data();
+      if (contestationData?.empresaId !== empresaId) {
+        return sendError(res, 'Acesso negado', 403);
+      }
+
+      // Atualizar contestação
+      const updateData: any = {
+        status,
+        updatedAt: new Date().toISOString()
+      };
+
+      if (resposta) {
+        updateData.respostaAdmin = resposta;
+        updateData.dataResposta = new Date().toISOString();
+      }
+
+      await db.collection('contestations').doc(id).update(updateData);
 
       logger.info(`Status da contestação ${id} atualizado para ${status}`);
-      return sendSuccess(res, { id, status, updatedAt: new Date().toISOString() }, 200, { message: 'Status da contestação atualizado com sucesso' });
+      return sendSuccess(res, { id, status, updatedAt: updateData.updatedAt }, 200, { message: 'Status da contestação atualizado com sucesso' });
     } catch (error) {
       logger.error(`Erro ao atualizar status da contestação: ${error}`);
-      return sendError(res, 'Erro ao processar a solicitação');
+      return sendError(res, 'Erro ao atualizar contestação');
+    }
+  }
+);
+
+/**
+ * @route GET /api/contestations/stats
+ * @desc Obtém estatísticas de contestações
+ */
+router.get('/stats',
+  authMiddleware,
+  async (req: Request, res: Response) => {
+    try {
+      const { empresaId } = req.query as { empresaId?: string };
+
+      if (!empresaId) {
+        return sendError(res, 'ID da empresa é obrigatório', 400);
+      }
+
+      logger.info(`Buscando estatísticas de contestações para empresa ${empresaId}`);
+
+      if (!db) {
+        return sendError(res, 'Serviço de banco de dados indisponível', 503);
+      }
+      const snapshot = await db.collection('contestations')
+        .where('empresaId', '==', empresaId)
+        .get();
+
+      const contestations = snapshot.docs.map(doc => doc.data());
+
+      const stats = {
+        total: contestations.length,
+        pendente: contestations.filter(c => c.status === 'pendente').length,
+        em_analise: contestations.filter(c => c.status === 'em_analise').length,
+        aprovada: contestations.filter(c => c.status === 'aprovada').length,
+        rejeitada: contestations.filter(c => c.status === 'rejeitada').length,
+      };
+
+      return sendSuccess(res, stats);
+    } catch (error) {
+      logger.error(`Erro ao buscar estatísticas de contestações: ${error}`);
+      return sendError(res, 'Erro ao buscar estatísticas');
     }
   }
 );

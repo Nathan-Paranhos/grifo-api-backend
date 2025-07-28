@@ -7,6 +7,7 @@ const levels = {
   warn: 1,
   info: 2,
   http: 3,
+  debug: 4,
 };
 
 // Determinar o nível de log com base no ambiente
@@ -20,6 +21,7 @@ const colors = {
   warn: 'yellow',
   info: 'green',
   http: 'magenta',
+  debug: 'blue',
 };
 
 // Adicionar cores ao winston

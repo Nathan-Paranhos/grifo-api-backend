@@ -25,25 +25,48 @@ export const corsOptions = {
     const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [
       'https://portal.grifovistorias.com',
       'https://app.grifovistorias.com',
+      'https://grifo-portal.netlify.app',
+      'https://grifo-portal-v1.netlify.app',
+      'https://visio-portal.netlify.app',
+      'https://www.visio-portal.com',
+      'https://www.grifo-portal.com',
       'android-app://com.grifo.vistorias',
       'https://grifo-api.onrender.com',
       'http://localhost:3000',
-      'http://localhost:3001'
+      'http://localhost:3001',
+      'http://localhost:5173',
+      'http://localhost:4173'
     ];
     
+    // Log da origin para debug
+    logger.debug(`CORS check - Origin: ${origin}`);
+    logger.debug(`CORS check - Allowed origins: ${allowedOrigins.join(', ')}`);
+    
     // Permitir requisições sem origin (ex: Postman, aplicativos móveis)
-    if (!origin) return callback(null, true);
+    if (!origin) {
+      logger.debug('CORS: Permitindo requisição sem origin');
+      return callback(null, true);
+    }
     
     // Verificar se a origin está na lista permitida
     if (allowedOrigins.includes(origin)) {
+      logger.debug(`CORS: Origin permitida: ${origin}`);
       return callback(null, true);
     }
     
     // Permitir localhost em desenvolvimento
     if (process.env.NODE_ENV === 'development' && origin.startsWith('http://localhost:')) {
+      logger.debug(`CORS: Localhost permitido em desenvolvimento: ${origin}`);
       return callback(null, true);
     }
     
+    // Permitir Netlify previews em desenvolvimento
+    if (process.env.NODE_ENV === 'development' && origin.includes('netlify.app')) {
+      logger.debug(`CORS: Netlify preview permitido em desenvolvimento: ${origin}`);
+      return callback(null, true);
+    }
+    
+    logger.error(`CORS BLOQUEADO para origin: ${origin}`);
     return callback(new Error('Não permitido pelo CORS'), false);
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -225,6 +248,17 @@ export const configureSecurityMiddleware = (app: Express): void => {
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   // Bypass para rotas públicas como health check
   if (req.originalUrl.includes('/api/health')) {
+    return next();
+  }
+
+  // Bypass de autenticação para desenvolvimento/teste
+  if (process.env.BYPASS_AUTH === 'true') {
+    logger.warn('BYPASS_AUTH ativado - pulando autenticação');
+    req.user = {
+      id: 'dev-user',
+      role: 'admin',
+      empresaId: 'dev-empresa'
+    };
     return next();
   }
 

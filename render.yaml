@@ -11,7 +11,7 @@ services:
       - key: PORT
         value: 3000
       - key: CORS_ORIGIN
-        value: https://app.grifovistorias.com,android-app://com.grifo.vistorias,http://localhost:3000,https://portal.grifovistorias.com
+        value: https://app.grifovistorias.com,android-app://com.grifo.vistorias,http://localhost:3000,https://portal.grifovistorias.com,https://grifo-portal.netlify.app,https://grifo-portal-v1.netlify.app
       - key: LOG_LEVEL
         value: info
       - key: RATE_LIMIT_WINDOW_MS

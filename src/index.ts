@@ -37,6 +37,11 @@ const PORT = process.env.PORT || 3006;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
 
+// Simple health check for Render (antes dos middlewares de segurança)
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -55,11 +60,6 @@ app.use((req, res, next) => {
   });
   
   next();
-});
-
-// Simple health check for Render
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // Routes

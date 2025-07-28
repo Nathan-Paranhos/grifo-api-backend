@@ -23,7 +23,7 @@ services:
       - key: JWT_EXPIRES_IN
         value: 1d
       - key: BYPASS_AUTH
-        value: false
+        value: true
       # Firebase credentials should be added manually in Render dashboard
       # as they contain sensitive information:
       # - FIREBASE_CREDENTIALS (JSON string with service account)

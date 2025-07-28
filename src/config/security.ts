@@ -67,7 +67,7 @@ export const corsOptions = {
     }
     
     logger.error(`CORS BLOQUEADO para origin: ${origin}`);
-    return callback(new Error('Não permitido pelo CORS'), false);
+    return callback(null, false);
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],

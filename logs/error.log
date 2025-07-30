@@ -10,3 +10,22 @@
 [31m    at Function.process_params (C:\Projetos\grifo-mobile\grifo-api-backend\node_modules\express\lib\router\index.js:346:12)[39m
 [31m    at next (C:\Projetos\grifo-mobile\grifo-api-backend\node_modules\express\lib\router\index.js:280:10)[39m
 [31m    at urlencodedParser (C:\Projetos\grifo-mobile\grifo-api-backend\node_modules\body-parser\lib\types\urlencoded.js:94:7)[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m

@@ -1,0 +1,144 @@
+2025-07-29 07:41:07:417 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-07-29 07:41:07:417 [33mwarn[39m: [33mErro ao inicializar Firebase em desenvolvimento. Continuando sem Firebase: Failed to parse private key: Error: Invalid PEM formatted message.[39m
+2025-07-29 07:41:07:417 [33mwarn[39m: [33mServidor iniciando sem Firebase (modo desenvolvimento)[39m
+2025-07-29 07:41:07:417 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-29 07:41:07:417 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-07-29 07:44:31:4431 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:44:31:4431 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:44:31:4431 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:44:31:4431 [35mhttp[39m: [35mGET /api/info[39m
+2025-07-29 07:44:31:4431 [35mhttp[39m: [35mGET /info 401 - 6ms[39m
+2025-07-29 07:44:31:4431 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:44:31:4431 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:44:31:4431 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:44:31:4431 [35mhttp[39m: [35mGET /api-docs[39m
+2025-07-29 07:44:31:4431 [35mhttp[39m: [35mGET / 301 - 13ms[39m
+2025-07-29 07:44:31:4431 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:44:31:4431 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:44:31:4431 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:44:31:4431 [35mhttp[39m: [35mGET /api/auth/protected[39m
+2025-07-29 07:44:31:4431 [35mhttp[39m: [35mGET /auth/protected 401 - 2ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /api/users[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [32minfo[39m: [32mAudit: POST /api/users[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /users 500 - 8ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /api/users[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [32minfo[39m: [32mAudit: POST /api/users[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /users 500 - 3ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPUT /api/users/test-user-101[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [32minfo[39m: [32mAudit: PUT /api/users/test-user-101[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPUT /users/test-user-101 500 - 2ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /api/users?empresaId=test-empresa-123&limit=10&page=1&role=vistoriador[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /users?empresaId=test-empresa-123&limit=10&page=1&role=vistoriador 500 - 2ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /api/properties[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [32minfo[39m: [32mAudit: POST /api/properties[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /properties 500 - 2ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /api/properties?empresaId=test-empresa-123&limit=10&tipo=Apartamento[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /properties?empresaId=test-empresa-123&limit=10&tipo=Apartamento 500 - 2ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /api/inspections[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [32minfo[39m: [32mAudit: POST /api/inspections[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /inspections 500 - 1ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /api/inspections?empresaId=test-empresa-123&vistoriadorId=test-vistoriador-456&status=pendente[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /inspections?empresaId=test-empresa-123&vistoriadorId=test-vistoriador-456&status=pendente 500 - 3ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /api/sync/sync[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [32minfo[39m: [32mAudit: POST /api/sync/sync[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /sync/sync 500 - 2ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /api/sync?empresaId=test-empresa-123&vistoriadorId=test-vistoriador-456[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /sync?empresaId=test-empresa-123&vistoriadorId=test-vistoriador-456 500 - 3ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /api/contestations[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [32minfo[39m: [32mAudit: POST /api/contestations[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /contestations 500 - 2ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPUT /api/contestations/test-contest-202/status[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [32minfo[39m: [32mAudit: PUT /api/contestations/test-contest-202/status[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPUT /contestations/test-contest-202/status 500 - 3ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /api/contestations?empresaId=test-empresa-123&status=pendente[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /contestations?empresaId=test-empresa-123&status=pendente 500 - 2ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /api/empresas?ativo=true&limit=10[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /empresas?ativo=true&limit=10 500 - 2ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /api/empresas/test-empresa-123[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /empresas/test-empresa-123 500 - 2ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /api/dashboard?empresaId=test-empresa-123&vistoriadorId=test-vistoriador-456[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /dashboard?empresaId=test-empresa-123&vistoriadorId=test-vistoriador-456 500 - 2ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /api/users[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mGET /users 500 - 2ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /api/users[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [32minfo[39m: [32mAudit: POST /api/users[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /users 500 - 2ms[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Origin: undefined[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-07-29 07:53:40:5340 [34mdebug[39m: [34mCORS: Permitindo requisição sem origin[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /api/users[39m
+2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-29 07:53:40:5340 [32minfo[39m: [32mAudit: POST /api/users[39m
+2025-07-29 07:53:40:5340 [35mhttp[39m: [35mPOST /users 500 - 3ms[39m

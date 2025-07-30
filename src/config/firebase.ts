@@ -34,12 +34,9 @@ export const initializeFirebase = (): Promise<admin.firestore.Firestore | null> 
           firebaseInitialized = true;
           resolve(db);
         } catch (firebaseError) {
-          if (process.env.NODE_ENV === 'development') {
-            logger.warn('Erro ao inicializar Firebase em desenvolvimento. Continuando sem Firebase:', firebaseError);
-            firebaseInitialized = false;
-            return resolve(null);
-          }
-          throw firebaseError;
+          logger.warn('Erro ao inicializar Firebase. Continuando sem Firebase:', firebaseError);
+          firebaseInitialized = false;
+          return resolve(null);
         }
       } else {
         db = admin.firestore();
@@ -52,14 +49,9 @@ export const initializeFirebase = (): Promise<admin.firestore.Firestore | null> 
         error
       );
       logger.warn('A autenticação usará apenas JWT.');
-      
-      if (process.env.NODE_ENV === 'development') {
-        logger.warn('Continuando em modo desenvolvimento sem Firebase.');
-        firebaseInitialized = false;
-        return resolve(null);
-      }
-      
-      reject(error);
+      logger.warn('Continuando sem Firebase.');
+      firebaseInitialized = false;
+      return resolve(null);
     }
   });
 };

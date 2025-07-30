@@ -296,7 +296,7 @@ const firebaseConfig = {
             apiResult.innerHTML = '<div class="status info">Testando API...</div>';
 
             try {
-                const response = await fetch('https://grifo-api.onrender.com/api/v1/properties', {
+                const response = await fetch('https://grifo-api-backend.onrender.com/api/v1/properties', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${currentToken}`,

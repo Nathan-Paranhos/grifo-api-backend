@@ -485,7 +485,7 @@ page: number (opcional, default: 1)
 
 ### Criar uma Nova Vistoria
 ```bash
-curl -X POST https://grifo-api.onrender.com/api/inspections \
+curl -X POST https://grifo-api-backend.onrender.com/api/inspections \
   -H "Authorization: Bearer <firebase_token>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -500,7 +500,7 @@ curl -X POST https://grifo-api.onrender.com/api/inspections \
 
 ### Sincronizar Dados
 ```bash
-curl -X POST https://grifo-api.onrender.com/api/sync/sync \
+curl -X POST https://grifo-api-backend.onrender.com/api/sync/sync \
   -H "Authorization: Bearer <firebase_token>" \
   -H "Content-Type: application/json" \
   -d '{

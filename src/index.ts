@@ -3,12 +3,12 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Carregar variáveis de ambiente com base no NODE_ENV
-const envPath = process.env.NODE_ENV === 'production' 
-    ? path.resolve(__dirname, '../.env.production') 
-    : path.resolve(__dirname, '../.env.development');
-
-dotenv.config({ path: envPath });
+// Carregar variáveis de ambiente apenas em desenvolvimento
+// Em produção, o Render fornece as variáveis de ambiente diretamente
+if (process.env.NODE_ENV !== 'production') {
+    const envPath = path.resolve(__dirname, '../.env.development');
+    dotenv.config({ path: envPath });
+}
 import fs from 'fs';
 import healthRoutes from './routes/health';
 import dashboardRoutes from './routes/dashboard';

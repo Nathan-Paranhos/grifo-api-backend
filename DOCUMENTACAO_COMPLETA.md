@@ -5,7 +5,7 @@
 O **Grifo API** é um backend completo para gerenciamento de propriedades e usuários, integrado com Firebase para autenticação. O sistema está hospedado no Render e usa Node.js com Express, TypeScript e inclui integração completa para portais web.
 
 ### 🚀 Status Atual
-- **Servidor**: Ativo em https://grifo-api.onrender.com
+- **Servidor**: Ativo em https://grifo-api-backend.onrender.com
 - **Autenticação**: Firebase Admin SDK configurado, middleware ativo
 - **Endpoints**: API v1 completa com validação Zod
 - **Documentação**: Swagger disponível em `/api-docs`
@@ -184,7 +184,7 @@ GET    /api/dashboard               # Dashboard (legacy)
 ```javascript
 const token = await firebase.auth().currentUser.getIdToken();
 
-fetch('https://grifo-api.onrender.com/api/v1/properties', {
+fetch('https://grifo-api-backend.onrender.com/api/v1/properties', {
   headers: {
     'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json'
@@ -215,11 +215,11 @@ fetch('https://grifo-api.onrender.com/api/v1/properties', {
 #### Soluções Rápidas
 ```bash
 # Verificar status da API
-curl https://grifo-api.onrender.com/api/health
+curl https://grifo-api-backend.onrender.com/api/health
 
 # Testar endpoint protegido
 curl -H "Authorization: Bearer <token>" \
-     https://grifo-api.onrender.com/api/v1/properties
+     https://grifo-api-backend.onrender.com/api/v1/properties
 
 # Verificar logs localmente
 npm run dev:win
@@ -291,7 +291,7 @@ grifo-api-backend/
 1. **Push para GitHub**: Deploy automático no `main`
 2. **Build**: `npm run build` executado automaticamente
 3. **Start**: `npm start` inicia o servidor
-4. **URL**: https://grifo-api.onrender.com
+4. **URL**: https://grifo-api-backend.onrender.com
 
 ### Deploy Manual (Docker)
 ```bash
@@ -367,8 +367,8 @@ LOG_LEVEL=info
 
 ## 📞 Suporte e Recursos
 
-- **Documentação API**: https://grifo-api.onrender.com/api-docs
-- **Status da API**: https://grifo-api.onrender.com/api/health
+- **Documentação API**: https://grifo-api-backend.onrender.com/api-docs
+- **Status da API**: https://grifo-api-backend.onrender.com/api/health
 - **Logs de Produção**: Render Console
 - **Firebase Console**: Para gerenciar autenticação
 - **GitHub Repository**: Para issues e contribuições

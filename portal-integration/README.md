@@ -1,6 +1,6 @@
 # 🌐 Portal Integration - Grifo API
 
-Integração completa entre o **Portal de Produção** (`https://grifo-portal-v1.netlify.app`) e a **API REST** (`https://grifo-api.onrender.com`) utilizando exclusivamente endpoints versionados (`/api/v1/*`) com autenticação segura via Firebase Authentication.
+Integração completa entre o **Portal de Produção** (`https://grifo-portal-v1.netlify.app`) e a **API REST** (`https://grifo-api-backend.onrender.com`) utilizando exclusivamente endpoints versionados (`/api/v1/*`) com autenticação segura via Firebase Authentication.
 
 ## 🎯 Características
 
@@ -396,7 +396,7 @@ export const apiRequest = async <T>(
   options: RequestInit = {}
 ): Promise<T> => {
   const response = await authenticatedFetch(
-    `https://grifo-api.onrender.com/api/v1${endpoint}`,
+    `https://grifo-api-backend.onrender.com/api/v1${endpoint}`,
     options
   );
 
@@ -468,8 +468,8 @@ function NotificationSetup() {
 ## 🔗 Links Importantes
 
 - **Portal de Produção**: https://grifo-portal-v1.netlify.app
-- **API de Produção**: https://grifo-api.onrender.com
-- **Documentação Swagger**: https://grifo-api.onrender.com/api-docs
+- **API de Produção**: https://grifo-api-backend.onrender.com
+- **Documentação Swagger**: https://grifo-api-backend.onrender.com/api-docs
 - **Firebase Console**: https://console.firebase.google.com/project/banco-visionaria
 
 ## 🆘 Troubleshooting

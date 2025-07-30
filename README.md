@@ -4,20 +4,20 @@
 
 API backend robusta e escalável para o sistema Grifo, responsável por gerenciar toda a lógica de negócio, autenticação de usuários, persistência de dados e integração com aplicativo móvel e portal web.
 
-[![Deploy Status](https://img.shields.io/badge/deploy-active-brightgreen)](https://grifo-api-backend.onrender.com)
+[![Deploy Status](https://img.shields.io/badge/deploy-active-brightgreen)](https://grifo-api.onrender.com)
 [![Node.js](https://img.shields.io/badge/node.js-18+-green)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.3+-blue)](https://www.typescriptlang.org/)
 [![Firebase](https://img.shields.io/badge/firebase-integrated-orange)](https://firebase.google.com/)
-[![API Docs](https://img.shields.io/badge/docs-swagger-green)](https://grifo-api-backend.onrender.com/api-docs)
+[![API Docs](https://img.shields.io/badge/docs-swagger-green)](https://grifo-api.onrender.com/api-docs)
 [![License](https://img.shields.io/badge/license-ISC-blue)](./LICENSE)
 
 ## 🔗 Links Rápidos
 
 | Recurso | URL | Descrição |
 |---------|-----|-----------|
-| 🌐 **API Produção** | [grifo-api-backend.onrender.com](https://grifo-api-backend.onrender.com) | API em produção |
-| 📚 **Documentação** | [/api-docs](https://grifo-api-backend.onrender.com/api-docs) | Swagger UI interativo |
-| ❤️ **Health Check** | [/api/health](https://grifo-api-backend.onrender.com/api/health) | Status da API |
+| 🌐 **API Produção** | [grifo-api.onrender.com](https://grifo-api.onrender.com) | API em produção |
+| 📚 **Documentação** | [/api-docs](https://grifo-api.onrender.com/api-docs) | Swagger UI interativo |
+| ❤️ **Health Check** | [/api/health](https://grifo-api.onrender.com/api/health) | Status da API |
 | 📖 **Docs Completas** | [DOCUMENTACAO_COMPLETA.md](./DOCUMENTACAO_COMPLETA.md) | Guia técnico detalhado |
 | 📋 **Parâmetros API** | [PARAMETROS_API_COMPLETO.md](./PARAMETROS_API_COMPLETO.md) | Documentação de parâmetros |
 
@@ -268,7 +268,7 @@ A API utiliza **Firebase Authentication** com **Admin SDK** para validação de 
 
 3. **Exemplo com JavaScript/Fetch**:
    ```javascript
-   const response = await fetch('https://grifo-api-backend.onrender.com/api/v1/users', {
+   const response = await fetch('https://grifo-api.onrender.com/api/v1/users', {
      method: 'GET',
      headers: {
        'Authorization': `Bearer ${token}`,
@@ -304,7 +304,7 @@ BYPASS_AUTH=true
 ### **Swagger UI (Interativa)**
 Documentação completa e interativa com todos os endpoints, schemas e exemplos.
 
-- **🔗 Produção**: [grifo-api-backend.onrender.com/api-docs](https://grifo-api-backend.onrender.com/api-docs)
+- **🔗 Produção**: [grifo-api.onrender.com/api-docs](https://grifo-api.onrender.com/api-docs)
 - **🔗 Desenvolvimento**: [localhost:3000/api-docs](http://localhost:3000/api-docs)
 
 ### **Principais Endpoints da API**
@@ -385,9 +385,9 @@ LOG_LEVEL=info
 ```
 
 #### **URLs de Produção**
-- **🔗 API Base**: https://grifo-api-backend.onrender.com
-- **🔗 Health Check**: https://grifo-api-backend.onrender.com/api/health
-- **🔗 Documentação**: https://grifo-api-backend.onrender.com/api-docs
+- **🔗 API Base**: https://grifo-api.onrender.com
+- **🔗 Health Check**: https://grifo-api.onrender.com/api/health
+- **🔗 Documentação**: https://grifo-api.onrender.com/api-docs
 
 ### **🐳 Deploy com Docker**
 
@@ -722,9 +722,9 @@ Este projeto está licenciado sob a **ISC License** - veja o arquivo [LICENSE](.
 
 *Sistema robusto e escalável para gestão imobiliária*
 
-[![Deploy Status](https://img.shields.io/badge/deploy-active-brightgreen)](https://grifo-api-backend.onrender.com)
-[![API Health](https://img.shields.io/badge/health-✅%20online-brightgreen)](https://grifo-api-backend.onrender.com/api/health)
-[![Documentation](https://img.shields.io/badge/docs-📚%20swagger-blue)](https://grifo-api-backend.onrender.com/api-docs)
+[![Deploy Status](https://img.shields.io/badge/deploy-active-brightgreen)](https://grifo-api.onrender.com)
+[![API Health](https://img.shields.io/badge/health-✅%20online-brightgreen)](https://grifo-api.onrender.com/api/health)
+[![Documentation](https://img.shields.io/badge/docs-📚%20swagger-blue)](https://grifo-api.onrender.com/api-docs)
 
 **Desenvolvido com ❤️ pela equipe Grifo**
 

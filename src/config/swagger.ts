@@ -13,7 +13,7 @@ const options = {
     },
     servers: [
       {
-        url: 'https://grifo-api-backend.onrender.com/api/v1',
+        url: 'https://grifo-api.onrender.com/api/v1',
         description: 'Production server',
       },
       {

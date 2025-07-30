@@ -2,7 +2,7 @@
  * Portal Integration - Grifo API
  * 
  * Este módulo fornece integração completa entre o portal web de produção
- * (https://grifo-portal-v1.netlify.app) e a API REST (https://grifo-api-backend.onrender.com)
+ * (https://grifo-portal-v1.netlify.app) e a API REST (https://grifo-api.onrender.com)
  * utilizando exclusivamente endpoints versionados (/api/v1/*) com autenticação
  * segura via Firebase Authentication.
  */
@@ -40,10 +40,10 @@ export {
  * Configurações de produção
  */
 export const PRODUCTION_CONFIG = {
-  API_BASE_URL: 'https://grifo-api-backend.onrender.com/api/v1',
+  API_BASE_URL: 'https://grifo-api.onrender.com/api/v1',
   PORTAL_URL: 'https://grifo-portal-v1.netlify.app',
   FIREBASE_PROJECT_ID: 'banco-visionaria',
-  SWAGGER_DOCS: 'https://grifo-api-backend.onrender.com/api-docs',
+  SWAGGER_DOCS: 'https://grifo-api.onrender.com/api-docs',
   VAPID_KEY: 'BNcV8bkNP0aR5fXJsgMWAKboOUWDG0S3m5jmKdgQNdZIB6ZjJuhHTMQGhe0qb_PTsGWxP2-Y8b0bySCwiglOx0'
 } as const;
 

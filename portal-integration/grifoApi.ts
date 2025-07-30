@@ -1,7 +1,7 @@
 import { authenticatedFetch } from './authInterceptor';
 
 // Base URL da API de produção
-const API_BASE = 'https://grifo-api-backend.onrender.com/api/v1';
+const API_BASE = 'https://grifo-api.onrender.com/api/v1';
 
 /**
  * Tipos de dados da API

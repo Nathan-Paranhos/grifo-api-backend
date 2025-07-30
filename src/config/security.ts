@@ -31,7 +31,7 @@ export const corsOptions = {
       'https://www.visio-portal.com',
       'https://www.grifo-portal.com',
       'android-app://com.grifo.vistorias',
-      'https://grifo-api-backend.onrender.com',
+      'https://grifo-api.onrender.com',
       'http://localhost:3000',
       'http://localhost:3001',
       'http://localhost:5173',

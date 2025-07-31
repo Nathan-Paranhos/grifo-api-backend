@@ -18,8 +18,7 @@ API backend robusta e escalável para o sistema Grifo, responsável por gerencia
 | 🌐 **API Produção** | [grifo-api.onrender.com](https://grifo-api.onrender.com) | API em produção |
 | 📚 **Documentação** | [/api-docs](https://grifo-api.onrender.com/api-docs) | Swagger UI interativo |
 | ❤️ **Health Check** | [/api/health](https://grifo-api.onrender.com/api/health) | Status da API |
-| 📖 **Docs Completas** | [DOCUMENTACAO_COMPLETA.md](./DOCUMENTACAO_COMPLETA.md) | Guia técnico detalhado |
-| 📋 **Parâmetros API** | [PARAMETROS_API_COMPLETO.md](./PARAMETROS_API_COMPLETO.md) | Documentação de parâmetros |
+| 📖 **Documentação** | [Swagger UI](https://grifo-api.onrender.com/api-docs) | Documentação interativa da API |
 
 ## 📊 Status do Projeto
 
@@ -48,6 +47,30 @@ API backend robusta e escalável para o sistema Grifo, responsável por gerencia
 - **Documentação Swagger**: API docs interativa e sempre atualizada
 - **Portal Integration**: Biblioteca React/TypeScript completa
 - **Health Checks**: Monitoramento de saúde da aplicação
+
+### 🔔 **Sistema de Notificações**
+- **CRUD Completo**: Criação, listagem, marcação como lida
+- **Paginação Avançada**: Suporte a filtros por tipo e status
+- **Tipos Múltiplos**: Inspeção, contestação, sistema, lembrete
+- **Marcação em Lote**: Marcar todas as notificações como lidas
+
+### 📁 **Sistema de Upload**
+- **Upload de Imagens**: Suporte a JPG, PNG, GIF, WebP (máx 10 arquivos, 5MB cada)
+- **Upload de Documentos**: Suporte a PDF, DOC, DOCX, TXT (máx 5 arquivos, 10MB cada)
+- **Validação de Tipos**: Filtros automáticos por tipo de arquivo
+- **Gerenciamento**: Listagem paginada e remoção de arquivos
+
+### 📊 **Sistema de Exportação**
+- **Múltiplos Formatos**: Excel, PDF e CSV
+- **Exportação de Vistorias**: Com filtros por data, status e vistoriador
+- **Exportação de Imóveis**: Com filtros por tipo de propriedade
+- **Exportação de Usuários**: Dados completos dos usuários
+
+### 📈 **Relatórios Avançados**
+- **Dashboard Avançado**: Métricas detalhadas e KPIs
+- **Relatórios de Performance**: Análise de produtividade dos vistoriadores
+- **Analytics**: Insights de negócio com recomendações
+- **Tendências**: Análise temporal e benchmarks
 
 ### 📊 **Monitoramento e Logs**
 - **Winston Logging**: Sistema de logs estruturado por níveis
@@ -316,6 +339,7 @@ POST   /api/v1/properties           # Cria propriedade
 GET    /api/v1/properties/:id       # Busca por ID
 PUT    /api/v1/properties/:id       # Atualiza propriedade
 DELETE /api/v1/properties/:id       # Remove propriedade
+GET    /api/v1/properties/export    # Exportar imóveis
 ```
 
 #### **👥 Usuários**
@@ -324,6 +348,7 @@ GET    /api/v1/users                # Lista usuários
 POST   /api/v1/users                # Cria usuário
 GET    /api/v1/users/:id            # Busca usuário
 PUT    /api/v1/users/:id            # Atualiza usuário
+GET    /api/v1/users/export         # Exportar usuários
 ```
 
 #### **🔍 Vistorias**
@@ -331,6 +356,7 @@ PUT    /api/v1/users/:id            # Atualiza usuário
 GET    /api/v1/inspections          # Lista vistorias
 POST   /api/v1/inspections          # Cria vistoria
 GET    /api/v1/inspections/:id      # Busca vistoria
+GET    /api/v1/inspections/export   # Exportar vistorias
 ```
 
 #### **🏢 Empresas**
@@ -351,6 +377,57 @@ GET    /api/v1/dashboard/stats      # Métricas detalhadas
 POST   /api/v1/sync/sync            # Sincronizar dados
 GET    /api/v1/sync                 # Status de sincronização
 ```
+
+#### **🔔 Notificações**
+```http
+GET    /api/v1/notifications        # Lista notificações paginadas
+PUT    /api/v1/notifications/:id/read # Marcar como lida
+PUT    /api/v1/notifications/mark-all-read # Marcar todas como lidas
+```
+**Parâmetros de Query:**
+- `page` (integer): Número da página (padrão: 1)
+- `limit` (integer): Itens por página (padrão: 10)
+- `read` (boolean): Filtrar por status de leitura
+- `type` (string): Filtrar por tipo [inspection, contestation, system, reminder]
+
+#### **📁 Upload de Arquivos**
+```http
+POST   /api/v1/uploads/images       # Upload de imagens (máx 10, 5MB cada)
+POST   /api/v1/uploads/documents    # Upload de documentos (máx 5, 10MB cada)
+GET    /api/v1/uploads              # Lista arquivos paginados
+DELETE /api/v1/uploads/:id         # Remove arquivo
+```
+**Parâmetros de Upload:**
+- `images[]` (file): Arquivos de imagem (JPG, PNG, GIF, WebP)
+- `documents[]` (file): Arquivos de documento (PDF, DOC, DOCX, TXT)
+- `category` (string): Categoria do arquivo
+
+#### **📊 Exportações**
+```http
+GET    /api/v1/inspections/export   # Exportar vistorias
+GET    /api/v1/properties/export    # Exportar imóveis
+GET    /api/v1/users/export         # Exportar usuários
+```
+**Parâmetros de Query:**
+- `format` (string): Formato [excel, pdf, csv] (padrão: excel)
+- `dateFrom` (date): Data inicial (YYYY-MM-DD)
+- `dateTo` (date): Data final (YYYY-MM-DD)
+- `status` (string): Filtrar por status
+- `vistoriadorId` (string): Filtrar por vistoriador
+- `propertyType` (string): Filtrar por tipo de imóvel
+
+#### **📈 Relatórios Avançados**
+```http
+GET    /api/v1/reports/dashboard-advanced # Dashboard com métricas detalhadas
+GET    /api/v1/reports/performance        # Relatório de performance
+GET    /api/v1/reports/analytics          # Analytics com insights
+```
+**Parâmetros de Query:**
+- `startDate` (date): Data inicial (YYYY-MM-DD)
+- `endDate` (date): Data final (YYYY-MM-DD)
+- `vistoriadorId` (string): Filtrar por vistoriador
+- `page` (integer): Número da página
+- `limit` (integer): Itens por página
 
 ### **Documentação Adicional**
 - 📖 **[DOCUMENTACAO_COMPLETA.md](./DOCUMENTACAO_COMPLETA.md)** - Guia técnico completo

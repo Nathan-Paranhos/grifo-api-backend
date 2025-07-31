@@ -29,3 +29,4 @@
 2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
 2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
 2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
+2025-07-30 23:35:18:3518 [31merror[39m: [31mErro durante login: The default Firebase app does not exist. Make sure you call initializeApp() before using any of the Firebase services.[39m

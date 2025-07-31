@@ -1,12 +1,16 @@
 import helmet from 'helmet';
 // import { rateLimit } from 'express-rate-limit'; // Temporariamente desabilitado
 import { Express, Request as ExpressRequest, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+import * as jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import * as firebase from './firebase';
 import { db } from './firebase';
 import logger from './logger';
 import validator from 'validator';
 import DOMPurify from 'isomorphic-dompurify';
+import admin from 'firebase-admin';
 
 // Extend the Express Request interface to include user property
 interface Request extends ExpressRequest {
@@ -16,7 +20,6 @@ interface Request extends ExpressRequest {
     empresaId: string; // Adicionar empresaId
   };
 }
-import cors from 'cors';
 import 'dotenv/config';
 
 // Configuração do CORS
@@ -86,6 +89,222 @@ export const corsOptions = {
 //     error: 'Muitas requisições, por favor tente novamente mais tarde.'
 //   }
 // });
+
+// ==================== JWT CONFIGURATION ====================
+
+// Configurações JWT
+const JWT_SECRET = process.env.JWT_SECRET || 'grifo_default_secret_change_in_production';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
+const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || '7d';
+
+// Interface para payload JWT
+interface JWTPayload {
+  uid: string;
+  email?: string;
+  role: string;
+  empresaId: string;
+  iat?: number;
+  exp?: number;
+}
+
+// Interface para refresh token
+interface RefreshTokenPayload {
+  uid: string;
+  tokenId: string;
+  iat?: number;
+  exp?: number;
+}
+
+/**
+ * Gera um token JWT personalizado
+ */
+export const generateJWT = (payload: Omit<JWTPayload, 'iat' | 'exp'>): string => {
+  try {
+    const token = jwt.sign(payload, JWT_SECRET, {
+      expiresIn: JWT_EXPIRES_IN
+    } as jwt.SignOptions);
+    
+    logger.debug(`JWT gerado para usuário ${payload.uid}`);
+    return token;
+  } catch (error) {
+    logger.error('Erro ao gerar JWT:', error);
+    throw new Error('Falha ao gerar token de acesso');
+  }
+};
+
+/**
+ * Gera um refresh token
+ */
+export const generateRefreshToken = (uid: string): string => {
+  try {
+    const tokenId = crypto.randomBytes(32).toString('hex');
+    const payload: RefreshTokenPayload = {
+      uid,
+      tokenId
+    };
+    
+    const refreshToken = jwt.sign(payload, JWT_SECRET, {
+      expiresIn: JWT_REFRESH_EXPIRES_IN
+    } as jwt.SignOptions);
+    
+    logger.debug(`Refresh token gerado para usuário ${uid}`);
+    return refreshToken;
+  } catch (error) {
+    logger.error('Erro ao gerar refresh token:', error);
+    throw new Error('Falha ao gerar refresh token');
+  }
+};
+
+/**
+ * Verifica e decodifica um JWT
+ */
+export const verifyJWT = (token: string): JWTPayload | null => {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
+    
+    logger.debug(`JWT verificado para usuário ${decoded.uid}`);
+    return decoded;
+  } catch (error: any) {
+    if (error.name === 'TokenExpiredError') {
+      logger.warn('JWT expirado');
+    } else if (error.name === 'JsonWebTokenError') {
+      logger.warn('JWT inválido');
+    } else {
+      logger.error('Erro ao verificar JWT:', error);
+    }
+    return null;
+  }
+};
+
+/**
+ * Verifica um refresh token
+ */
+export const verifyRefreshToken = (token: string): RefreshTokenPayload | null => {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as RefreshTokenPayload;
+    
+    logger.debug(`Refresh token verificado para usuário ${decoded.uid}`);
+    return decoded;
+  } catch (error: any) {
+    if (error.name === 'TokenExpiredError') {
+      logger.warn('Refresh token expirado');
+    } else if (error.name === 'JsonWebTokenError') {
+      logger.warn('Refresh token inválido');
+    } else {
+      logger.error('Erro ao verificar refresh token:', error);
+    }
+    return null;
+  }
+};
+
+/**
+ * Gera um par de tokens (access + refresh)
+ */
+export const generateTokenPair = (payload: Omit<JWTPayload, 'iat' | 'exp'>) => {
+  const accessToken = generateJWT(payload);
+  const refreshToken = generateRefreshToken(payload.uid);
+  
+  return {
+    accessToken,
+    refreshToken,
+    expiresIn: JWT_EXPIRES_IN,
+    tokenType: 'Bearer'
+  };
+};
+
+/**
+ * Middleware para autenticação JWT (alternativa ao Firebase)
+ */
+export const jwtAuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  // Bypass para rotas públicas
+  if (req.originalUrl.includes('/api/health') || req.originalUrl.includes('/api/auth')) {
+    return next();
+  }
+
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ 
+      success: false, 
+      error: 'Token de autenticação ausente. Inclua o header Authorization: Bearer <token>' 
+    });
+  }
+
+  if (!authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ 
+      success: false, 
+      error: 'Formato de token inválido. Use: Authorization: Bearer <token>' 
+    });
+  }
+
+  const token = authHeader.split(' ')[1];
+  if (!token || token.trim() === '') {
+    return res.status(401).json({ 
+      success: false, 
+      error: 'Token vazio. Forneça um token JWT válido.' 
+    });
+  }
+
+  try {
+    const decoded = verifyJWT(token);
+    if (!decoded) {
+      return res.status(401).json({ 
+        success: false, 
+        error: 'Token inválido ou expirado. Faça login novamente.' 
+      });
+    }
+
+    // Anexar dados do usuário à requisição
+    req.user = {
+      id: decoded.uid,
+      role: decoded.role,
+      empresaId: decoded.empresaId
+    };
+
+    logger.debug(`Usuário autenticado via JWT: ${decoded.uid}`);
+    return next();
+
+  } catch (error: any) {
+    logger.error('Erro durante a verificação do JWT:', error);
+    return res.status(401).json({ 
+      success: false, 
+      error: 'Token inválido. Faça login novamente.' 
+    });
+  }
+};
+
+/**
+ * Extrai informações do token sem verificar (para debug)
+ */
+export const decodeJWTWithoutVerification = (token: string): any => {
+  try {
+    return jwt.decode(token);
+  } catch (error) {
+    logger.error('Erro ao decodificar JWT:', error);
+    return null;
+  }
+};
+
+/**
+ * Verifica se um token está próximo do vencimento
+ */
+export const isTokenNearExpiry = (token: string, thresholdMinutes: number = 5): boolean => {
+  try {
+    const decoded = jwt.decode(token) as any;
+    if (!decoded || !decoded.exp) {
+      return true;
+    }
+    
+    const now = Math.floor(Date.now() / 1000);
+    const timeUntilExpiry = decoded.exp - now;
+    const thresholdSeconds = thresholdMinutes * 60;
+    
+    return timeUntilExpiry <= thresholdSeconds;
+  } catch (error) {
+    return true;
+  }
+};
+
+// ==================== END JWT CONFIGURATION ====================
 
 // Rate limiter mais restritivo para autenticação (temporariamente desabilitado)
 // const authLimiter = rateLimit({

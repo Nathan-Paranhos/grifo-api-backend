@@ -194,3 +194,8 @@
 2025-07-31 07:49:40:4940 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
 2025-07-31 07:49:40:4940 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
 2025-07-31 07:49:40:4940 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-07-31 07:50:09:509 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-07-31 07:50:09:509 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-07-31 07:50:09:509 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-07-31 07:50:09:509 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-07-31 07:50:09:509 [32minfo[39m: [32mServidor rodando na porta 3001[39m

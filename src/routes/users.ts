@@ -1,11 +1,12 @@
-import { Router, Request, Response } from 'express';
+import { Router, Response } from 'express';
+import { Request } from '../config/security';
 import { authMiddleware } from '../config/security';
 import { validateRequest, userSchema } from '../utils/validation';
 import { sendSuccess, sendError } from '../utils/response';
 import logger from '../config/logger';
 import { z } from 'zod';
 import * as admin from 'firebase-admin';
-import { getDb } from '../config/firebase';
+import { getDb, setCustomClaims } from '../config/firebase';
 
 const router = Router();
 
@@ -334,6 +335,97 @@ router.put('/:id', authMiddleware, validateRequest({ body: updateUserSchema }), 
   } catch (error) {
     logger.error('Erro ao atualizar usuário:', error);
     sendError(res, 'Erro interno do servidor', 500);
+  }
+});
+
+// Schema para validação de set claims
+const setClaimsSchema = z.object({
+  uid: z.string().min(1, 'UID é obrigatório'),
+  empresaId: z.string().min(1, 'EmpresaId é obrigatório'),
+  role: z.enum(['admin', 'user'], { required_error: 'Role deve ser admin ou user' })
+});
+
+/**
+ * @openapi
+ * /users/set-claims:
+ *   post:
+ *     summary: Define custom claims para um usuário
+ *     tags:
+ *       - Usuários
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - uid
+ *               - empresaId
+ *               - role
+ *             properties:
+ *               uid:
+ *                 type: string
+ *                 description: UID do usuário no Firebase
+ *               empresaId:
+ *                 type: string
+ *                 description: ID da empresa
+ *               role:
+ *                 type: string
+ *                 enum: [admin, user]
+ *                 description: Role do usuário
+ *     responses:
+ *       200:
+ *         description: Claims setados com sucesso
+ *       403:
+ *         description: Acesso negado - apenas admins
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.post('/set-claims', authMiddleware, validateRequest({ body: setClaimsSchema }), async (req: Request, res: Response) => {
+  try {
+    const { uid, empresaId, role } = req.body;
+    const user = req.user;
+
+    // Verificar se o usuário é admin
+    if (!user || user.role !== 'admin') {
+      logger.warn('Tentativa de acesso negado ao endpoint set-claims:', {
+        userId: user?.id,
+        userRole: user?.role,
+        targetUid: uid
+      });
+      return sendError(res, 'Acesso negado. Apenas administradores podem setar claims.', 403);
+    }
+
+    // Verificar se o admin tem acesso à empresa
+    if (user.empresaId !== empresaId) {
+      logger.warn('Admin tentando setar claims para empresa diferente:', {
+        adminId: user.id,
+        adminEmpresaId: user.empresaId,
+        targetEmpresaId: empresaId
+      });
+      return sendError(res, 'Acesso negado. Você só pode setar claims para sua própria empresa.', 403);
+    }
+
+    // Setar os custom claims
+    const result = await setCustomClaims(uid, empresaId, role);
+
+    logger.info('Custom claims setados com sucesso:', {
+      adminId: user.id,
+      targetUid: uid,
+      empresaId,
+      role
+    });
+
+    return sendSuccess(res, result, 200);
+  } catch (error: any) {
+    logger.error('Erro ao setar custom claims:', {
+      error: error.message,
+      stack: error.stack,
+      body: req.body
+    });
+    return sendError(res, 'Erro interno do servidor ao setar claims', 500);
   }
 });
 

@@ -102,4 +102,29 @@ export const getDb = (): admin.firestore.Firestore => {
   return db;
 };
 
+// Função para setar custom claims no Firebase
+export const setCustomClaims = async (uid: string, empresaId: string, role: 'admin' | 'user') => {
+  if (!firebaseInitialized) {
+    throw new Error('Firebase Admin SDK não está inicializado');
+  }
+
+  try {
+    await admin.auth().setCustomUserClaims(uid, {
+      empresaId,
+      role,
+    });
+
+    logger.info(`✔ Claims setados para o UID ${uid}: empresaId=${empresaId}, role=${role}`);
+    return { success: true, message: 'Claims setados com sucesso' };
+  } catch (error: any) {
+    logger.error('❌ Erro ao setar custom claims:', {
+      uid,
+      empresaId,
+      role,
+      error: error.message
+    });
+    throw error;
+  }
+};
+
 export { admin, db, firebaseInitialized };

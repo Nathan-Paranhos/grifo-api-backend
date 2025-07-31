@@ -13,7 +13,7 @@ import DOMPurify from 'isomorphic-dompurify';
 import admin from 'firebase-admin';
 
 // Extend the Express Request interface to include user property
-interface Request extends ExpressRequest {
+export interface Request extends ExpressRequest {
   user?: { 
     id: string; 
     role: string; 

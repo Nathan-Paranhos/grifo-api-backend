@@ -121,6 +121,118 @@ const options = {
             }
           },
           required: ['uid', 'name', 'email', 'role']
+        },
+        Notification: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              description: 'ID único da notificação'
+            },
+            userId: {
+              type: 'string',
+              description: 'ID do usuário destinatário'
+            },
+            empresaId: {
+              type: 'string',
+              description: 'ID da empresa'
+            },
+            title: {
+              type: 'string',
+              description: 'Título da notificação'
+            },
+            message: {
+              type: 'string',
+              description: 'Mensagem da notificação'
+            },
+            type: {
+              type: 'string',
+              enum: ['inspection', 'contestation', 'system', 'reminder'],
+              description: 'Tipo da notificação'
+            },
+            read: {
+              type: 'boolean',
+              description: 'Status de leitura'
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Data de criação'
+            }
+          },
+          required: ['id', 'userId', 'title', 'message', 'type']
+        },
+        UploadFile: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              description: 'ID único do arquivo'
+            },
+            filename: {
+              type: 'string',
+              description: 'Nome do arquivo'
+            },
+            originalName: {
+              type: 'string',
+              description: 'Nome original do arquivo'
+            },
+            mimetype: {
+              type: 'string',
+              description: 'Tipo MIME do arquivo'
+            },
+            size: {
+              type: 'number',
+              description: 'Tamanho do arquivo em bytes'
+            },
+            url: {
+              type: 'string',
+              description: 'URL de acesso ao arquivo'
+            },
+            category: {
+              type: 'string',
+              description: 'Categoria do arquivo'
+            },
+            uploadedBy: {
+              type: 'string',
+              description: 'ID do usuário que fez upload'
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Data de upload'
+            }
+          },
+          required: ['id', 'filename', 'mimetype', 'size', 'url']
+        },
+        Pagination: {
+          type: 'object',
+          properties: {
+            page: {
+              type: 'integer',
+              description: 'Página atual'
+            },
+            limit: {
+              type: 'integer',
+              description: 'Itens por página'
+            },
+            total: {
+              type: 'integer',
+              description: 'Total de itens'
+            },
+            totalPages: {
+              type: 'integer',
+              description: 'Total de páginas'
+            },
+            hasNext: {
+              type: 'boolean',
+              description: 'Tem próxima página'
+            },
+            hasPrev: {
+              type: 'boolean',
+              description: 'Tem página anterior'
+            }
+          }
         }
       }
     },

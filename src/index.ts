@@ -21,6 +21,10 @@ import companiesRoutes from './routes/companies';
 import contestationRoutes from './routes/contestation';
 
 import authRoutes from './routes/auth';
+import notificationsRoutes from './routes/notifications';
+import uploadsRoutes from './routes/uploads';
+import exportsRoutes from './routes/exports';
+import reportsRoutes from './routes/reports';
 import { configureSecurityMiddleware } from './config/security';
 import logger from './config/logger';
 // Importar Firebase Admin SDK para inicialização
@@ -80,6 +84,10 @@ apiLegacy.use('/sync', syncRoutes);
 apiLegacy.use('/users', usersRoutes);
 apiLegacy.use('/empresas', companiesRoutes);
 apiLegacy.use('/contestations', contestationRoutes);
+apiLegacy.use('/notifications', notificationsRoutes);
+apiLegacy.use('/uploads', uploadsRoutes);
+apiLegacy.use('/exports', exportsRoutes);
+apiLegacy.use('/reports', reportsRoutes);
 
 
 app.use('/api', apiLegacy);
@@ -95,6 +103,10 @@ apiV1.use('/sync', syncRoutes);
 apiV1.use('/users', usersRoutes);
 apiV1.use('/empresas', companiesRoutes);
 apiV1.use('/contestations', contestationRoutes);
+apiV1.use('/notifications', notificationsRoutes);
+apiV1.use('/uploads', uploadsRoutes);
+apiV1.use('/exports', exportsRoutes);
+apiV1.use('/reports', reportsRoutes);
 
 
 app.use('/api/v1', apiV1);
@@ -120,7 +132,11 @@ app.get('/', (req, res) => {
         '/api/sync',
         '/api/contestations',
         '/api/users',
-        '/api/empresas'
+        '/api/empresas',
+        '/api/notifications',
+        '/api/uploads',
+        '/api/exports',
+        '/api/reports'
       ],
       v1: [
         '/api/v1/dashboard',
@@ -129,7 +145,11 @@ app.get('/', (req, res) => {
         '/api/v1/sync',
         '/api/v1/contestations',
         '/api/v1/users',
-        '/api/v1/empresas'
+        '/api/v1/empresas',
+        '/api/v1/notifications',
+        '/api/v1/uploads',
+        '/api/v1/exports',
+        '/api/v1/reports'
       ]
     },
     authentication: {

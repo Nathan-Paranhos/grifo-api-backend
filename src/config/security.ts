@@ -40,62 +40,24 @@ export const requireEmpresa = (req: Request, res: Response, next: NextFunction) 
 import 'dotenv/config';
 
 // Configuração do CORS
+const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [];
+
 export const corsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    const allowedOrigins = process.env.CORS_ORIGINS?.split(',') || [
-      'https://portal.grifovistorias.com',
-      'https://app.grifovistorias.com',
-      'https://grifo-portal.netlify.app',
-      'https://grifo-portal-v1.netlify.app',
-      'https://visio-portal.netlify.app',
-      'https://www.visio-portal.com',
-      'https://www.grifo-portal.com',
-      'android-app://com.grifo.vistorias',
-      'https://grifo-api.onrender.com',
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:5173',
-      'http://localhost:4173'
-    ];
-    
-    // Log da origin para debug
-    logger.debug(`CORS check - Origin: ${origin}`);
-    logger.debug(`CORS check - Allowed origins: ${allowedOrigins.join(', ')}`);
-    
-    // Permitir requisições sem origin (ex: Postman, aplicativos móveis)
-    if (!origin) {
-      logger.debug('CORS: Permitindo requisição sem origin');
-      return callback(null, true);
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    // permitir requisições sem origin em ambientes de não produção (ex: Postman) ou se a lista de origens estiver vazia
+    if (!origin && process.env.NODE_ENV !== 'production') {
+        return callback(null, true);
     }
-    
-    // Verificar se a origin está na lista permitida
-    if (allowedOrigins.includes(origin)) {
-      logger.debug(`CORS: Origin permitida: ${origin}`);
-      return callback(null, true);
+    if (allowedOrigins.includes(origin!)) {
+      callback(null, true);
+    } else {
+      logger.error(`Tentativa de acesso CORS de origem não permitida: ${origin}`);
+      callback(new Error('Origem não permitida pelo CORS'));
     }
-    
-    // Permitir localhost em desenvolvimento
-    if (process.env.NODE_ENV === 'development' && origin.startsWith('http://localhost:')) {
-      logger.debug(`CORS: Localhost permitido em desenvolvimento: ${origin}`);
-      return callback(null, true);
-    }
-    
-    // Permitir Netlify previews em desenvolvimento e produção
-    if (origin.includes('netlify.app')) {
-      logger.debug(`CORS: Netlify preview permitido: ${origin}`);
-      return callback(null, true);
-    }
-    
-    logger.error(`CORS BLOQUEADO para origin: ${origin}`);
-    logger.error(`CORS - Origins permitidos: ${allowedOrigins.join(', ')}`);
-    logger.error(`CORS - NODE_ENV: ${process.env.NODE_ENV}`);
-    logger.error(`CORS - CORS_ORIGINS env: ${process.env.CORS_ORIGINS}`);
-    return callback(new Error(`CORS policy: Origin ${origin} not allowed`), false);
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: true,
-  optionsSuccessStatus: 200 // Para suportar navegadores legados
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Authorization', 'Content-Type'],
 };
 
 // Configuração do rate limiter geral (temporariamente desabilitado)
@@ -483,139 +445,23 @@ export const configureSecurityMiddleware = (app: Express): void => {
   });
 };
 
-// Middleware de autenticação com Firebase Admin SDK
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  // Bypass para rotas públicas como health check
-  if (req.originalUrl.includes('/api/health')) {
-    return next();
-  }
+export async function authenticateToken(req: Request, res: Response, next: NextFunction) {
+   const authHeader = req.headers.authorization;
+   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+     logger.warn('Tentativa de acesso sem token de autenticação ou mal formatado.');
+     return res.status(401).send('Token ausente ou mal formatado.');
+   }
 
-  // Bypass de autenticação para desenvolvimento/teste
-  if (process.env.BYPASS_AUTH === 'true') {
-    logger.warn('BYPASS_AUTH ativado - pulando autenticação');
-    req.user = {
-      id: 'dev-user',
-      role: 'admin',
-      empresaId: 'dev-empresa'
-    };
-    return next();
-  }
-
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).json({ 
-      success: false, 
-      error: 'Token de autenticação ausente. Inclua o header Authorization: Bearer <token>' 
-    });
-  }
-
-  if (!authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ 
-      success: false, 
-      error: 'Formato de token inválido. Use: Authorization: Bearer <token>' 
-    });
-  }
-
-  const token = authHeader.split(' ')[1];
-  if (!token || token.trim() === '') {
-    return res.status(401).json({ 
-      success: false, 
-      error: 'Token vazio. Forneça um token Firebase válido.' 
-    });
-  }
-
-  try {
-    if (!firebase.firebaseInitialized) {
-      logger.error('Firebase Admin SDK não inicializado. A autenticação não pode prosseguir.');
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Erro interno no servidor: serviço de autenticação indisponível.' 
-      });
-    }
-
-    const decodedToken = await firebase.verifyFirebaseToken(token);
-    if (!decodedToken) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Token inválido ou expirado. Gere um novo token Firebase.' 
-      });
-    }
-
-    // Extrair dados do token
-    const { uid } = decodedToken;
-    let { role, empresaId } = decodedToken;
-
-    // Log para debug
-    logger.debug(`Token decodificado para usuário ${uid}:`, {
-      uid,
-      role: role || 'não definido',
-      empresaId: empresaId || 'não definido'
-    });
-
-    // Se não tiver empresaId no token, buscar no Firestore
-    if (!empresaId || !role) {
-      try {
-        const userDoc = await db?.collection('usuarios').doc(uid).get();
-        if (userDoc && userDoc.exists) {
-          const userData = userDoc.data();
-          empresaId = empresaId || userData?.empresaId || 'default';
-          role = role || userData?.role || 'admin';
-          logger.info(`Dados do usuário obtidos do Firestore: ${uid}, role: ${role}, empresaId: ${empresaId}`);
-        } else {
-          // Usar valores padrão se o documento não existir
-          empresaId = empresaId || 'default';
-          role = role || 'admin';
-          logger.warn(`Documento do usuário ${uid} não encontrado, usando valores padrão`);
-        }
-      } catch (firestoreError) {
-        logger.warn(`Erro ao buscar dados do usuário ${uid} no Firestore:`, firestoreError);
-        // Usar valores padrão em caso de erro
-        empresaId = empresaId || 'default';
-        role = role || 'admin';
-      }
-    }
-
-    // Anexar dados do usuário à requisição
-    req.user = {
-      id: uid,
-      role: role,
-      empresaId: empresaId
-    };
-
-    logger.debug(`Usuário autenticado: ${uid}, role: ${role}, empresaId: ${empresaId}`);
-    return next();
-
-  } catch (error: any) {
-    logger.error('Erro durante a verificação do token:', {
-      error: error.message,
-      code: error.code,
-      token: token.substring(0, 20) + '...' // Log apenas os primeiros caracteres por segurança
-    });
-    
-    if (error.code === 'auth/id-token-expired') {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Token expirado. Faça login novamente para obter um novo token.' 
-      });
-    }
-    
-    if (error.code === 'auth/id-token-revoked') {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Token revogado. Faça login novamente.' 
-      });
-    }
-    
-    if (error.code === 'auth/invalid-id-token') {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Token Firebase inválido. Verifique se está usando o token correto.' 
-      });
-    }
-    
-    return res.status(401).json({ 
-      success: false, 
-      error: 'Token inválido ou expirado. Faça login novamente.' 
-    });
-  }
-};
+   const token = authHeader.split(' ')[1];
+   try {
+     const decoded = await admin.auth().verifyIdToken(token);
+     // Opcional: buscar dados adicionais do usuário no seu banco de dados
+     // const userProfile = await getUserProfile(decoded.uid);
+     req.user = decoded; // Adiciona o payload decodificado ao objeto da requisição
+     logger.debug(`Token Firebase verificado para usuário: ${decoded.uid}`);
+     next();
+   } catch (err) {
+     logger.error('Erro ao verificar token Firebase:', err);
+     return res.status(403).send('Token inválido ou expirado.');
+   }
+ }

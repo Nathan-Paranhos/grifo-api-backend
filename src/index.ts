@@ -25,8 +25,8 @@ import notificationsRoutes from './routes/notifications';
 import uploadsRoutes from './routes/uploads';
 import exportsRoutes from './routes/exports';
 import reportsRoutes from './routes/reports';
-import { configureSecurityMiddleware } from './config/security';
-import logger from './config/logger';
+import { configureSecurityMiddleware, authenticateToken, corsOptions } from './config/security';
+import { logger } from './utils/logger';
 // Importar Firebase Admin SDK para inicialização
 import { initializeFirebase } from './config/firebase';
 
@@ -58,8 +58,17 @@ app.use((req, res, next) => {
   next();
 });
 
-// Configurar middlewares de segurança (inclui CORS)
+// Configurar// Middleware para log de origem e outros detalhes da requisição
+app.use((req, res, next) => {
+  logger.info(`Origin: ${req.headers.origin}, Method: ${req.method}, URL: ${req.url}`);
+  next();
+});
+
+// Middleware de segurança (inclui CORS, Helmet, etc.)
 configureSecurityMiddleware(app);
+
+// Habilitar pre-flight para todas as rotas
+app.options('*', cors(corsOptions));
 
 // Middleware de logging para requisições HTTP
 app.use((req, res, next) => {
@@ -82,9 +91,11 @@ app.use('/api/auth', authRoutes);
 // Legacy routes for mobile app compatibility (without /v1 prefix)
 const apiLegacy = express.Router();
 
-// Apply auth middleware to all legacy routes
-import { authMiddleware } from './config/security';
-apiLegacy.use(authMiddleware);
+// Rotas públicas (não precisam de autenticação)
+app.use('/api/auth', authRoutes);
+// A partir daqui, todas as rotas podem ser protegidas
+// Aplicando o middleware de autenticação globalmente
+app.use(authenticateToken);
 
 apiLegacy.use('/dashboard', dashboardRoutes);
 apiLegacy.use('/inspections', inspectionsRouter);
@@ -101,9 +112,9 @@ apiLegacy.use('/reports', reportsRoutes);
 
 app.use('/api', apiLegacy);
 
-// Version 1 Routes (for future use and portal)
+// As rotas legadas e v1 já estarão protegidas pelo middleware global
+// Não é necessário aplicar novamente
 const apiV1 = express.Router();
-apiV1.use(authMiddleware);
 
 apiV1.use('/dashboard', dashboardRoutes);
 apiV1.use('/inspections', inspectionsRouter);

@@ -803,10 +803,10 @@ Este projeto está licenciado sob a **ISC License** - veja o arquivo [LICENSE](.
 [![API Health](https://img.shields.io/badge/health-✅%20online-brightgreen)](https://grifo-api.onrender.com/api/health)
 [![Documentation](https://img.shields.io/badge/docs-📚%20swagger-blue)](https://grifo-api.onrender.com/api-docs)
 
-**Desenvolvido com ❤️ pela equipe Grifo**
+**Desenvolvido by Nathan Silva**
 
 </div>
 
 ---
 
-*Documentação mantida e atualizada pela equipe de desenvolvimento.*
+*Documentação mantida e atualizada.*

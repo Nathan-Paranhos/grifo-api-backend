@@ -337,3 +337,42 @@
 2025-08-01 02:46:37:4637 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
 2025-08-01 02:47:47:4747 [32minfo[39m: [32mVerificação de saúde da API solicitada[39m
 2025-08-01 02:47:47:4747 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-08-01 02:48:46:4846 [33mwarn[39m: [33mConfigurações de banco PostgreSQL não encontradas. Usando apenas Firebase.[39m
+2025-08-01 02:48:46:4846 [32minfo[39m: [32mPortal integration disabled[39m
+2025-08-01 02:48:55:4855 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 02:48:56:4856 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 02:48:56:4856 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 02:48:56:4856 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 02:48:56:4856 [32minfo[39m: [32mServidor rodando na porta 3006[39m
+2025-08-01 02:50:33:5033 [32minfo[39m: [32mOrigin: https://grifo-portal-v1.netlify.app[39m
+2025-08-01 02:50:33:5033 [32minfo[39m: [32mMethod: GET[39m
+2025-08-01 02:50:33:5033 [32minfo[39m: [32mURL: /api/v1/dashboard[39m
+2025-08-01 02:51:57:5157 [32minfo[39m: [32mOrigin: undefined[39m
+2025-08-01 02:51:57:5157 [32minfo[39m: [32mMethod: GET[39m
+2025-08-01 02:51:57:5157 [32minfo[39m: [32mURL: /api/health[39m
+2025-08-01 02:51:57:5157 [32minfo[39m: [32mVerificação de saúde da API solicitada[39m
+2025-08-01 02:51:57:5157 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-08-01 02:52:02:522 [32minfo[39m: [32mOrigin: undefined[39m
+2025-08-01 02:52:02:522 [32minfo[39m: [32mMethod: GET[39m
+2025-08-01 02:52:02:522 [32minfo[39m: [32mURL: /api/v1/dashboard[39m
+2025-08-01 02:52:09:529 [32minfo[39m: [32mOrigin: https://grifo-portal-v1.netlify.app[39m
+2025-08-01 02:52:09:529 [32minfo[39m: [32mMethod: GET[39m
+2025-08-01 02:52:09:529 [32minfo[39m: [32mURL: /api/health[39m
+2025-08-01 02:52:09:529 [32minfo[39m: [32mVerificação de saúde da API solicitada[39m
+2025-08-01 02:52:09:529 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-08-01 02:52:14:5214 [32minfo[39m: [32mOrigin: undefined[39m
+2025-08-01 02:52:14:5214 [32minfo[39m: [32mMethod: GET[39m
+2025-08-01 02:52:14:5214 [32minfo[39m: [32mURL: /[39m
+2025-08-01 02:52:19:5219 [32minfo[39m: [32mOrigin: undefined[39m
+2025-08-01 02:52:19:5219 [32minfo[39m: [32mMethod: GET[39m
+2025-08-01 02:52:19:5219 [32minfo[39m: [32mURL: /api-docs[39m
+2025-08-01 02:52:19:5219 [32minfo[39m: [32mOrigin: undefined[39m
+2025-08-01 02:52:19:5219 [32minfo[39m: [32mMethod: GET[39m
+2025-08-01 02:52:19:5219 [32minfo[39m: [32mURL: /api-docs/[39m
+2025-08-01 02:52:35:5235 [32minfo[39m: [32mOrigin: https://grifo-portal-v1.netlify.app[39m
+2025-08-01 02:52:35:5235 [32minfo[39m: [32mMethod: OPTIONS[39m
+2025-08-01 02:52:35:5235 [32minfo[39m: [32mURL: /api/v1/dashboard[39m
+2025-08-01 02:52:41:5241 [32minfo[39m: [32mOrigin: https://grifo-portal-v1.netlify.app[39m
+2025-08-01 02:52:41:5241 [32minfo[39m: [32mMethod: POST[39m
+2025-08-01 02:52:41:5241 [32minfo[39m: [32mURL: /api/v1/dashboard[39m
+2025-08-01 02:52:41:5241 [32minfo[39m: [32mAudit: POST /api/v1/dashboard[39m

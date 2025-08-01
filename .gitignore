@@ -1,0 +1,14 @@
+node_modules
+dist
+logs/
+*.log
+.env
+.env.local
+firebase-credentials.json
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!render.yaml
+!.env.development
+!.env.production

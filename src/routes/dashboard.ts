@@ -13,7 +13,7 @@ interface Request extends ExpressRequest {
 import { sendSuccess, sendError } from '../utils/response';
 import logger from '../config/logger';
 import { validateRequest, commonQuerySchema } from '../utils/validation';
-import { authMiddleware } from '../config/security';
+import { authMiddleware, requireEmpresa } from '../config/security';
 
 const router = Router();
 
@@ -54,16 +54,13 @@ const getDashboardStats = async (empresaId: string, vistoriadorId?: string) => {
   };
 };
 
-router.get('/', authMiddleware, async (req: Request, res: Response) => {
+router.get('/', authMiddleware, requireEmpresa, async (req: Request, res: Response) => {
   const { empresaId, vistoriadorId } = req.query;
   
-  logger.info(`Solicitação de informações gerais do dashboard para empresaId: ${empresaId}${vistoriadorId ? `, vistoriadorId: ${vistoriadorId}` : ''}`);
+  logger.info(`Solicitação de informações gerais do dashboard para empresaId: ${req.user?.empresaId}${vistoriadorId ? `, vistoriadorId: ${vistoriadorId}` : ''}`);
   
   try {
     const empresaId = req.user?.empresaId;
-    if (!empresaId) {
-      return sendError(res, 'Acesso negado: empresa não identificada.', 403);
-    }
     const stats = await getDashboardStats(empresaId, req.query.vistoriadorId as string | undefined);
     logger.info(`Informações gerais do dashboard retornadas com sucesso`);
     return sendSuccess(res, stats);
@@ -80,17 +77,15 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
  */
 router.get('/stats', 
   authMiddleware,
+  requireEmpresa,
   validateRequest({ query: commonQuerySchema }),
   async (req: Request, res: Response) => {
     const { empresaId, vistoriadorId } = req.query;
     
-    logger.info(`Solicitação de estatísticas do dashboard para empresaId: ${empresaId}${vistoriadorId ? `, vistoriadorId: ${vistoriadorId}` : ''}`);
+    logger.info(`Solicitação de estatísticas do dashboard para empresaId: ${req.user?.empresaId}${vistoriadorId ? `, vistoriadorId: ${vistoriadorId}` : ''}`);
     
     try {
       const empresaId = req.user?.empresaId;
-      if (!empresaId) {
-        return sendError(res, 'Acesso negado: empresa não identificada.', 403);
-      }
       const stats = await getDashboardStats(empresaId, req.query.vistoriadorId as string | undefined);
       logger.info(`Estatísticas do dashboard retornadas com sucesso`);
       return sendSuccess(res, stats);

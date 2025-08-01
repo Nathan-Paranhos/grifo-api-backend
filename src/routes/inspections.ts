@@ -12,7 +12,7 @@ interface Request extends ExpressRequest {
 }
 import logger from '../config/logger';
 import { validateRequest, commonQuerySchema, inspectionSchema, contestationSchema } from '../utils/validation';
-import { authMiddleware } from '../config/security';
+import { authMiddleware, requireEmpresa } from '../config/security';
 import { db } from '../config/firebase';
 
 const router = Router();
@@ -24,14 +24,11 @@ const router = Router();
  */
 router.get('/', 
   authMiddleware,
+  requireEmpresa,
   validateRequest({ query: commonQuerySchema }),
   async (req: Request, res: Response) => {
     const { vistoriadorId, status, limit = '10', dataInicio, dataFim } = req.query;
     const empresaId = req.user?.empresaId;
-
-    if (!empresaId) {
-      return sendError(res, 'Acesso negado: empresa não identificada.', 403);
-    }
 
     logger.info(`Buscando vistorias para empresa ${empresaId}`, { status, vistoriadorId, dataInicio, dataFim, limit });
 
@@ -102,13 +99,10 @@ router.get('/',
  */
 router.get('/:id',
   authMiddleware,
+  requireEmpresa,
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const empresaId = req.user?.empresaId;
-
-    if (!empresaId) {
-      return sendError(res, 'Acesso negado: empresa não identificada.', 403);
-    }
 
     logger.info(`Buscando vistoria ${id} para empresa ${empresaId}`);
 
@@ -149,15 +143,12 @@ router.get('/:id',
  */
 router.put('/:id',
   authMiddleware,
+  requireEmpresa,
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const updateData = req.body;
     const empresaId = req.user?.empresaId;
     const currentUser = req.user;
-
-    if (!empresaId) {
-      return sendError(res, 'Acesso negado: empresa não identificada.', 403);
-    }
 
     try {
       // Verificar se a inspeção existe e pertence à empresa

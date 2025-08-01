@@ -13,7 +13,7 @@ interface Request extends ExpressRequest {
 }
 import logger from '../config/logger';
 import { validateRequest, commonQuerySchema, propertySchema } from '../utils/validation';
-import { authMiddleware } from '../config/security';
+import { authMiddleware, requireEmpresa } from '../config/security';
 
 const router = Router();
 
@@ -24,14 +24,11 @@ const router = Router();
  */
 router.get('/', 
   authMiddleware,
+  requireEmpresa,
   validateRequest({ query: commonQuerySchema }),
   async (req: Request, res: Response) => {
     const { search, limit = '10' } = req.query;
     const empresaId = req.user?.empresaId;
-
-    if (!empresaId) {
-      return sendError(res, 'Acesso negado: empresa não identificada.', 403);
-    }
 
     logger.info(`Solicitação de propriedades para empresaId: ${empresaId}${search ? `, termo de busca: ${search}` : ''}`);
 

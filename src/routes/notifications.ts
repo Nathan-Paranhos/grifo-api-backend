@@ -3,7 +3,7 @@ import { sendSuccess, sendError } from '../utils/response';
 import * as admin from 'firebase-admin';
 import logger from '../config/logger';
 import { validateRequest } from '../utils/validation';
-import { authMiddleware } from '../config/security';
+import { authMiddleware, requireEmpresa } from '../config/security';
 import { db } from '../config/firebase';
 import { z } from 'zod';
 import { Notification, PaginatedResponse, PaginationOptions } from '../types';
@@ -92,13 +92,14 @@ const markAsReadSchema = z.object({
  */
 router.get('/',
   authMiddleware,
+  requireEmpresa,
   validateRequest({ query: notificationsQuerySchema }),
   async (req: Request, res: Response) => {
     const { page = 1, limit = 10, read, type } = req.query as any;
     const userId = req.user?.id;
     const empresaId = req.user?.empresaId;
 
-    if (!userId || !empresaId) {
+    if (!userId) {
       return sendError(res, 'Usuário não autenticado', 401);
     }
 

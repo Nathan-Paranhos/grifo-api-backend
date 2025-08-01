@@ -20,6 +20,23 @@ export interface Request extends ExpressRequest {
     empresaId: string; // Adicionar empresaId
   };
 }
+
+// Middleware para verificar se o usuário tem empresaId válido
+export const requireEmpresa = (req: Request, res: Response, next: NextFunction) => {
+  const empresaId = req.user?.empresaId;
+  
+  if (!empresaId || empresaId === 'default') {
+    logger.warn(`Acesso negado - usuário ${req.user?.id} sem empresa associada`);
+    return res.status(403).json({ 
+      success: false,
+      error: 'Usuário sem empresa associada. Entre em contato com o administrador.' 
+    });
+  }
+  
+  logger.debug(`Empresa validada: ${empresaId} para usuário ${req.user?.id}`);
+  next();
+};
+
 import 'dotenv/config';
 
 // Configuração do CORS

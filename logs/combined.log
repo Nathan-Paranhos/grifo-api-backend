@@ -286,3 +286,54 @@
 2025-08-01 01:09:17:917 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
 2025-08-01 01:09:17:917 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
 2025-08-01 01:09:17:917 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 02:06:52:652 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 02:06:52:652 [33mwarn[39m: [33mFirebase credentials não configuradas. Continuando sem Firebase.[39m
+2025-08-01 02:06:52:652 [33mwarn[39m: [33mServidor iniciando sem Firebase (modo desenvolvimento)[39m
+2025-08-01 02:06:52:652 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 02:06:52:652 [32minfo[39m: [32mServidor rodando na porta 3006[39m
+2025-08-01 02:07:27:727 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 02:07:27:727 [33mwarn[39m: [33mFirebase credentials não configuradas. Continuando sem Firebase.[39m
+2025-08-01 02:07:27:727 [33mwarn[39m: [33mServidor iniciando sem Firebase (modo desenvolvimento)[39m
+2025-08-01 02:07:27:727 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 02:07:27:727 [32minfo[39m: [32mServidor rodando na porta 3006[39m
+2025-08-01 02:18:33:1833 [33mwarn[39m: [33mConfigurações de banco PostgreSQL não encontradas. Usando apenas Firebase.[39m
+2025-08-01 02:18:33:1833 [32minfo[39m: [32mPortal integration disabled[39m
+2025-08-01 02:18:36:1836 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 02:18:36:1836 [33mwarn[39m: [33mFirebase credentials não configuradas. Continuando sem Firebase.[39m
+2025-08-01 02:18:36:1836 [33mwarn[39m: [33mServidor iniciando sem Firebase (modo desenvolvimento)[39m
+2025-08-01 02:18:36:1836 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 02:18:36:1836 [32minfo[39m: [32mServidor rodando na porta 3006[39m
+2025-08-01 02:20:32:2032 [33mwarn[39m: [33mRota não encontrada: GET /dashboard/empresa_visionaria[39m
+2025-08-01 02:20:40:2040 [33mwarn[39m: [33mRota não encontrada: GET /dashboard?empresaId=empresa_visionaria[39m
+2025-08-01 02:21:33:2133 [32minfo[39m: [32mVerificação de saúde da API solicitada[39m
+2025-08-01 02:21:33:2133 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-08-01 02:21:51:2151 [32minfo[39m: [32mAudit: POST /api/auth/login[39m
+2025-08-01 02:33:52:3352 [33mwarn[39m: [33mConfigurações de banco PostgreSQL não encontradas. Usando apenas Firebase.[39m
+2025-08-01 02:33:52:3352 [32minfo[39m: [32mPortal integration disabled[39m
+2025-08-01 02:33:55:3355 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 02:33:55:3355 [33mwarn[39m: [33mErro ao inicializar Firebase. Continuando sem Firebase: Expected property name or '}' in JSON at position 1[39m
+2025-08-01 02:33:55:3355 [33mwarn[39m: [33mServidor iniciando sem Firebase (modo desenvolvimento)[39m
+2025-08-01 02:33:55:3355 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 02:33:55:3355 [32minfo[39m: [32mServidor rodando na porta 3006[39m
+2025-08-01 02:38:51:3851 [33mwarn[39m: [33mConfigurações de banco PostgreSQL não encontradas. Usando apenas Firebase.[39m
+2025-08-01 02:38:51:3851 [32minfo[39m: [32mPortal integration disabled[39m
+2025-08-01 02:38:53:3853 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 02:38:54:3854 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 02:38:56:3856 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 02:38:56:3856 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 02:38:56:3856 [32minfo[39m: [32mServidor rodando na porta 3006[39m
+2025-08-01 02:39:10:3910 [32minfo[39m: [32mVerificação de saúde da API solicitada[39m
+2025-08-01 02:39:10:3910 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-08-01 02:42:40:4240 [32minfo[39m: [32mVerificação de saúde da API solicitada[39m
+2025-08-01 02:42:40:4240 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-08-01 02:46:04:464 [33mwarn[39m: [33mConfigurações de banco PostgreSQL não encontradas. Usando apenas Firebase.[39m
+2025-08-01 02:46:04:464 [32minfo[39m: [32mPortal integration disabled[39m
+2025-08-01 02:46:15:4615 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 02:46:15:4615 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 02:46:16:4616 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 02:46:16:4616 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 02:46:16:4616 [32minfo[39m: [32mServidor rodando na porta 3006[39m
+2025-08-01 02:46:37:4637 [32minfo[39m: [32mVerificação de saúde da API solicitada[39m
+2025-08-01 02:46:37:4637 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-08-01 02:47:47:4747 [32minfo[39m: [32mVerificação de saúde da API solicitada[39m
+2025-08-01 02:47:47:4747 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m

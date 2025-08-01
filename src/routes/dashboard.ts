@@ -1,6 +1,7 @@
 import { Router, Request as ExpressRequest, Response } from 'express';
 import { db } from '../config/firebase';
 import * as admin from 'firebase-admin';
+import databaseManager from '../config/database';
 
 // Extend the Express Request interface to include user property
 interface Request extends ExpressRequest {
@@ -61,7 +62,22 @@ router.get('/', authMiddleware, requireEmpresa, async (req: Request, res: Respon
   
   try {
     const empresaId = req.user?.empresaId;
-    const stats = await getDashboardStats(empresaId, req.query.vistoriadorId as string | undefined);
+    let stats;
+    
+    // Tentar buscar do PostgreSQL primeiro, depois Firebase como fallback
+    if (databaseManager.isAvailable()) {
+      try {
+        stats = await databaseManager.getDashboardStats(empresaId!, req.query.vistoriadorId as string | undefined);
+        logger.info('Dashboard stats retrieved from PostgreSQL');
+      } catch (error) {
+        logger.warn('Failed to get stats from PostgreSQL, using Firebase fallback', { error });
+        stats = await getDashboardStats(empresaId!, req.query.vistoriadorId as string | undefined);
+      }
+    } else {
+      logger.info('PostgreSQL not available, using Firebase');
+      stats = await getDashboardStats(empresaId!, req.query.vistoriadorId as string | undefined);
+    }
+    
     logger.info(`Informações gerais do dashboard retornadas com sucesso`);
     return sendSuccess(res, stats);
   } catch (error) {
@@ -86,7 +102,22 @@ router.get('/stats',
     
     try {
       const empresaId = req.user?.empresaId;
-      const stats = await getDashboardStats(empresaId, req.query.vistoriadorId as string | undefined);
+      let stats;
+      
+      // Tentar buscar do PostgreSQL primeiro, depois Firebase como fallback
+      if (databaseManager.isAvailable()) {
+        try {
+          stats = await databaseManager.getDashboardStats(empresaId!, req.query.vistoriadorId as string | undefined);
+          logger.info('Dashboard stats retrieved from PostgreSQL');
+        } catch (error) {
+          logger.warn('Failed to get stats from PostgreSQL, using Firebase fallback', { error });
+          stats = await getDashboardStats(empresaId!, req.query.vistoriadorId as string | undefined);
+        }
+      } else {
+        logger.info('PostgreSQL not available, using Firebase');
+        stats = await getDashboardStats(empresaId!, req.query.vistoriadorId as string | undefined);
+      }
+      
       logger.info(`Estatísticas do dashboard retornadas com sucesso`);
       return sendSuccess(res, stats);
     } catch (error) {

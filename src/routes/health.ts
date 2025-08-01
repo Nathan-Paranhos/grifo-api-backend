@@ -1,6 +1,8 @@
 import express from 'express';
 import logger from '../config/logger';
 import { firebaseInitialized } from '../config/firebase';
+import databaseManager from '../config/database';
+import portalManager from '../config/portal';
 
 const router = express.Router();
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -55,9 +57,11 @@ router.get('/', (req, res) => {
     environment: NODE_ENV,
     uptime: `${uptime} segundos`,
     services: {
-      firebase: firebaseInitialized ? 'connected' : 'disconnected',
-      database: firebaseInitialized ? 'available' : 'unavailable'
-    },
+        firebase: firebaseInitialized ? 'connected' : 'disconnected',
+        firestore: firebaseInitialized ? 'available' : 'unavailable',
+        postgresql: databaseManager.isAvailable() ? 'connected' : 'disconnected',
+        portal: portalManager.isAvailable() ? 'connected' : 'disconnected'
+      },
     memory: {
       used: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`,
       total: `${Math.round(process.memoryUsage().heapTotal / 1024 / 1024)} MB`

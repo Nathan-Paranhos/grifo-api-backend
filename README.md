@@ -117,7 +117,7 @@ API backend robusta e escalável para o sistema Grifo, responsável por gerencia
 ## 📁 Estrutura do Projeto
 
 ```
-grifo-api-backend/
+src/
 ├── 📂 src/                          # Código fonte TypeScript
 │   ├── 📂 config/                   # Configurações (Firebase, Logger, Swagger)
 │   ├── 📂 middleware/               # Middlewares (auth, validation, rate-limit)
@@ -161,7 +161,7 @@ grifo-api-backend/
 1. **Clone o repositório**:
    ```bash
    git clone <repository-url>
-   cd grifo-api-backend
+   # Execute na pasta raiz do projeto
    ```
 
 2. **Instale as dependências**:
@@ -471,13 +471,13 @@ LOG_LEVEL=info
 #### **Build Local**
 ```bash
 # Construir imagem
-docker build -t grifo-api-backend .
+docker build -t grifo-api .
 
 # Executar container
 docker run -p 3000:3000 \
   -e NODE_ENV=production \
   --env-file .env.production \
-  grifo-api-backend
+  grifo-api
 ```
 
 #### **Deploy em Cloud Providers**

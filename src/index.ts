@@ -50,26 +50,21 @@ app.get('/health', (req, res) => {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Configurar middlewares de segurança
-configureSecurityMiddleware(app);
+// Log de CORS para debug
+app.use((req, res, next) => {
+  logger.info(`Origin: ${req.headers.origin}`);
+  logger.info(`Method: ${req.method}`);
+  logger.info(`URL: ${req.url}`);
+  next();
+});
 
-// Garantir que CORS está configurado com credentials
-app.use(cors({
-  origin: [
-    'https://grifo-portal-v1.netlify.app',
-    'https://portal.grifovistorias.com',
-    'https://app.grifovistorias.com',
-    'http://localhost:3000',
-    'http://localhost:5173'
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
+// Configurar middlewares de segurança (inclui CORS)
+configureSecurityMiddleware(app);
 
 // Middleware de logging para requisições HTTP
 app.use((req, res, next) => {
   logger.http(`${req.method} ${req.url}`);
+  logger.debug(`Headers: ${JSON.stringify(req.headers)}`);
   const start = Date.now();
   
   res.on('finish', () => {

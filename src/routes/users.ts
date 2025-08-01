@@ -7,6 +7,7 @@ import logger from '../config/logger';
 import { z } from 'zod';
 import * as admin from 'firebase-admin';
 import { getDb, setCustomClaims } from '../config/firebase';
+import databaseManager from '../config/database';
 
 const router = Router();
 
@@ -57,45 +58,87 @@ const updateUserSchema = z.object({
  */
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { role, ativo, limit } = req.query;
+    const { role, ativo, limit, page = 1 } = req.query;
     const empresaId = (req as any).user.empresaId;
     
-    logger.info(`Buscando usuários para empresa ${empresaId}`, { role, ativo, limit });
+    logger.info(`Buscando usuários para empresa ${empresaId}`, { role, ativo, limit, page });
     
-    // Buscar usuários no Firestore
-    const db = getDb();
-    let query: admin.firestore.Query = db.collection('users').where('empresaId', '==', empresaId);
+    let users, total;
     
-    // Aplicar filtros
-    if (role) {
-      query = query.where('role', '==', role);
+    // Tentar buscar do PostgreSQL primeiro, depois Firebase como fallback
+    if (databaseManager.isAvailable()) {
+      try {
+        const result = await databaseManager.getUsers(empresaId, {
+          page: Number(page),
+          limit: limit ? Number(limit) : undefined,
+          role: role as string,
+          ativo: ativo !== undefined ? ativo === 'true' : undefined
+        });
+        users = result.users;
+        total = result.total;
+        logger.info('Users retrieved from PostgreSQL');
+      } catch (error) {
+        logger.warn('Failed to get users from PostgreSQL, falling back to Firebase', { error });
+        // Fallback para Firebase
+        const db = getDb();
+        let query: admin.firestore.Query = db.collection('users').where('empresaId', '==', empresaId);
+        
+        if (role) {
+          query = query.where('role', '==', role);
+        }
+        
+        if (ativo !== undefined) {
+          const isActive = ativo === 'true';
+          query = query.where('ativo', '==', isActive);
+        }
+        
+        if (limit) {
+          const limitNum = parseInt(limit as string);
+          query = query.limit(limitNum);
+        }
+        
+        const snapshot = await query.get();
+        users = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        total = users.length;
+      }
+    } else {
+      logger.info('PostgreSQL not available, using Firebase');
+      // Usar Firebase
+      const db = getDb();
+      let query: admin.firestore.Query = db.collection('users').where('empresaId', '==', empresaId);
+      
+      if (role) {
+        query = query.where('role', '==', role);
+      }
+      
+      if (ativo !== undefined) {
+        const isActive = ativo === 'true';
+        query = query.where('ativo', '==', isActive);
+      }
+      
+      if (limit) {
+        const limitNum = parseInt(limit as string);
+        query = query.limit(limitNum);
+      }
+      
+      const snapshot = await query.get();
+      users = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      total = users.length;
     }
     
-    if (ativo !== undefined) {
-      const isActive = ativo === 'true';
-      query = query.where('ativo', '==', isActive);
-    }
-    
-    // Aplicar limite
-    if (limit) {
-      const limitNum = parseInt(limit as string);
-      query = query.limit(limitNum);
-    }
-    
-    const snapshot = await query.get();
-    
-    if (snapshot.empty) {
+    if (!users || users.length === 0) {
       logger.info('Nenhum usuário encontrado');
-      return sendSuccess(res, []);
+      return sendSuccess(res, { users: [], total: 0 });
     }
-    
-    const users = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
     
     logger.info(`Encontrados ${users.length} usuários`);
-    sendSuccess(res, users);
+    sendSuccess(res, { users, total });
   } catch (error) {
     logger.error('Erro ao buscar usuários:', error);
     sendError(res, 'Erro interno do servidor', 500);
@@ -202,35 +245,76 @@ router.post('/', authMiddleware, validateRequest({ body: createUserSchema }), as
     
     logger.info('Criando novo usuário', { userData, empresaId });
     
-    // Verificar se já existe um usuário com o mesmo email
-    const db = getDb();
-    const existingUserQuery = await db.collection('users')
-      .where('email', '==', userData.email)
-      .where('empresaId', '==', empresaId)
-      .get();
+    let newUser;
     
-    if (!existingUserQuery.empty) {
-      return sendError(res, 'Já existe um usuário com este email', 400);
+    // Tentar criar no PostgreSQL primeiro, depois Firebase como fallback
+    if (databaseManager.isAvailable()) {
+      try {
+        newUser = await databaseManager.createUser({
+          empresaId,
+          ...userData
+        });
+        logger.info('User created in PostgreSQL');
+      } catch (error) {
+        logger.warn('Failed to create user in PostgreSQL, falling back to Firebase', { error });
+        // Fallback para Firebase
+        const db = getDb();
+        const existingUserQuery = await db.collection('users')
+          .where('email', '==', userData.email)
+          .where('empresaId', '==', empresaId)
+          .get();
+        
+        if (!existingUserQuery.empty) {
+          return sendError(res, 'Já existe um usuário com este email', 400);
+        }
+        
+        const newUserData = {
+          empresaId,
+          ...userData,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+        
+        const docRef = await db.collection('users').add(newUserData);
+        
+        newUser = {
+          id: docRef.id,
+          ...newUserData,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+      }
+    } else {
+      logger.info('PostgreSQL not available, using Firebase');
+      // Usar Firebase
+      const db = getDb();
+      const existingUserQuery = await db.collection('users')
+        .where('email', '==', userData.email)
+        .where('empresaId', '==', empresaId)
+        .get();
+      
+      if (!existingUserQuery.empty) {
+        return sendError(res, 'Já existe um usuário com este email', 400);
+      }
+      
+      const newUserData = {
+        empresaId,
+        ...userData,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      };
+      
+      const docRef = await db.collection('users').add(newUserData);
+      
+      newUser = {
+        id: docRef.id,
+        ...newUserData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
     }
     
-    // Criar usuário no Firestore
-    const newUserData = {
-      empresaId,
-      ...userData,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
-    };
-    
-    const docRef = await db.collection('users').add(newUserData);
-    
-    const newUser = {
-      id: docRef.id,
-      ...newUserData,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    logger.info(`Usuário criado com sucesso: ${docRef.id}`);
+    logger.info(`Usuário criado com sucesso: ${newUser.id}`);
     sendSuccess(res, newUser, 201);
   } catch (error) {
     logger.error('Erro ao criar usuário:', error);

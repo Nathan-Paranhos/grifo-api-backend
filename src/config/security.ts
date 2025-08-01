@@ -42,7 +42,7 @@ import 'dotenv/config';
 // Configuração do CORS
 export const corsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [
+    const allowedOrigins = process.env.CORS_ORIGINS?.split(',') || [
       'https://portal.grifovistorias.com',
       'https://app.grifovistorias.com',
       'https://grifo-portal.netlify.app',
@@ -89,7 +89,8 @@ export const corsOptions = {
     logger.error(`CORS BLOQUEADO para origin: ${origin}`);
     logger.error(`CORS - Origins permitidos: ${allowedOrigins.join(', ')}`);
     logger.error(`CORS - NODE_ENV: ${process.env.NODE_ENV}`);
-    return callback(null, false);
+    logger.error(`CORS - CORS_ORIGINS env: ${process.env.CORS_ORIGINS}`);
+    return callback(new Error(`CORS policy: Origin ${origin} not allowed`), false);
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],

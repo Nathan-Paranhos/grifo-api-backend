@@ -5,7 +5,7 @@ Write-Host "🚀 Iniciando processo de deploy..." -ForegroundColor Green
 
 # Verificar se estamos no diretório correto
 if (!(Test-Path "package.json")) {
-    Write-Host "❌ Erro: Execute este script na pasta grifo-api-backend" -ForegroundColor Red
+    Write-Host "❌ Erro: Execute este script na pasta raiz do projeto" -ForegroundColor Red
     exit 1
 }
 

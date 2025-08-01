@@ -1,5 +1,5 @@
 import { Router, Request as ExpressRequest, Response } from 'express';
-import { body, validationResult } from 'express-validator';
+const { body, validationResult } = require('express-validator');
 import { generateTokenPair, verifyRefreshToken, generateJWT } from '../config/security';
 import { sendSuccess, sendError } from '../utils/response';
 import logger from '../config/logger';

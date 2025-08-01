@@ -41,14 +41,14 @@ As seguintes variáveis já estão configuradas no `render.yaml`:
 
 O deploy será automático quando:
 - Houver push na branch `main`
-- Arquivos na pasta `grifo-api-backend/` forem modificados
+- Arquivos na pasta `src/` forem modificados
 - Arquivos `.md` e `.gitignore` são ignorados
 
 ## Estrutura do Projeto
 
 ```
 grifo-mobile/
-├── grifo-api-backend/          # Backend API
+├── src/                        # Backend API
 │   ├── src/                    # Código fonte
 │   ├── dist/                   # Código compilado (ignorado)
 │   ├── package.json           # Dependências
@@ -73,7 +73,7 @@ O Render monitora a saúde da aplicação através do endpoint:
 
 Para visualizar logs:
 1. Acessar o Render Dashboard
-2. Selecionar o serviço `grifo-api-backend`
+2. Selecionar o serviço `grifo-api`
 3. Ir na aba "Logs"
 
 ## Troubleshooting

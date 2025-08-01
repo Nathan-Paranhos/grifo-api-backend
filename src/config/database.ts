@@ -34,6 +34,7 @@ class DatabaseManager {
       // Se não há URL de banco configurada, não inicializa
       if (!process.env.DATABASE_URL && !process.env.DATABASE_PASSWORD) {
         logger.warn('Configurações de banco PostgreSQL não encontradas. Usando apenas Firebase.');
+        this.isConnected = false;
         return;
       }
 
@@ -56,10 +57,20 @@ class DatabaseManager {
         this.isConnected = false;
       });
 
-      await this.testConnection();
+      // Testa conexão com timeout
+      await Promise.race([
+        this.testConnection(),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout na conexão do banco')), 5000)
+        )
+      ]);
+      logger.info('Database PostgreSQL inicializado com sucesso');
 
     } catch (error) {
-      logger.error('Erro ao inicializar pool PostgreSQL:', error);
+      logger.error('Erro ao inicializar banco PostgreSQL:', error);
+      logger.warn('Continuando sem PostgreSQL - usando apenas Firebase');
+      this.isConnected = false;
+      this.pool = null;
     }
   }
 

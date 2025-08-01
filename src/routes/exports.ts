@@ -7,7 +7,7 @@ import { Request } from '../config/security';
 import { db } from '../config/firebase';
 import { z } from 'zod';
 import { ExportOptions } from '../types';
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 const PDFDocument = require('pdfkit');
 import fs from 'fs';
 import path from 'path';
@@ -28,10 +28,29 @@ const exportQuerySchema = z.object({
 });
 
 // Função auxiliar para criar arquivo Excel
-function createExcelFile(data: any[], filename: string, sheetName: string): string {
-  const workbook = XLSX.utils.book_new();
-  const worksheet = XLSX.utils.json_to_sheet(data);
-  XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+async function createExcelFile(data: any[], filename: string, sheetName: string): Promise<string> {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet(sheetName);
+  
+  if (data.length > 0) {
+    // Adicionar cabeçalhos
+    const headers = Object.keys(data[0]);
+    worksheet.addRow(headers);
+    
+    // Adicionar dados
+    data.forEach(row => {
+      const values = headers.map(header => row[header]);
+      worksheet.addRow(values);
+    });
+    
+    // Estilizar cabeçalhos
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE0E0E0' }
+    };
+  }
   
   const filePath = path.join(process.cwd(), 'exports', filename);
   
@@ -41,7 +60,7 @@ function createExcelFile(data: any[], filename: string, sheetName: string): stri
     fs.mkdirSync(exportDir, { recursive: true });
   }
   
-  XLSX.writeFile(workbook, filePath);
+  await workbook.xlsx.writeFile(filePath);
   return filePath;
 }
 
@@ -247,7 +266,7 @@ router.get('/inspections/export',
       switch (format) {
         case 'excel':
           filename = `vistorias_${timestamp}.xlsx`;
-          filePath = createExcelFile(inspections, filename, 'Vistorias');
+          filePath = await createExcelFile(inspections, filename, 'Vistorias');
           contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
           break;
 
@@ -387,7 +406,7 @@ router.get('/properties/export',
       switch (format) {
         case 'excel':
           filename = `imoveis_${timestamp}.xlsx`;
-          filePath = createExcelFile(properties, filename, 'Imóveis');
+          filePath = await createExcelFile(properties, filename, 'Imóveis');
           contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
           break;
 
@@ -520,7 +539,7 @@ router.get('/users/export',
       switch (format) {
         case 'excel':
           filename = `usuarios_${timestamp}.xlsx`;
-          filePath = createExcelFile(users, filename, 'Usuários');
+          filePath = await createExcelFile(users, filename, 'Usuários');
           contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
           break;
 

@@ -1,21 +1,14 @@
-import { Router, Request as ExpressRequest, Response } from 'express';
+import { Router, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/response';
 import * as admin from 'firebase-admin';
 import logger from '../config/logger';
 import { validateRequest } from '../utils/validation';
-import { authMiddleware } from '../config/security';
+import { Request } from '../config/security';
 import { db } from '../config/firebase';
 import { z } from 'zod';
 import { DashboardAdvancedData, PerformanceReport, AnalyticsData, PaginationOptions } from '../types';
 
-// Extend the Express Request interface to include user property
-interface Request extends ExpressRequest {
-  user?: { 
-    id: string; 
-    role: string; 
-    empresaId: string; 
-  };
-}
+
 
 const router = Router();
 
@@ -153,10 +146,7 @@ async function getUsersData(empresaId: string) {
  *       500:
  *         description: Erro interno do servidor
  */
-router.get('/dashboard-advanced',
-  authMiddleware,
-  validateRequest({ query: reportsQuerySchema }),
-  async (req: Request, res: Response) => {
+router.get('/dashboard-advanced', validateRequest({ query: reportsQuerySchema }), async (req: Request, res: Response) => {
     const { period, dateFrom, dateTo, vistoriadorId } = req.query as any;
     const empresaId = req.user?.empresaId;
     const userId = req.user?.id;
@@ -322,7 +312,6 @@ router.get('/dashboard-advanced',
  *         description: Erro interno do servidor
  */
 router.get('/performance',
-  authMiddleware,
   validateRequest({ query: reportsQuerySchema }),
   async (req: Request, res: Response) => {
     const { period, vistoriadorId } = req.query as any;
@@ -510,7 +499,6 @@ router.get('/performance',
  *         description: Erro interno do servidor
  */
 router.get('/analytics',
-  authMiddleware,
   validateRequest({ 
     query: reportsQuerySchema.merge(paginationSchema)
   }),

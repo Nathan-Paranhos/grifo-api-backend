@@ -1,13 +1,8 @@
-import { Router, Request as ExpressRequest, Response, NextFunction } from 'express';
+import { Router, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/response';
-
-// Extend the Express Request interface to include user property
-interface Request extends ExpressRequest {
-  user?: { id: string; role: string };
-}
 import logger from '../config/logger';
 import { validateRequest, syncSchema, syncStatusSchema } from '../utils/validation';
-import { authMiddleware } from '../config/security';
+import { Request } from '../config/security';
 
 const router = Router();
 
@@ -16,7 +11,7 @@ const router = Router();
  * @desc Obtém informações de sincronização
  * @access Private
  */
-router.get('/', authMiddleware, async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
     const { empresaId, vistoriadorId } = req.query as unknown as { empresaId: string, vistoriadorId?: string };
     
@@ -150,7 +145,7 @@ async function withRetry<T>(
 };
 
 // Endpoint para sincronização de inspeções
-router.post('/sync', authMiddleware, validateRequest({ body: syncSchema }), async (req: Request, res: Response) => {
+router.post('/sync', validateRequest({ body: syncSchema }), async (req: Request, res: Response) => {
   try {
     // Iniciar timer para medir duração do processo
     const startTime = Date.now();
@@ -290,7 +285,7 @@ router.post('/sync', authMiddleware, validateRequest({ body: syncSchema }), asyn
 });
 
 // Endpoint para verificar status de sincronização
-router.get('/status', authMiddleware, validateRequest({ query: syncStatusSchema }), async (req: Request, res: Response) => {
+router.get('/status', validateRequest({ query: syncStatusSchema }), async (req: Request, res: Response) => {
   try {
     const { empresaId, vistoriadorId } = req.query as unknown as { empresaId: string, vistoriadorId?: string };
     

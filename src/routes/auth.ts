@@ -1,18 +1,11 @@
-import { Router, Request as ExpressRequest, Response } from 'express';
+import { Router, Response } from 'express';
 const { body, validationResult } = require('express-validator');
-import { generateTokenPair, verifyRefreshToken, generateJWT } from '../config/security';
+import { generateTokenPair, verifyRefreshToken, generateJWT, authenticateToken, Request } from '../config/security';
 import { sendSuccess, sendError } from '../utils/response';
 import logger from '../config/logger';
 import * as admin from 'firebase-admin';
 
-// Extend the Express Request interface to include user property
-interface Request extends ExpressRequest {
-  user?: { 
-    id: string; 
-    role: string; 
-    empresaId: string; 
-  };
-}
+
 
 const router = Router();
 
@@ -154,7 +147,7 @@ router.post('/logout', async (req: Request, res: Response) => {
  * GET /api/auth/me
  * Endpoint para obter informações do usuário autenticado
  */
-router.get('/me', async (req: Request, res: Response) => {
+router.get('/me', authenticateToken, async (req: Request, res: Response) => {
   try {
     // O middleware de autenticação já anexou os dados do usuário
     const user = req.user;
@@ -181,7 +174,7 @@ router.get('/me', async (req: Request, res: Response) => {
  * GET /api/auth/validate
  * Endpoint para validar se o token atual é válido
  */
-router.get('/validate', async (req: Request, res: Response) => {
+router.get('/validate', authenticateToken, async (req: Request, res: Response) => {
   try {
     // Se chegou até aqui, o token é válido (passou pelo middleware)
     return sendSuccess(res, {

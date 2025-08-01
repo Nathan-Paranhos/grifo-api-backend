@@ -21,11 +21,9 @@ class PortalManager {
       retryAttempts: parseInt(process.env.PORTAL_RETRY_ATTEMPTS || '3'),
       enabled: process.env.PORTAL_ENABLED === 'true'
     };
-
-    this.initialize();
   }
 
-  private async initialize() {
+  public async initialize() {
     if (!this.config.enabled) {
       logger.info('Portal integration disabled');
       return;
@@ -232,8 +230,11 @@ class PortalManager {
   }
 }
 
-// Instância singleton
 const portalManager = new PortalManager();
+
+export const initializePortal = async () => {
+  await portalManager.initialize();
+};
 
 export default portalManager;
 export { PortalManager, PortalConfig };

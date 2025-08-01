@@ -1,16 +1,5 @@
-import { Router, Request as ExpressRequest, Response } from 'express';
-
-// Extend the Express Request interface to include user property
-interface Request extends ExpressRequest {
-  user?: { 
-    id: string; 
-    uid: string;
-    role: string; 
-    empresaId: string; 
-  };
-}
-
-import { authMiddleware, requireEmpresa } from '../config/security';
+import { Router, Response } from 'express';
+import { authenticateToken, requireEmpresa, Request } from '../config/security';
 import { sendSuccess, sendError } from '../utils/response';
 import logger from '../config/logger';
 import { validateRequest, contestationSchema, contestationStatusSchema } from '../utils/validation';
@@ -23,7 +12,6 @@ const router = Router();
  * @desc Registra uma nova contestação para uma vistoria
  */
 router.post('/',
-  authMiddleware,
   requireEmpresa,
   validateRequest({ body: contestationSchema }),
   async (req: Request, res: Response) => {
@@ -51,7 +39,7 @@ router.post('/',
         id: `contest_${Date.now()}`,
         inspectionId,
         empresaId,
-        clienteId: clienteId || req.user?.uid,
+        clienteId: clienteId || req.user?.id,
         motivo,
         detalhes,
         status: 'pendente',
@@ -83,7 +71,6 @@ router.post('/',
  * @desc Lista todas as contestações para uma empresa
  */
 router.get('/',
-  authMiddleware,
   requireEmpresa,
   async (req: Request, res: Response) => {
     try {
@@ -156,7 +143,6 @@ router.get('/',
  * @desc Obtém detalhes de uma contestação específica
  */
 router.get('/:id',
-  authMiddleware,
   requireEmpresa,
   async (req: Request, res: Response) => {
     try {
@@ -213,7 +199,6 @@ router.get('/:id',
  * @desc Atualiza o status de uma contestação
  */
 router.put('/:id/status',
-  authMiddleware,
   requireEmpresa,
   validateRequest({
     body: contestationStatusSchema
@@ -269,7 +254,6 @@ router.put('/:id/status',
  * @desc Obtém estatísticas de contestações
  */
 router.get('/stats',
-  authMiddleware,
   requireEmpresa,
   async (req: Request, res: Response) => {
     try {

@@ -1,18 +1,9 @@
-import { Router, Request as ExpressRequest, Response } from 'express';
+import { Router, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/response';
 import * as admin from 'firebase-admin';
-
-// Extend the Express Request interface to include user property
-interface Request extends ExpressRequest {
-  user?: { 
-    id: string; 
-    role: string; 
-    empresaId: string; 
-  };
-}
 import logger from '../config/logger';
 import { validateRequest, commonQuerySchema, inspectionSchema, contestationSchema } from '../utils/validation';
-import { authMiddleware, requireEmpresa } from '../config/security';
+import { requireEmpresa, Request } from '../config/security';
 import { db } from '../config/firebase';
 
 const router = Router();
@@ -23,7 +14,6 @@ const router = Router();
  * @access Private
  */
 router.get('/', 
-  authMiddleware,
   requireEmpresa,
   validateRequest({ query: commonQuerySchema }),
   async (req: Request, res: Response) => {
@@ -98,7 +88,6 @@ router.get('/',
  * @access Private
  */
 router.get('/:id',
-  authMiddleware,
   requireEmpresa,
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -142,7 +131,6 @@ router.get('/:id',
  * @access Private
  */
 router.put('/:id',
-  authMiddleware,
   requireEmpresa,
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -201,7 +189,7 @@ router.put('/:id',
 );
 
 router.post('/', 
-  authMiddleware,
+  requireEmpresa,
   validateRequest({ body: inspectionSchema }),
   async (req: Request, res: Response) => {
     const empresaId = req.user?.empresaId;
@@ -308,7 +296,7 @@ router.post('/',
  * @access Private
  */
 router.post('/:id/contest', 
-  authMiddleware,
+  requireEmpresa,
   validateRequest({ body: contestationSchema }),
   async (req: Request, res: Response) => {
     try {

@@ -1,9 +1,9 @@
-import { Router, Request as ExpressRequest, Response } from 'express';
+import { Router, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/response';
 import * as admin from 'firebase-admin';
 import logger from '../config/logger';
 import { validateRequest } from '../utils/validation';
-import { authMiddleware } from '../config/security';
+import { Request } from '../config/security';
 import { db } from '../config/firebase';
 import { z } from 'zod';
 import { ExportOptions } from '../types';
@@ -13,14 +13,7 @@ import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
-// Extend the Express Request interface to include user property
-interface Request extends ExpressRequest {
-  user?: { 
-    id: string; 
-    role: string; 
-    empresaId: string; 
-  };
-}
+
 
 const router = Router();
 
@@ -189,7 +182,6 @@ function createCSVFile(data: any[], filename: string): string {
  *         description: Erro interno do servidor
  */
 router.get('/inspections/export',
-  authMiddleware,
   validateRequest({ query: exportQuerySchema }),
   async (req: Request, res: Response) => {
     const { format, dateFrom, dateTo, status, vistoriadorId } = req.query as any;
@@ -340,7 +332,6 @@ router.get('/inspections/export',
  *         description: Erro interno do servidor
  */
 router.get('/properties/export',
-  authMiddleware,
   validateRequest({ query: exportQuerySchema }),
   async (req: Request, res: Response) => {
     const { format, propertyType } = req.query as any;
@@ -476,7 +467,6 @@ router.get('/properties/export',
  *         description: Erro interno do servidor
  */
 router.get('/users/export',
-  authMiddleware,
   validateRequest({ query: exportQuerySchema }),
   async (req: Request, res: Response) => {
     const { format } = req.query as any;

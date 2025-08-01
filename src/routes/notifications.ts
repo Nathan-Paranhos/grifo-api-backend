@@ -1,21 +1,14 @@
-import { Router, Request as ExpressRequest, Response } from 'express';
+import { Router, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/response';
 import * as admin from 'firebase-admin';
 import logger from '../config/logger';
 import { validateRequest } from '../utils/validation';
-import { authMiddleware, requireEmpresa } from '../config/security';
+import { requireEmpresa, Request } from '../config/security';
 import { db } from '../config/firebase';
 import { z } from 'zod';
 import { Notification, PaginatedResponse, PaginationOptions } from '../types';
 
-// Extend the Express Request interface to include user property
-interface Request extends ExpressRequest {
-  user?: { 
-    id: string; 
-    role: string; 
-    empresaId: string; 
-  };
-}
+
 
 const router = Router();
 
@@ -91,7 +84,6 @@ const markAsReadSchema = z.object({
  *         description: Erro interno do servidor
  */
 router.get('/',
-  authMiddleware,
   requireEmpresa,
   validateRequest({ query: notificationsQuerySchema }),
   async (req: Request, res: Response) => {
@@ -216,7 +208,6 @@ router.get('/',
  *         description: Erro interno do servidor
  */
 router.put('/:id/read',
-  authMiddleware,
   validateRequest({ params: markAsReadSchema }),
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -295,7 +286,6 @@ router.put('/:id/read',
  *         description: Erro interno do servidor
  */
 router.put('/mark-all-read',
-  authMiddleware,
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
     const empresaId = req.user?.empresaId;

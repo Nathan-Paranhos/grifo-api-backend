@@ -1,19 +1,10 @@
-import { Router, Request as ExpressRequest, Response } from 'express';
+import { Router, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/response';
 import * as admin from 'firebase-admin';
 import { db } from '../config/firebase';
-
-// Extend the Express Request interface to include user property
-interface Request extends ExpressRequest {
-  user?: { 
-    id: string; 
-    role: string; 
-    empresaId: string; 
-  };
-}
 import logger from '../config/logger';
 import { validateRequest, commonQuerySchema, propertySchema } from '../utils/validation';
-import { authMiddleware, requireEmpresa } from '../config/security';
+import { requireEmpresa, Request } from '../config/security';
 
 const router = Router();
 
@@ -23,7 +14,6 @@ const router = Router();
  * @access Private
  */
 router.get('/', 
-  authMiddleware,
   requireEmpresa,
   validateRequest({ query: commonQuerySchema }),
   async (req: Request, res: Response) => {
@@ -84,8 +74,7 @@ router.get('/',
  * @desc Obtém detalhes de uma propriedade específica
  * @access Private
  */
-router.get('/:id', 
-  authMiddleware,
+router.get('/:id',
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const empresaId = req.user?.empresaId;
@@ -115,7 +104,6 @@ router.get('/:id',
  * @access Private
  */
 router.post('/', 
-  authMiddleware, 
   validateRequest({ body: propertySchema }), 
   async (req: Request, res: Response) => {
     const newPropertyData = req.body;
@@ -150,7 +138,6 @@ router.post('/',
  * @access Private
  */
 router.put('/:id', 
-  authMiddleware, 
   validateRequest({ body: propertySchema.partial() }), 
   async (req: Request, res: Response) => {
     const { id } = req.params;

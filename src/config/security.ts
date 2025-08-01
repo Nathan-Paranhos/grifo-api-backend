@@ -446,22 +446,48 @@ export const configureSecurityMiddleware = (app: Express): void => {
 };
 
 export async function authenticateToken(req: Request, res: Response, next: NextFunction) {
-   const authHeader = req.headers.authorization;
-   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-     logger.warn('Tentativa de acesso sem token de autenticação ou mal formatado.');
-     return res.status(401).send('Token ausente ou mal formatado.');
-   }
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    logger.warn('Tentativa de acesso sem token de autenticação ou mal formatado.');
+    return res.status(401).send('Token ausente ou mal formatado.');
+  }
 
-   const token = authHeader.split(' ')[1];
-   try {
-     const decoded = await admin.auth().verifyIdToken(token);
-     // Opcional: buscar dados adicionais do usuário no seu banco de dados
-     // const userProfile = await getUserProfile(decoded.uid);
-     req.user = decoded; // Adiciona o payload decodificado ao objeto da requisição
-     logger.debug(`Token Firebase verificado para usuário: ${decoded.uid}`);
-     next();
-   } catch (err) {
-     logger.error('Erro ao verificar token Firebase:', err);
-     return res.status(403).send('Token inválido ou expirado.');
-   }
- }
+  const token = authHeader.split(' ')[1];
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    const { uid } = decodedToken;
+
+    // Buscar dados do usuário no Firestore para obter role e empresaId
+    if (!db) {
+      logger.error('Database não inicializado');
+      return res.status(500).send('Erro interno do servidor.');
+    }
+    const userDoc = await db.collection('usuarios').doc(uid).get();
+    if (!userDoc.exists) {
+      logger.error(`Usuário não encontrado no Firestore: ${uid}`);
+      return res.status(403).send('Usuário não autorizado.');
+    }
+
+    const userData = userDoc.data();
+    const role = userData?.role || 'user'; // 'user' como role padrão
+    const empresaId = userData?.empresaId;
+
+    if (!empresaId) {
+      logger.error(`empresaId não encontrado para o usuário: ${uid}`);
+      return res.status(403).send('Usuário sem empresa associada.');
+    }
+
+    // Montar o objeto de usuário para a requisição
+    req.user = {
+      id: uid,
+      role: role,
+      empresaId: empresaId,
+    };
+
+    logger.debug(`Token Firebase verificado para usuário: ${uid}, role: ${role}, empresaId: ${empresaId}`);
+    next();
+  } catch (err) {
+    logger.error('Erro ao verificar token Firebase:', err);
+    return res.status(403).send('Token inválido ou expirado.');
+  }
+}

@@ -1,13 +1,11 @@
 import { Router, Response } from 'express';
 import { Request } from '../config/security';
-import { authMiddleware } from '../config/security';
-import { validateRequest, userSchema } from '../utils/validation';
+import { validateRequest } from '../utils/validation';
 import { sendSuccess, sendError } from '../utils/response';
 import logger from '../config/logger';
 import { z } from 'zod';
 import * as admin from 'firebase-admin';
 import { getDb, setCustomClaims } from '../config/firebase';
-import databaseManager from '../config/database';
 
 const router = Router();
 
@@ -56,81 +54,37 @@ const updateUserSchema = z.object({
  *       200:
  *         description: Lista de usuários
  */
-router.get('/', authMiddleware, async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
     const { role, ativo, limit, page = 1 } = req.query;
-    const empresaId = (req as any).user.empresaId;
+    const empresaId = req.user?.empresaId;
+
+    if (!empresaId) {
+      return sendError(res, 'Empresa não identificada para o usuário.', 403);
+    }
     
     logger.info(`Buscando usuários para empresa ${empresaId}`, { role, ativo, limit, page });
     
-    let users, total;
-    
-    // Tentar buscar do PostgreSQL primeiro, depois Firebase como fallback
-    if (databaseManager.isAvailable()) {
-      try {
-        const result = await databaseManager.getUsers(empresaId, {
-          page: Number(page),
-          limit: limit ? Number(limit) : undefined,
-          role: role as string,
-          ativo: ativo !== undefined ? ativo === 'true' : undefined
-        });
-        users = result.users;
-        total = result.total;
-        logger.info('Users retrieved from PostgreSQL');
-      } catch (error) {
-        logger.warn('Failed to get users from PostgreSQL, falling back to Firebase', { error });
-        // Fallback para Firebase
-        const db = getDb();
-        let query: admin.firestore.Query = db.collection('users').where('empresaId', '==', empresaId);
-        
-        if (role) {
-          query = query.where('role', '==', role);
-        }
-        
-        if (ativo !== undefined) {
-          const isActive = ativo === 'true';
-          query = query.where('ativo', '==', isActive);
-        }
-        
-        if (limit) {
-          const limitNum = parseInt(limit as string);
-          query = query.limit(limitNum);
-        }
-        
-        const snapshot = await query.get();
-        users = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        total = users.length;
-      }
-    } else {
-      logger.info('PostgreSQL not available, using Firebase');
-      // Usar Firebase
-      const db = getDb();
-      let query: admin.firestore.Query = db.collection('users').where('empresaId', '==', empresaId);
-      
-      if (role) {
-        query = query.where('role', '==', role);
-      }
-      
-      if (ativo !== undefined) {
-        const isActive = ativo === 'true';
-        query = query.where('ativo', '==', isActive);
-      }
-      
-      if (limit) {
-        const limitNum = parseInt(limit as string);
-        query = query.limit(limitNum);
-      }
-      
-      const snapshot = await query.get();
-      users = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      total = users.length;
+    const db = getDb();
+    let query: admin.firestore.Query = db.collection('users').where('empresaId', '==', empresaId);
+
+    if (role) {
+      query = query.where('role', '==', role);
     }
+
+    if (ativo !== undefined) {
+      query = query.where('ativo', '==', ativo === 'true');
+    }
+
+    const snapshot = await query.get();
+    const total = snapshot.size;
+
+    if (limit) {
+      query = query.limit(Number(limit));
+    }
+
+    const usersSnapshot = await query.get();
+    const users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
     if (!users || users.length === 0) {
       logger.info('Nenhum usuário encontrado');
@@ -167,10 +121,14 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
  *       404:
  *         description: Usuário não encontrado
  */
-router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const empresaId = (req as any).user.empresaId;
+    const empresaId = req.user?.empresaId;
+
+    if (!empresaId) {
+      return sendError(res, 'Empresa não identificada para o usuário.', 403);
+    }
     
     logger.info(`Buscando usuário ${id} para empresa ${empresaId}`);
     
@@ -232,7 +190,7 @@ router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
  *       201:
  *         description: Usuário criado com sucesso
  */
-router.post('/', authMiddleware, validateRequest({ body: createUserSchema }), async (req: Request, res: Response) => {
+router.post('/', validateRequest({ body: createUserSchema }), async (req: Request, res: Response) => {
   try {
     const userData = req.body;
     const empresaId = (req as any).user.empresaId;
@@ -247,48 +205,9 @@ router.post('/', authMiddleware, validateRequest({ body: createUserSchema }), as
     
     let newUser;
     
-    // Tentar criar no PostgreSQL primeiro, depois Firebase como fallback
-    if (databaseManager.isAvailable()) {
-      try {
-        newUser = await databaseManager.createUser({
-          empresaId,
-          ...userData
-        });
-        logger.info('User created in PostgreSQL');
-      } catch (error) {
-        logger.warn('Failed to create user in PostgreSQL, falling back to Firebase', { error });
-        // Fallback para Firebase
-        const db = getDb();
-        const existingUserQuery = await db.collection('users')
-          .where('email', '==', userData.email)
-          .where('empresaId', '==', empresaId)
-          .get();
-        
-        if (!existingUserQuery.empty) {
-          return sendError(res, 'Já existe um usuário com este email', 400);
-        }
-        
-        const newUserData = {
-          empresaId,
-          ...userData,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          updatedAt: admin.firestore.FieldValue.serverTimestamp()
-        };
-        
-        const docRef = await db.collection('users').add(newUserData);
-        
-        newUser = {
-          id: docRef.id,
-          ...newUserData,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-      }
-    } else {
-      logger.info('PostgreSQL not available, using Firebase');
-      // Usar Firebase
-      const db = getDb();
-      const existingUserQuery = await db.collection('users')
+    // Criar usuário no Firebase
+    const db = getDb();
+    const existingUserQuery = await db.collection('users')
         .where('email', '==', userData.email)
         .where('empresaId', '==', empresaId)
         .get();
@@ -312,7 +231,6 @@ router.post('/', authMiddleware, validateRequest({ body: createUserSchema }), as
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
-    }
     
     logger.info(`Usuário criado com sucesso: ${newUser.id}`);
     sendSuccess(res, newUser, 201);
@@ -357,7 +275,7 @@ router.post('/', authMiddleware, validateRequest({ body: createUserSchema }), as
  *       200:
  *         description: Usuário atualizado com sucesso
  */
-router.put('/:id', authMiddleware, validateRequest({ body: updateUserSchema }), async (req: Request, res: Response) => {
+router.put('/:id', validateRequest({ body: updateUserSchema }), async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
@@ -467,7 +385,7 @@ const setClaimsSchema = z.object({
  *       500:
  *         description: Erro interno do servidor
  */
-router.post('/set-claims', authMiddleware, validateRequest({ body: setClaimsSchema }), async (req: Request, res: Response) => {
+router.post('/set-claims', validateRequest({ body: setClaimsSchema }), async (req: Request, res: Response) => {
   try {
     const { uid, empresaId, role } = req.body;
     const user = req.user;

@@ -1,20 +1,11 @@
-import { Router, Request as ExpressRequest, Response } from 'express';
+import { Router, Response } from 'express';
 import { db } from '../config/firebase';
 import * as admin from 'firebase-admin';
 import databaseManager from '../config/database';
-
-// Extend the Express Request interface to include user property
-interface Request extends ExpressRequest {
-  user?: { 
-    id: string; 
-    role: string; 
-    empresaId: string; 
-  };
-}
 import { sendSuccess, sendError } from '../utils/response';
 import logger from '../config/logger';
 import { validateRequest, commonQuerySchema } from '../utils/validation';
-import { authMiddleware, requireEmpresa } from '../config/security';
+import { requireEmpresa, Request } from '../config/security';
 
 const router = Router();
 
@@ -55,7 +46,7 @@ const getDashboardStats = async (empresaId: string, vistoriadorId?: string) => {
   };
 };
 
-router.get('/', authMiddleware, requireEmpresa, async (req: Request, res: Response) => {
+router.get('/', requireEmpresa, async (req: Request, res: Response) => {
   const { empresaId, vistoriadorId } = req.query;
   
   logger.info(`Solicitação de informações gerais do dashboard para empresaId: ${req.user?.empresaId}${vistoriadorId ? `, vistoriadorId: ${vistoriadorId}` : ''}`);
@@ -92,7 +83,6 @@ router.get('/', authMiddleware, requireEmpresa, async (req: Request, res: Respon
  * @access Private
  */
 router.get('/stats', 
-  authMiddleware,
   requireEmpresa,
   validateRequest({ query: commonQuerySchema }),
   async (req: Request, res: Response) => {

@@ -25,10 +25,11 @@ import notificationsRoutes from './routes/notifications';
 import uploadsRoutes from './routes/uploads';
 import exportsRoutes from './routes/exports';
 import reportsRoutes from './routes/reports';
-import { configureSecurityMiddleware, authenticateToken, corsOptions } from './config/security';
-import { logger } from './utils/logger';
-// Importar Firebase Admin SDK para inicialização
+import { authenticateToken, corsOptions } from './config/security';
+import logger from './config/logger';
 import { initializeFirebase } from './config/firebase';
+import { initializeDatabase } from './config/database';
+import { initializePortal } from './config/portal';
 
 // Criar diretório de logs se não existir
 const logDir = path.join(__dirname, '../logs');
@@ -50,25 +51,9 @@ app.get('/health', (req, res) => {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Log de CORS para debug
-app.use((req, res, next) => {
-  logger.info(`Origin: ${req.headers.origin}`);
-  logger.info(`Method: ${req.method}`);
-  logger.info(`URL: ${req.url}`);
-  next();
-});
-
-// Configurar// Middleware para log de origem e outros detalhes da requisição
-app.use((req, res, next) => {
-  logger.info(`Origin: ${req.headers.origin}, Method: ${req.method}, URL: ${req.url}`);
-  next();
-});
-
-// Middleware de segurança (inclui CORS, Helmet, etc.)
-configureSecurityMiddleware(app);
-
-// Habilitar pre-flight para todas as rotas
-app.options('*', cors(corsOptions));
+// Configuração do CORS
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Enable pre-flight for all routes
 
 // Middleware de logging para requisições HTTP
 app.use((req, res, next) => {
@@ -93,8 +78,11 @@ const apiLegacy = express.Router();
 
 // Rotas públicas (não precisam de autenticação)
 app.use('/api/auth', authRoutes);
-// A partir daqui, todas as rotas podem ser protegidas
-// Aplicando o middleware de autenticação globalmente
+// Rotas públicas (não precisam de autenticação)
+app.use('/api/health', healthRoutes);
+app.use('/api/auth', authRoutes);
+
+// A partir daqui, todas as rotas são protegidas
 app.use(authenticateToken);
 
 apiLegacy.use('/dashboard', dashboardRoutes);
@@ -133,6 +121,34 @@ app.use('/api/v1', apiV1);
 
 // Setup Swagger
 setupSwagger(app);
+
+const startServer = async () => {
+  try {
+    logger.info('Initializing Database...');
+    await initializeDatabase();
+    logger.info('Database initialized.');
+
+    logger.info('Initializing Portal...');
+    await initializePortal();
+    logger.info('Portal initialized.');
+
+    logger.info('Initializing Firebase...');
+    await initializeFirebase();
+    logger.info('Firebase initialized successfully.');
+
+    app.listen(PORT, () => {
+      logger.info(`Server is running on port ${PORT}`);
+      logger.info(`Environment: ${NODE_ENV}`);
+      logger.info(`CORS Origin: ${CORS_ORIGIN}`);
+    });
+
+  } catch (error) {
+    logger.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 
 // Rota raiz com informações da API
@@ -207,27 +223,7 @@ app.use((req, res) => {
   });
 });
 
-// Start server
-const startServer = async () => {
-  try {
-    const firebaseDb = await initializeFirebase();
-    if (firebaseDb) {
-      logger.info('Firebase inicializado com sucesso');
-    } else {
-      logger.warn('Servidor iniciando sem Firebase (modo desenvolvimento)');
-    }
-    
-    app.listen(PORT, () => {
-      logger.info(`Servidor iniciado no ambiente ${NODE_ENV}`);
-      logger.info(`Servidor rodando na porta ${PORT}`);
-    });
-  } catch (error) {
-    logger.error('Falha ao iniciar o servidor:', error);
-    process.exit(1);
-  }
-};
-
-startServer();
+// Firebase já foi inicializado na primeira função startServer
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {

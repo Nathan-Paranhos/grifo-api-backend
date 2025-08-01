@@ -17,11 +17,7 @@ class DatabaseManager {
   private pool: Pool | null = null;
   private isConnected = false;
 
-  constructor() {
-    this.initializePool();
-  }
-
-  private initializePool(): void {
+  public async initialize(): Promise<void> {
     try {
       const config: DatabaseConfig = {
         host: process.env.DATABASE_HOST || 'localhost',
@@ -60,8 +56,7 @@ class DatabaseManager {
         this.isConnected = false;
       });
 
-      // Testa a conexão
-      this.testConnection();
+      await this.testConnection();
 
     } catch (error) {
       logger.error('Erro ao inicializar pool PostgreSQL:', error);
@@ -295,8 +290,11 @@ class DatabaseManager {
   }
 }
 
-// Instância singleton
 const databaseManager = new DatabaseManager();
+
+export const initializeDatabase = async () => {
+  await databaseManager.initialize();
+};
 
 export default databaseManager;
 export { DatabaseManager };

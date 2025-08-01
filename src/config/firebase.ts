@@ -5,55 +5,37 @@ import logger from './logger';
 let db: admin.firestore.Firestore | undefined;
 let firebaseInitialized = false;
 
-export const initializeFirebase = (): Promise<admin.firestore.Firestore | null> => {
-  return new Promise((resolve, reject) => {
-    if (firebaseInitialized && db) {
-      return resolve(db);
+export const initializeFirebase = async (): Promise<void> => {
+  if (firebaseInitialized) {
+    logger.info('Firebase already initialized.');
+    return;
+  }
+
+  try {
+    const credentialsJson = process.env.FIREBASE_CREDENTIALS;
+    if (!credentialsJson) {
+      throw new Error('FIREBASE_CREDENTIALS environment variable not set.');
     }
 
-    try {
-      if (admin.apps.length === 0) {
-        const credentialsJson = process.env.FIREBASE_CREDENTIALS;
-        if (!credentialsJson) {
-          logger.warn('Firebase credentials não configuradas. Continuando sem Firebase.');
-          firebaseInitialized = false;
-          return resolve(null);
-        }
+    const serviceAccount = JSON.parse(credentialsJson);
 
-        try {
-          const serviceAccount = JSON.parse(credentialsJson);
-
-          admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount),
-            storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-          });
-
-          logger.info('Firebase Admin SDK inicializado com sucesso via variável de ambiente.');
-          
-          db = admin.firestore();
-          firebaseInitialized = true;
-          resolve(db);
-        } catch (firebaseError) {
-          logger.warn('Erro ao inicializar Firebase. Continuando sem Firebase:', firebaseError);
-          firebaseInitialized = false;
-          return resolve(null);
-        }
-      } else {
-        db = admin.firestore();
-        firebaseInitialized = true;
-        resolve(db);
-      }
-    } catch (error) {
-      logger.error(
-        'Erro ao inicializar Firebase Admin SDK. Verifique a variável FIREBASE_CREDENTIALS.',
-        error
-      );
-      logger.warn('A autenticação usará apenas JWT.');
-      logger.warn('Continuando sem Firebase.');
-      firebaseInitialized = false;
-      return resolve(null);
+    if (admin.apps.length === 0) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+      });
+      logger.info('Firebase Admin SDK initialized successfully.');
+    } else {
+      logger.info('Firebase Admin SDK was already initialized.');
     }
-  });
+
+    db = admin.firestore();
+    firebaseInitialized = true;
+
+  } catch (error) {
+    logger.error('Failed to initialize Firebase Admin SDK.', error);
+    throw error; // Re-throw the error to be caught by the caller
+  }
 };
 
 // Função para verificar um token do Firebase

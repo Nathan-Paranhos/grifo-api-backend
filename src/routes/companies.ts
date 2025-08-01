@@ -1,5 +1,5 @@
-import { Router, Request, Response } from 'express';
-import { authMiddleware } from '../config/security';
+import { Router, Response } from 'express';
+import { authenticateToken, Request } from '../config/security';
 import { validateRequest } from '../utils/validation';
 import { sendSuccess, sendError } from '../utils/response';
 import logger from '../config/logger';
@@ -35,10 +35,10 @@ const router = Router();
  *       404:
  *         description: Empresa não encontrada
  */
-router.get('/', authMiddleware, async (req: Request, res: Response) => {
+router.get('/', authenticateToken, async (req: Request, res: Response) => {
   try {
     const { ativo, limit } = req.query;
-    const userRole = (req as any).user.role;
+    const userRole = req.user?.role;
     
     // Apenas admins podem listar todas as empresas
     if (userRole !== 'admin') {
@@ -86,11 +86,11 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
-router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
+router.get('/:id', authenticateToken, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const userEmpresaId = (req as any).user.empresaId;
-    const userRole = (req as any).user.role;
+    const userEmpresaId = req.user?.empresaId;
+    const userRole = req.user?.role;
     
     // Usuários só podem ver sua própria empresa, exceto admins
     if (userRole !== 'admin' && userEmpresaId !== id) {

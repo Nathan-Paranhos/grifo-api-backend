@@ -1198,7 +1198,7 @@ GET /api/v1/notifications?page=1&limit=10&read=false&type=inspection
 **Exemplo de Requisição**:
 ```bash
 curl -X POST \
-  http://localhost:3000/api/v1/uploads/images \
+  https://grifo-api.onrender.com/api/v1/uploads/images \
   -H 'Authorization: Bearer YOUR_JWT_TOKEN' \
   -H 'Content-Type: multipart/form-data' \
   -F 'files=@image1.jpg' \
@@ -1216,7 +1216,7 @@ curl -X POST \
       {
         "originalName": "image1.jpg",
         "filename": "1643723400000-image1.jpg",
-        "url": "https://storage.com/uploads/images/1643723400000-image1.jpg",
+        "url": "https://firebasestorage.googleapis.com/v0/b/grifo-vistorias.appspot.com/o/uploads%2Fimages%2F1643723400000-image1.jpg",
         "size": 2048576,
         "mimetype": "image/jpeg",
         "categoria": "ambiente",
@@ -1225,7 +1225,7 @@ curl -X POST \
       {
         "originalName": "image2.png",
         "filename": "1643723400001-image2.png",
-        "url": "https://storage.com/uploads/images/1643723400001-image2.png",
+        "url": "https://firebasestorage.googleapis.com/v0/b/grifo-vistorias.appspot.com/o/uploads%2Fimages%2F1643723400001-image2.png",
         "size": 1536000,
         "mimetype": "image/png",
         "categoria": "ambiente",
@@ -1258,7 +1258,7 @@ curl -X POST \
 **Exemplo de Requisição**:
 ```bash
 curl -X POST \
-  http://localhost:3000/api/v1/uploads/documents \
+  https://grifo-api.onrender.com/api/v1/uploads/documents \
   -H 'Authorization: Bearer YOUR_JWT_TOKEN' \
   -H 'Content-Type: multipart/form-data' \
   -F 'files=@contrato.pdf' \
@@ -1804,7 +1804,7 @@ node test_api_production.js
 #### 1. Autenticação
 ```bash
 # Login do vistoriador
-curl -X POST http://localhost:3000/api/auth/login \
+curl -X POST https://grifo-api.onrender.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "firebaseToken": "eyJhbGciOiJSUzI1NiIs...",
@@ -1815,14 +1815,14 @@ curl -X POST http://localhost:3000/api/auth/login \
 #### 2. Listar Vistorias Pendentes
 ```bash
 # Buscar vistorias pendentes do vistoriador
-curl -X GET "http://localhost:3000/api/inspections?status=Pendente&vistoriadorId=vistoriador_123" \
+curl -X GET "https://grifo-api.onrender.com/api/inspections?status=Pendente&vistoriadorId=vistoriador_123" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
 #### 3. Iniciar Vistoria
 ```bash
 # Atualizar status para "Em Andamento"
-curl -X PUT http://localhost:3000/api/inspections/inspection_123 \
+curl -X PUT https://grifo-api.onrender.com/api/inspections/inspection_123 \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1833,7 +1833,7 @@ curl -X PUT http://localhost:3000/api/inspections/inspection_123 \
 #### 4. Upload de Fotos
 ```bash
 # Upload de imagens da vistoria
-curl -X POST http://localhost:3000/api/v1/uploads/images \
+curl -X POST https://grifo-api.onrender.com/api/v1/uploads/images \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -F "files=@sala.jpg" \
   -F "files=@cozinha.jpg" \
@@ -1843,7 +1843,7 @@ curl -X POST http://localhost:3000/api/v1/uploads/images \
 #### 5. Finalizar Vistoria
 ```bash
 # Atualizar com dados completos e finalizar
-curl -X PUT http://localhost:3000/api/inspections/inspection_123 \
+curl -X PUT https://grifo-api.onrender.com/api/inspections/inspection_123 \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -1851,7 +1851,7 @@ curl -X PUT http://localhost:3000/api/inspections/inspection_123 \
     "observacoes": "Vistoria realizada com sucesso",
     "fotos": [
       {
-        "url": "https://storage.com/uploads/sala.jpg",
+        "url": "https://firebasestorage.googleapis.com/v0/b/grifo-vistorias.appspot.com/o/uploads%2Fsala.jpg",
         "descricao": "Sala principal",
         "categoria": "ambiente"
       }
@@ -1875,13 +1875,13 @@ curl -X PUT http://localhost:3000/api/inspections/inspection_123 \
 
 #### 1. Verificar Status de Sincronização
 ```bash
-curl -X GET "http://localhost:3000/api/v1/sync/status?lastSync=2025-01-25T10:00:00Z" \
+curl -X GET "https://grifo-api.onrender.com/api/v1/sync/status?lastSync=2025-01-25T10:00:00Z" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
 #### 2. Sincronizar Dados Pendentes
 ```bash
-curl -X POST http://localhost:3000/api/v1/sync \
+curl -X POST https://grifo-api.onrender.com/api/v1/sync \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -2009,7 +2009,7 @@ class GrifoAPI {
 }
 
 // Uso
-const api = new GrifoAPI('http://localhost:3000', 'your-jwt-token');
+const api = new GrifoAPI('https://grifo-api.onrender.com', 'your-jwt-token');
 
 // Listar vistorias pendentes
 const pendingInspections = await api.getInspections({ 
@@ -2024,12 +2024,259 @@ await api.updateInspection('inspection_123', {
 });
 ```
 
+## 🔥 Configuração do Firebase
+
+### Informações do Projeto Firebase
+
+**Projeto**: `grifo-vistorias`
+**URL do Console**: https://console.firebase.google.com/project/grifo-vistorias
+
+### Serviços Utilizados
+
+#### 1. Firebase Authentication
+- **Provedores habilitados**:
+  - Email/Password
+  - Google Sign-In
+  - Telefone (SMS)
+- **Domínios autorizados**:
+  - `grifovistorias.com`
+  - `app.grifovistorias.com`
+  - `portal.grifovistorias.com`
+  - `localhost` (apenas desenvolvimento)
+
+#### 2. Cloud Firestore
+- **Modo**: Produção
+- **Região**: `us-central1`
+- **Regras de Segurança**:
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Regra para empresas - apenas usuários da própria empresa
+    match /empresas/{empresaId} {
+      allow read, write: if request.auth != null && 
+        request.auth.token.empresaId == empresaId;
+    }
+    
+    // Regra para usuários - apenas o próprio usuário ou admin da empresa
+    match /usuarios/{userId} {
+      allow read, write: if request.auth != null && 
+        (request.auth.uid == userId || 
+         request.auth.token.role == 'admin');
+    }
+    
+    // Regra para propriedades - filtradas por empresa
+    match /propriedades/{propertyId} {
+      allow read, write: if request.auth != null && 
+        request.auth.token.empresaId == resource.data.empresaId;
+    }
+    
+    // Regra para vistorias - filtradas por empresa
+    match /vistorias/{inspectionId} {
+      allow read, write: if request.auth != null && 
+        request.auth.token.empresaId == resource.data.empresaId;
+    }
+  }
+}
+```
+
+#### 3. Cloud Storage
+- **Bucket**: `grifo-vistorias.appspot.com`
+- **Regras de Segurança**:
+```javascript
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Uploads organizados por empresa
+    match /uploads/{empresaId}/{allPaths=**} {
+      allow read, write: if request.auth != null && 
+        request.auth.token.empresaId == empresaId;
+    }
+    
+    // Imagens públicas (logos, etc.)
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null && 
+        request.auth.token.role == 'admin';
+    }
+  }
+}
+```
+
+#### 4. Cloud Functions
+- **Região**: `us-central1`
+- **Funções Implementadas**:
+  - `setCustomClaims`: Define claims personalizados após registro
+  - `processImageUpload`: Processa e otimiza imagens enviadas
+  - `sendNotification`: Envia notificações push
+  - `generateReport`: Gera relatórios em PDF
+
+### Configuração de Custom Claims
+
+O sistema utiliza custom claims para controle de acesso:
+
+```javascript
+// Exemplo de custom claims
+{
+  "empresaId": "empresa_123",
+  "role": "vistoriador",
+  "permissions": ["read:inspections", "write:inspections"],
+  "isActive": true
+}
+```
+
+### Variáveis de Ambiente Necessárias
+
+```env
+# Firebase Admin SDK
+FIREBASE_PROJECT_ID=grifo-vistorias
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@grifo-vistorias.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nXXXXX\n-----END PRIVATE KEY-----\n"
+
+# Firebase Storage
+FIREBASE_STORAGE_BUCKET=grifo-vistorias.appspot.com
+
+# Firebase Auth
+FIREBASE_AUTH_DOMAIN=grifo-vistorias.firebaseapp.com
+FIREBASE_API_KEY=AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+### Configuração do Cliente (Frontend)
+
+#### Web/React
+```javascript
+// firebase-config.js
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  authDomain: "grifo-vistorias.firebaseapp.com",
+  projectId: "grifo-vistorias",
+  storageBucket: "grifo-vistorias.appspot.com",
+  messagingSenderId: "123456789012",
+  appId: "1:123456789012:web:abcdef123456789012"
+};
+
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+```
+
+#### Android
+```json
+// google-services.json (colocar em app/)
+{
+  "project_info": {
+    "project_number": "123456789012",
+    "project_id": "grifo-vistorias",
+    "storage_bucket": "grifo-vistorias.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123456789012:android:abcdef123456789012",
+        "android_client_info": {
+          "package_name": "com.grifo.vistorias"
+        }
+      }
+    }
+  ]
+}
+```
+
+#### iOS
+```plist
+<!-- GoogleService-Info.plist -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PROJECT_ID</key>
+	<string>grifo-vistorias</string>
+	<key>STORAGE_BUCKET</key>
+	<string>grifo-vistorias.appspot.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</string>
+	<key>BUNDLE_ID</key>
+	<string>com.grifo.vistorias</string>
+</dict>
+</plist>
+```
+
+### Estrutura do Banco de Dados
+
+#### Coleções Principais
+
+```
+📁 empresas/
+  📄 {empresaId}
+    - nome: string
+    - cnpj: string
+    - email: string
+    - telefone: string
+    - endereco: object
+    - plano: string
+    - ativo: boolean
+    - criadoEm: timestamp
+
+📁 usuarios/
+  📄 {userId}
+    - email: string
+    - nome: string
+    - role: string
+    - empresaId: string
+    - telefone: string
+    - ativo: boolean
+    - ultimoLogin: timestamp
+
+📁 propriedades/
+  📄 {propertyId}
+    - empresaId: string
+    - endereco: object
+    - tipo: string
+    - proprietario: object
+    - caracteristicas: object
+    - criadoEm: timestamp
+
+📁 vistorias/
+  📄 {inspectionId}
+    - empresaId: string
+    - propriedadeId: string
+    - vistoriadorId: string
+    - tipo: string
+    - status: string
+    - dataVistoria: timestamp
+    - observacoes: string
+    - fotos: array
+    - checklists: array
+    - criadoEm: timestamp
+```
+
+### Monitoramento e Logs
+
+- **Firebase Console**: https://console.firebase.google.com/project/grifo-vistorias
+- **Logs de Autenticação**: Firebase Console > Authentication > Users
+- **Logs do Firestore**: Firebase Console > Firestore Database
+- **Logs do Storage**: Firebase Console > Storage
+- **Métricas de Uso**: Firebase Console > Analytics
+
+### Backup e Recuperação
+
+- **Backup automático**: Configurado via Firebase Console
+- **Exportação de dados**: `gcloud firestore export gs://grifo-vistorias-backup`
+- **Importação de dados**: `gcloud firestore import gs://grifo-vistorias-backup/[EXPORT_PREFIX]`
+
 ## 📞 Suporte
 
 Para suporte técnico ou dúvidas sobre a API:
 - **Documentação Interativa**: https://grifo-api.onrender.com/api-docs
 - **Health Check**: https://grifo-api.onrender.com/api/health
 - **Logs**: Disponíveis no dashboard do Render
+- **Firebase Console**: https://console.firebase.google.com/project/grifo-vistorias
 
 ---
 

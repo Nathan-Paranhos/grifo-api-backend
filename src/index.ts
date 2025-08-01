@@ -53,6 +53,20 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Configurar middlewares de segurança
 configureSecurityMiddleware(app);
 
+// Garantir que CORS está configurado com credentials
+app.use(cors({
+  origin: [
+    'https://grifo-portal-v1.netlify.app',
+    'https://portal.grifovistorias.com',
+    'https://app.grifovistorias.com',
+    'http://localhost:3000',
+    'http://localhost:5173'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
 // Middleware de logging para requisições HTTP
 app.use((req, res, next) => {
   logger.http(`${req.method} ${req.url}`);
@@ -176,12 +190,14 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   });
 });
 
-// Handle 404 routes
+// Handle 404 routes - garantir resposta JSON
 app.use((req, res) => {
   logger.warn(`Rota não encontrada: ${req.method} ${req.url}`);
   res.status(404).json({
     success: false,
-    error: 'Rota não encontrada'
+    error: 'Recurso não encontrado',
+    message: `Endpoint ${req.method} ${req.url} não existe`,
+    timestamp: new Date().toISOString()
   });
 });
 

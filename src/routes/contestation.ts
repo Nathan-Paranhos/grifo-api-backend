@@ -9,7 +9,8 @@ interface Request extends ExpressRequest {
     empresaId: string; 
   };
 }
-import { authMiddleware } from '../config/security';
+
+import { authMiddleware, requireEmpresa } from '../config/security';
 import { sendSuccess, sendError } from '../utils/response';
 import logger from '../config/logger';
 import { validateRequest, contestationSchema, contestationStatusSchema } from '../utils/validation';
@@ -23,6 +24,7 @@ const router = Router();
  */
 router.post('/',
   authMiddleware,
+  requireEmpresa,
   validateRequest({ body: contestationSchema }),
   async (req: Request, res: Response) => {
     try {
@@ -82,19 +84,15 @@ router.post('/',
  */
 router.get('/',
   authMiddleware,
+  requireEmpresa,
   async (req: Request, res: Response) => {
     try {
-      const { empresaId, inspectionId, status, clienteId } = req.query as {
-        empresaId?: string;
+      const { inspectionId, status, clienteId } = req.query as {
         inspectionId?: string;
         status?: string;
         clienteId?: string;
       };
-
-      if (!empresaId) {
-        logger.warn('Tentativa de listar contestações sem fornecer empresaId');
-        return sendError(res, 'ID da empresa é obrigatório', 400);
-      }
+      const empresaId = req.user?.empresaId;
 
       logger.info(`Listando contestações para empresa ${empresaId}`);
 
@@ -159,15 +157,11 @@ router.get('/',
  */
 router.get('/:id',
   authMiddleware,
+  requireEmpresa,
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const { empresaId } = req.query as { empresaId?: string };
-
-      if (!empresaId) {
-        logger.warn('Tentativa de acessar contestação sem fornecer empresaId');
-        return sendError(res, 'ID da empresa é obrigatório', 400);
-      }
+      const empresaId = req.user?.empresaId;
 
       logger.info(`Buscando contestação ${id} para empresa ${empresaId}`);
 
@@ -220,6 +214,7 @@ router.get('/:id',
  */
 router.put('/:id/status',
   authMiddleware,
+  requireEmpresa,
   validateRequest({
     body: contestationStatusSchema
   }),
@@ -227,12 +222,7 @@ router.put('/:id/status',
     try {
       const { id } = req.params;
       const { status, resposta } = req.body;
-      const { empresaId } = req.query as { empresaId?: string };
-
-      if (!empresaId) {
-        logger.warn('Tentativa de atualizar contestação sem fornecer empresaId');
-        return sendError(res, 'ID da empresa é obrigatório', 400);
-      }
+      const empresaId = req.user?.empresaId;
 
       logger.info(`Atualizando status da contestação ${id} para ${status}`);
 
@@ -280,13 +270,10 @@ router.put('/:id/status',
  */
 router.get('/stats',
   authMiddleware,
+  requireEmpresa,
   async (req: Request, res: Response) => {
     try {
-      const { empresaId } = req.query as { empresaId?: string };
-
-      if (!empresaId) {
-        return sendError(res, 'ID da empresa é obrigatório', 400);
-      }
+      const empresaId = req.user?.empresaId;
 
       logger.info(`Buscando estatísticas de contestações para empresa ${empresaId}`);
 

@@ -199,3 +199,90 @@
 2025-07-31 07:50:09:509 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
 2025-07-31 07:50:09:509 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
 2025-07-31 07:50:09:509 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 00:34:27:3427 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 00:34:27:3427 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 00:34:28:3428 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 00:34:28:3428 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 00:34:28:3428 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 00:49:00:490 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 00:49:00:490 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 00:49:00:490 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 00:49:00:490 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 00:49:00:490 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 00:51:11:5111 [34mdebug[39m: [34mCORS check - Origin: http://localhost:3001[39m
+2025-08-01 00:51:11:5111 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-08-01 00:51:11:5111 [34mdebug[39m: [34mCORS: Origin permitida: http://localhost:3001[39m
+2025-08-01 00:51:11:5111 [35mhttp[39m: [35mGET /@vite/client[39m
+2025-08-01 00:51:11:5111 [33mwarn[39m: [33mRota não encontrada: GET /@vite/client[39m
+2025-08-01 00:51:11:5111 [35mhttp[39m: [35mGET /@vite/client 404 - 5ms[39m
+2025-08-01 01:02:55:255 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 01:02:55:255 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 01:02:55:255 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 01:02:55:255 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 01:02:55:255 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 01:03:20:320 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 01:03:20:320 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 01:03:20:320 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 01:03:20:320 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 01:03:20:320 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 01:03:38:338 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 01:03:38:338 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 01:03:39:339 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 01:03:39:339 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 01:03:39:339 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 01:04:01:41 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 01:04:01:41 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 01:04:01:41 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 01:04:01:41 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 01:04:01:41 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 01:04:20:420 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 01:04:21:421 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 01:04:21:421 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 01:04:21:421 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 01:04:21:421 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 01:04:59:459 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 01:05:00:50 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 01:05:01:51 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 01:05:01:51 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 01:05:01:51 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 01:05:51:551 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 01:05:51:551 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 01:05:52:552 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 01:05:52:552 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 01:05:52:552 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 01:06:27:627 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 01:06:27:627 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 01:06:28:628 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 01:06:28:628 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 01:06:28:628 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 01:06:30:630 [34mdebug[39m: [34mCORS check - Origin: http://localhost:3001[39m
+2025-08-01 01:06:30:630 [34mdebug[39m: [34mCORS check - Allowed origins: http://localhost:3000, http://localhost:3001, http://localhost:5173, http://localhost:4173, https://portal.grifovistorias.com, https://app.grifovistorias.com, https://grifo-portal.netlify.app, https://visio-portal.netlify.app, https://www.visio-portal.com, https://www.grifo-portal.com, https://grifo-portal-v1.netlify.app, android-app://com.grifo.vistorias[39m
+2025-08-01 01:06:30:630 [34mdebug[39m: [34mCORS: Origin permitida: http://localhost:3001[39m
+2025-08-01 01:06:30:630 [35mhttp[39m: [35mGET /@vite/client[39m
+2025-08-01 01:06:30:630 [33mwarn[39m: [33mRota não encontrada: GET /@vite/client[39m
+2025-08-01 01:06:30:630 [35mhttp[39m: [35mGET /@vite/client 404 - 2ms[39m
+2025-08-01 01:06:47:647 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 01:06:48:648 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 01:06:48:648 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 01:06:48:648 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 01:06:48:648 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 01:07:06:76 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 01:07:06:76 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 01:07:06:76 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 01:07:06:76 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 01:07:06:76 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 01:07:40:740 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 01:07:40:740 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 01:07:40:740 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 01:07:40:740 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 01:07:40:740 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 01:09:01:91 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 01:09:02:92 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 01:09:02:92 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 01:09:02:92 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 01:09:02:92 [32minfo[39m: [32mServidor rodando na porta 3001[39m
+2025-08-01 01:09:17:917 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-01 01:09:17:917 [32minfo[39m: [32mFirebase Admin SDK inicializado com sucesso via variável de ambiente.[39m
+2025-08-01 01:09:17:917 [32minfo[39m: [32mFirebase inicializado com sucesso[39m
+2025-08-01 01:09:17:917 [32minfo[39m: [32mServidor iniciado no ambiente development[39m
+2025-08-01 01:09:17:917 [32minfo[39m: [32mServidor rodando na porta 3001[39m

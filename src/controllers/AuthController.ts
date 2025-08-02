@@ -64,27 +64,9 @@ export class AuthController {
       
       return sendSuccess(res, userData, 'Token verificado com sucesso');
     } catch (error) {
-      logger.error('Erro na verificação do token:', error);
-      
-      if (error instanceof CustomError) {
-        return next(error);
-      }
-      
-      // Erros específicos do Firebase Auth
-      if (error.code) {
-        switch (error.code) {
-          case 'auth/id-token-expired':
-            return next(createAuthError('Token expirado'));
-          case 'auth/id-token-revoked':
-            return next(createAuthError('Token revogado'));
-          case 'auth/invalid-id-token':
-            return next(createAuthError('Token inválido'));
-          default:
-            return next(createAuthError('Erro na autenticação'));
-        }
-      }
-      
-      next(new CustomError('Erro interno na verificação do token', 500));
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido ao validar token';
+      logger.error('Erro ao validar token:', { error: errorMessage });
+      return sendError(res, 401, 'Token inválido ou expirado.');
     }
   };
 

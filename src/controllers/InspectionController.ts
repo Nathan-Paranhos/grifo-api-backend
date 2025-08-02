@@ -21,10 +21,10 @@ export class InspectionController {
       const data: CreateInspectionData = req.body;
 
       // Garantir que a vistoria seja criada para a empresa do usuário
-      data.empresaId = empresaId;
+      data.empresaId = empresaId; // Adicionado para garantir o contexto da empresa
       data.vistoriadorId = data.vistoriadorId || uid;
 
-      const inspection = await this.inspectionService.createInspection(data);
+      const inspection = await this.inspectionService.createInspection(empresaId, data);
       
       logger.info(`Vistoria criada:`, { id: inspection.id, empresaId, createdBy: uid });
       
@@ -110,7 +110,7 @@ export class InspectionController {
         throw createForbiddenError('Você só pode editar suas próprias vistorias');
       }
 
-      const inspection = await this.inspectionService.updateInspection(id, data, empresaId);
+      const inspection = await this.inspectionService.updateInspection(id, empresaId, data);
       
       logger.info(`Vistoria atualizada:`, { id, empresaId, updatedBy: uid });
       
@@ -142,13 +142,11 @@ export class InspectionController {
 
       const photoData = {
         url,
-        comentario,
+        descricao: comentario,
         categoria: categoria || 'geral',
-        uploadedBy: uid,
-        uploadedAt: new Date()
       };
 
-      const inspection = await this.inspectionService.addPhoto(id, photoData, empresaId);
+      const inspection = await this.inspectionService.addPhoto(id, empresaId, photoData);
       
       logger.info(`Foto adicionada à vistoria:`, { vistoriaId: id, empresaId, uploadedBy: uid });
       
@@ -173,7 +171,7 @@ export class InspectionController {
         throw createForbiddenError('Você só pode remover fotos das suas próprias vistorias');
       }
 
-      const inspection = await this.inspectionService.removePhoto(id, photoId, empresaId);
+      const inspection = await this.inspectionService.removePhoto(id, empresaId, photoId);
       
       logger.info(`Foto removida da vistoria:`, { vistoriaId: id, photoId, empresaId, removedBy: uid });
       
@@ -198,13 +196,10 @@ export class InspectionController {
 
       const contestationData = {
         motivo,
-        descricao,
-        contestadoPor: uid,
-        dataContestacao: new Date(),
-        status: 'pendente' as const
+        detalhes: descricao,
       };
 
-      const inspection = await this.inspectionService.addContestation(id, contestationData, empresaId);
+      const inspection = await this.inspectionService.addContestation(id, empresaId, contestationData);
       
       logger.info(`Contestação adicionada à vistoria:`, { vistoriaId: id, empresaId, contestadoPor: uid });
       
@@ -252,8 +247,8 @@ export class InspectionController {
       const targetVistoriadorId = papel === 'admin' ? vistoriadorId : uid;
 
       const inspections = await this.inspectionService.getInspectionsByVistoriador(
-        targetVistoriadorId,
         empresaId,
+        targetVistoriadorId,
         {
           limit: parseInt(limit as string),
           offset: parseInt(offset as string)
@@ -276,8 +271,8 @@ export class InspectionController {
       const { limit = '20', offset = '0' } = req.query;
 
       const inspections = await this.inspectionService.getInspectionsByImovel(
-        imovelId,
         empresaId,
+        imovelId,
         {
           limit: parseInt(limit as string),
           offset: parseInt(offset as string)
@@ -301,7 +296,7 @@ export class InspectionController {
       // Se não é admin, só pode ver suas próprias estatísticas
       const targetVistoriadorId = papel === 'admin' && vistoriadorId ? vistoriadorId as string : uid;
 
-      const stats = await this.inspectionService.getInspectionStats(empresaId, targetVistoriadorId);
+      const stats = await this.inspectionService.getStats(empresaId);
       
       return sendSuccess(res, stats, 'Estatísticas obtidas com sucesso');
     } catch (error) {
@@ -331,8 +326,8 @@ export class InspectionController {
 
       const inspection = await this.inspectionService.updateInspection(
         id,
-        { status },
-        empresaId
+        empresaId,
+        { status }
       );
       
       logger.info(`Status da vistoria atualizado:`, { id, status, empresaId, updatedBy: uid });

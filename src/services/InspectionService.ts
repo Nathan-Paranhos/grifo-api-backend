@@ -1,4 +1,5 @@
 import { InspectionRepository, Inspection, InspectionFilters } from '../repositories/InspectionRepository';
+export { InspectionFilters }; // Exportar para uso em outros módulos
 import { CompanyRepository } from '../repositories/CompanyRepository';
 import { QueryOptions } from '../repositories/BaseRepository';
 import logger from '../config/logger';

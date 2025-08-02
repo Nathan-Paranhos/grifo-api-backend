@@ -47,7 +47,11 @@ export class CompanyController {
       const { id } = req.params;
 
       // Usuários normais só podem ver sua própria empresa
-      const targetId = papel === 'admin' && id !== empresaId ? id : empresaId;
+      const targetId = (papel === 'admin' && id) ? id : empresaId;
+
+      if (!targetId) {
+        return next(createValidationError('ID da empresa não fornecido'));
+      }
 
       const company = await this.companyService.getCompanyById(targetId);
       
@@ -81,7 +85,7 @@ export class CompanyController {
       const { proprietarioId } = req.params;
 
       // Usuários normais só podem ver suas próprias empresas
-      const targetProprietarioId = papel === 'admin' ? proprietarioId : uid;
+      const targetProprietarioId = (papel === 'admin' && proprietarioId) ? proprietarioId : uid;
 
       const companies = await this.companyService.getCompaniesByProprietario(targetProprietarioId);
       
@@ -106,9 +110,9 @@ export class CompanyController {
       const { limit = '20', offset = '0', status } = req.query;
 
       const options = {
-        limit: parseInt(limit as string),
-        offset: parseInt(offset as string),
-        filters: status ? { status } : undefined
+        limit: parseInt(limit as string, 10),
+        offset: parseInt(offset as string, 10),
+        filters: status ? { status: status as string } : undefined
       };
 
       const companies = await this.companyService.listAllCompanies(options);
@@ -129,7 +133,11 @@ export class CompanyController {
       const data: UpdateCompanyData = req.body;
 
       // Usuários normais só podem editar sua própria empresa
-      const targetId = papel === 'admin' && id !== empresaId ? id : empresaId;
+      const targetId = (papel === 'admin' && id) ? id : empresaId;
+
+      if (!targetId) {
+        return next(createValidationError('ID da empresa não fornecido'));
+      }
 
       const company = await this.companyService.updateCompany(targetId, data);
       
@@ -182,7 +190,11 @@ export class CompanyController {
       }
 
       // Usuários normais só podem editar configurações da própria empresa
-      const targetId = papel === 'admin' && id !== empresaId ? id : empresaId;
+      const targetId = (papel === 'admin' && id) ? id : empresaId;
+
+      if (!targetId) {
+        return next(createValidationError('ID da empresa não fornecido'));
+      }
 
       const company = await this.companyService.updateConfiguracoes(targetId, configuracoes);
       

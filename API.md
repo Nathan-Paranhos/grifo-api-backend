@@ -9,7 +9,7 @@
 - **Ambiente**: Production
 - **Documentação Interativa**: https://grifo-api.onrender.com/api-docs
 - **Health Check**: https://grifo-api.onrender.com/api/health
-- **Tecnologias**: Node.js v22.16.0, TypeScript, Firebase, Express.js
+- **Tecnologias**: Node.js v18+, TypeScript, Firebase, Express.js
 - **Banco de Dados**: Firebase Firestore
 - **Autenticação**: Firebase Authentication
 
@@ -133,31 +133,19 @@ O sistema utiliza custom claims do Firebase para controle de acesso:
   "environment": "production",
   "endpoints": {
     "public": ["/api/health"],
-    "legacy": [
-      "/api/dashboard",
+    "endpoints": [
+      "/api/auth",
+      "/api/users",
+      "/api/companies",
       "/api/inspections",
+      "/api/dashboard",
       "/api/properties",
       "/api/sync",
       "/api/contestations",
-      "/api/users",
-      "/api/empresas",
       "/api/notifications",
       "/api/uploads",
       "/api/exports",
       "/api/reports"
-    ],
-    "v1": [
-      "/api/v1/dashboard",
-      "/api/v1/inspections",
-      "/api/v1/properties",
-      "/api/v1/sync",
-      "/api/v1/contestations",
-      "/api/v1/users",
-      "/api/v1/empresas",
-      "/api/v1/notifications",
-      "/api/v1/uploads",
-      "/api/v1/exports",
-      "/api/v1/reports"
     ]
   },
   "authentication": {
@@ -177,7 +165,7 @@ O sistema utiliza custom claims do Firebase para controle de acesso:
 
 #### 👥 Usuários
 
-##### GET /api/users ou /api/v1/users
+##### GET /api/users
 **Descrição**: Lista usuários da empresa
 **Autenticação**: Obrigatória
 **Filtros**: Por `empresaId` do usuário autenticado

@@ -118,33 +118,23 @@ API backend robusta e escalável para o sistema Grifo, responsável por gerencia
 
 ```
 src/
-├── 📂 src/                          # Código fonte TypeScript
-│   ├── 📂 config/                   # Configurações (Firebase, Logger, Swagger)
-│   ├── 📂 middleware/               # Middlewares (auth, validation, rate-limit)
-│   ├── 📂 routes/                   # Definição das rotas da API
-│   │   ├── v1/                      # Rotas da API v1
-│   │   └── legacy/                  # Rotas legacy para compatibilidade
-│   ├── 📂 types/                    # Definições de tipos TypeScript
-│   ├── 📂 utils/                    # Funções utilitárias
-│   └── 📄 index.ts                  # Ponto de entrada da aplicação
-├── 📂 portal-integration/           # Biblioteca para integração com portais
-│   ├── 📄 grifoApi.ts              # Cliente API tipado
-│   ├── 📄 useAuth.tsx              # Hook de autenticação React
-│   ├── 📄 authInterceptor.ts       # Interceptor para requisições
-│   └── 📄 firebase.ts              # Configuração Firebase client
-├── 📂 portal-web/                   # Portal web de demonstração
-├── 📂 dist/                         # Código compilado (JavaScript)
+├── 📂 config/                   # Configurações (Firebase, Logger, Segurança, etc.)
+├── 📂 controllers/              # Controladores (lógica de requisição/resposta)
+├── 📂 middlewares/              # Middlewares (auth, erros, rate limiting, logging)
+├── 📂 repositories/             # Repositórios (abstração de acesso a dados)
+├── 📂 routes/                   # Definição das rotas da API
+├── 📂 services/                 # Serviços (lógica de negócio)
+├── 📂 types/                    # Definições de tipos TypeScript
+├── 📂 utils/                    # Funções utilitárias
+├── 📂 validators/               # Schemas de validação (Zod)
+└── 📄 index.ts                  # Ponto de entrada da aplicação
 ├── 📂 logs/                         # Arquivos de log da aplicação
 ├── 📄 .env.example                  # Template de variáveis de ambiente
-├── 📄 .env.development              # Configurações de desenvolvimento
 ├── 📄 .env.production               # Configurações de produção
 ├── 📄 Dockerfile                    # Configuração Docker
-├── 📄 render.yaml                   # Configuração deploy Render
+├── 📄 render.yaml                   # Configuração de deploy para o Render
 ├── 📄 package.json                  # Dependências e scripts
-├── 📄 tsconfig.json                 # Configurações TypeScript
-├── 📄 DOCUMENTACAO_COMPLETA.md      # Documentação técnica completa
-├── 📄 PARAMETROS_API_COMPLETO.md    # Documentação de parâmetros
-└── 📄 test-*.js                     # Scripts de teste da API
+└── 📄 tsconfig.json                 # Configurações TypeScript
 ```
 
 ## 🔧 Configuração do Ambiente

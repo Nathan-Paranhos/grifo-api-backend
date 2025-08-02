@@ -1,123 +1,157 @@
-import { Router, Response } from 'express';
-import { authenticateToken, Request } from '../config/security';
-import { validateRequest } from '../utils/validation';
-import { sendSuccess, sendError } from '../utils/response';
-import logger from '../config/logger';
+import { Router } from 'express';
+import { companyController } from '../controllers';
+import { authenticateToken, requireRole } from '../middlewares/auth';
+import { generalLimiter, createLimiter } from '../middlewares/rateLimiter';
+import { validateRequest } from '../validators';
 import { z } from 'zod';
-import * as admin from 'firebase-admin';
-import { getDb } from '../config/firebase';
 
 const router = Router();
 
-/**
- * @openapi
- * /empresas/{empresaId}:
- *   get:
- *     summary: Retorna dados de uma empresa específica
- *     tags:
- *       - Empresas
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: empresaId
- *         required: true
- *         schema:
- *           type: string
- *         description: ID da empresa
- *     responses:
- *       200:
- *         description: Dados da empresa
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Company'
- *       404:
- *         description: Empresa não encontrada
- */
-router.get('/', authenticateToken, async (req: Request, res: Response) => {
-  try {
-    const { ativo, limit } = req.query;
-    const userRole = req.user?.role;
-    
-    // Apenas admins podem listar todas as empresas
-    if (userRole !== 'admin') {
-      return sendError(res, 'Acesso negado', 403);
-    }
-    
-    logger.info('Buscando empresas', { ativo, limit });
-    
-    // Buscar empresas no Firestore
-    const db = getDb();
-    let query: admin.firestore.Query = db.collection('companies');
-    
-    // Aplicar filtros
-    if (ativo !== undefined) {
-      const isActive = ativo === 'true';
-      query = query.where('ativo', '==', isActive);
-    }
-    
-    // Aplicar limite
-    if (limit) {
-      const limitNum = parseInt(limit as string);
-      query = query.limit(limitNum);
-    }
-    
-    // Ordenar por data de criação
-    query = query.orderBy('createdAt', 'desc');
-    
-    const snapshot = await query.get();
-    
-    if (snapshot.empty) {
-      logger.info('Nenhuma empresa encontrada');
-      return sendSuccess(res, []);
-    }
-    
-    const companies = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    
-    logger.info(`Encontradas ${companies.length} empresas`);
-    sendSuccess(res, companies);
-  } catch (error) {
-    logger.error('Erro ao buscar empresas:', error);
-    sendError(res, 'Erro interno do servidor', 500);
-  }
+// Schemas de validação
+const createCompanySchema = z.object({
+  body: z.object({
+    nome: z.string().min(1, 'Nome é obrigatório'),
+    cnpj: z.string().regex(/^\d{14}$/, 'CNPJ deve ter 14 dígitos'),
+    email: z.string().email('Email inválido'),
+    telefone: z.string().optional(),
+    endereco: z.object({
+      logradouro: z.string(),
+      numero: z.string(),
+      complemento: z.string().optional(),
+      bairro: z.string(),
+      cidade: z.string(),
+      estado: z.string(),
+      cep: z.string()
+    }).optional(),
+    plano: z.enum(['basico', 'profissional', 'empresarial']).default('basico'),
+    proprietarioId: z.string().min(1, 'ID do proprietário é obrigatório')
+  })
 });
 
-router.get('/:id', authenticateToken, async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const userEmpresaId = req.user?.empresaId;
-    const userRole = req.user?.role;
-    
-    // Usuários só podem ver sua própria empresa, exceto admins
-    if (userRole !== 'admin' && userEmpresaId !== id) {
-      return sendError(res, 'Acesso negado', 403);
-    }
-    
-    logger.info(`Buscando empresa ${id}`);
-    
-    // Buscar empresa no Firestore
-    const db = getDb();
-    const companyDoc = await db.collection('companies').doc(id).get();
-    
-    if (!companyDoc.exists) {
-      logger.warn(`Empresa ${id} não encontrada`);
-      return sendError(res, 'Empresa não encontrada', 404);
-    }
-    
-    const company = {
-      id: companyDoc.id,
-      ...companyDoc.data()
-    };
-    
-    sendSuccess(res, company);
-  } catch (error) {
-    logger.error('Erro ao buscar empresa:', error);
-    sendError(res, 'Erro interno do servidor', 500);
-  }
+const updateCompanySchema = z.object({
+  body: z.object({
+    nome: z.string().min(1).optional(),
+    email: z.string().email().optional(),
+    telefone: z.string().optional(),
+    endereco: z.object({
+      logradouro: z.string(),
+      numero: z.string(),
+      complemento: z.string().optional(),
+      bairro: z.string(),
+      cidade: z.string(),
+      estado: z.string(),
+      cep: z.string()
+    }).optional()
+  })
 });
+
+const updateStatusSchema = z.object({
+  body: z.object({
+    status: z.enum(['ativa', 'suspensa', 'cancelada'])
+  })
+});
+
+const updateConfiguracoesSchema = z.object({
+  body: z.object({
+    configuracoes: z.object({
+      limiteUsuarios: z.number().min(1).optional(),
+      limiteVistorias: z.number().min(1).optional(),
+      limiteFotos: z.number().min(1).optional(),
+      modulosAtivos: z.array(z.string()).optional()
+    })
+  })
+});
+
+const updatePlanoSchema = z.object({
+  body: z.object({
+    plano: z.enum(['basico', 'profissional', 'empresarial'])
+  })
+});
+
+// Aplicar autenticação a todas as rotas
+router.use(authenticateToken);
+
+/**
+ * GET /api/companies
+ * Lista todas as empresas (apenas admin)
+ */
+router.get('/', 
+  generalLimiter,
+  requireRole(['admin']),
+  companyController.list
+);
+
+/**
+ * POST /api/companies
+ * Cria uma nova empresa (apenas admin)
+ */
+router.post('/',
+  createLimiter,
+  requireRole(['admin']),
+  validateRequest(createCompanySchema),
+  companyController.create
+);
+
+/**
+ * GET /api/companies/:id
+ * Busca uma empresa específica
+ */
+router.get('/:id',
+  generalLimiter,
+  companyController.getById
+);
+
+/**
+ * PUT /api/companies/:id
+ * Atualiza dados de uma empresa
+ */
+router.put('/:id',
+  generalLimiter,
+  validateRequest(updateCompanySchema),
+  companyController.update
+);
+
+/**
+ * PATCH /api/companies/:id/status
+ * Atualiza status de uma empresa (apenas admin)
+ */
+router.patch('/:id/status',
+  generalLimiter,
+  requireRole(['admin']),
+  validateRequest(updateStatusSchema),
+  companyController.updateStatus
+);
+
+/**
+ * PATCH /api/companies/:id/configuracoes
+ * Atualiza configurações de uma empresa (apenas admin)
+ */
+router.patch('/:id/configuracoes',
+  generalLimiter,
+  requireRole(['admin']),
+  validateRequest(updateConfiguracoesSchema),
+  companyController.updateConfiguracoes
+);
+
+/**
+ * PATCH /api/companies/:id/plano
+ * Atualiza plano de uma empresa (apenas admin)
+ */
+router.patch('/:id/plano',
+  generalLimiter,
+  requireRole(['admin']),
+  validateRequest(updatePlanoSchema),
+  companyController.updatePlano
+);
+
+/**
+ * DELETE /api/companies/:id
+ * Remove uma empresa (apenas admin)
+ */
+router.delete('/:id',
+  generalLimiter,
+  requireRole(['admin']),
+  companyController.delete
+);
 
 export default router;

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 
 // Carregar variáveis de ambiente apenas em desenvolvimento
 // Em produção, o Render fornece as variáveis de ambiente diretamente
@@ -9,27 +10,34 @@ if (process.env.NODE_ENV !== 'production') {
     const envPath = path.resolve(__dirname, '../.env.development');
     dotenv.config({ path: envPath });
 }
-import fs from 'fs';
-import healthRoutes from './routes/health';
-import dashboardRoutes from './routes/dashboard';
-import inspectionsRouter from './routes/inspections';
-import { setupSwagger } from './config/swagger';
-import propertiesRoutes from './routes/properties';
-import syncRoutes from './routes/sync';
-import usersRoutes from './routes/users';
-import companiesRoutes from './routes/companies';
-import contestationRoutes from './routes/contestation';
 
-import authRoutes from './routes/auth';
-import notificationsRoutes from './routes/notifications';
-import uploadsRoutes from './routes/uploads';
-import exportsRoutes from './routes/exports';
-import reportsRoutes from './routes/reports';
-import { authenticateToken, corsOptions } from './config/security';
+// Importar configurações
+import { corsOptions } from './config/security';
 import logger from './config/logger';
 import { initializeFirebase } from './config/firebase';
 import { initializeDatabase } from './config/database';
 import { initializePortal } from './config/portal';
+import { setupSwagger } from './config/swagger';
+
+// Importar middlewares
+import { generalLimiter } from './middlewares/rateLimiter';
+import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
+import { requestLogger } from './middlewares/requestLogger';
+
+// Importar rotas refatoradas
+import apiRoutes from './routes';
+
+// Importar rotas legadas (para compatibilidade)
+import healthRoutes from './routes/health';
+import dashboardRoutes from './routes/dashboard';
+import propertiesRoutes from './routes/properties';
+import syncRoutes from './routes/sync';
+import contestationRoutes from './routes/contestation';
+import notificationsRoutes from './routes/notifications';
+import uploadsRoutes from './routes/uploads';
+import exportsRoutes from './routes/exports';
+import reportsRoutes from './routes/reports';
+import { authenticateToken } from './config/security';
 
 // Criar diretório de logs se não existir
 const logDir = path.join(__dirname, '../logs');
@@ -47,7 +55,7 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Middleware
+// Middlewares básicos
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -55,69 +63,41 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions)); // Enable pre-flight for all routes
 
-// Middleware de logging para requisições HTTP
-app.use((req, res, next) => {
-  logger.http(`${req.method} ${req.url}`);
-  logger.debug(`Headers: ${JSON.stringify(req.headers)}`);
-  const start = Date.now();
-  
-  res.on('finish', () => {
-    const duration = Date.now() - start;
-    logger.http(`${req.method} ${req.url} ${res.statusCode} - ${duration}ms`);
-  });
-  
-  next();
-});
+// Rate limiting global
+app.use(generalLimiter);
 
-// Routes
-app.use('/api/health', healthRoutes);
-app.use('/api/auth', authRoutes);
+// Middleware de logging
+app.use(requestLogger);
 
-// Legacy routes for mobile app compatibility (without /v1 prefix)
+// Rotas principais da API (nova arquitetura)
+app.use('/api', apiRoutes);
+
+// Legacy routes for mobile app compatibility (rotas antigas)
 const apiLegacy = express.Router();
 
-// Rotas públicas (não precisam de autenticação)
-app.use('/api/auth', authRoutes);
-// Rotas públicas (não precisam de autenticação)
-app.use('/api/health', healthRoutes);
-app.use('/api/auth', authRoutes);
-
-// A partir daqui, todas as rotas são protegidas
-app.use(authenticateToken);
+// Aplicar autenticação às rotas legadas
+apiLegacy.use(authenticateToken);
 
 apiLegacy.use('/dashboard', dashboardRoutes);
-apiLegacy.use('/inspections', inspectionsRouter);
 apiLegacy.use('/properties', propertiesRoutes);
 apiLegacy.use('/sync', syncRoutes);
-apiLegacy.use('/users', usersRoutes);
-apiLegacy.use('/empresas', companiesRoutes);
 apiLegacy.use('/contestations', contestationRoutes);
 apiLegacy.use('/notifications', notificationsRoutes);
 apiLegacy.use('/uploads', uploadsRoutes);
 apiLegacy.use('/exports', exportsRoutes);
 apiLegacy.use('/reports', reportsRoutes);
 
-
-app.use('/api', apiLegacy);
-
-// As rotas legadas e v1 já estarão protegidas pelo middleware global
-// Não é necessário aplicar novamente
-const apiV1 = express.Router();
-
-apiV1.use('/dashboard', dashboardRoutes);
-apiV1.use('/inspections', inspectionsRouter);
-apiV1.use('/properties', propertiesRoutes);
-apiV1.use('/sync', syncRoutes);
-apiV1.use('/users', usersRoutes);
-apiV1.use('/empresas', companiesRoutes);
-apiV1.use('/contestations', contestationRoutes);
-apiV1.use('/notifications', notificationsRoutes);
-apiV1.use('/uploads', uploadsRoutes);
-apiV1.use('/exports', exportsRoutes);
-apiV1.use('/reports', reportsRoutes);
+// Rotas de saúde legadas
+app.use('/api/health', healthRoutes);
 
 
-app.use('/api/v1', apiV1);
+app.use('/api/legacy', apiLegacy);
+
+// Middleware para rotas não encontradas
+app.use(notFoundHandler);
+
+// Middleware global de tratamento de erros
+app.use(errorHandler);
 
 // Setup Swagger
 setupSwagger(app);

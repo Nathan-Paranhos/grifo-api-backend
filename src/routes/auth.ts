@@ -33,13 +33,13 @@ const updateAuthSettingsSchema = z.object({
 // Rotas públicas (sem autenticação)
 router.post('/verify-token', 
   authLimiter,
-  validateRequest(verifyTokenSchema),
+  validateRequest({ body: verifyTokenSchema }),
   authController.verifyToken
 );
 
 router.post('/reset-password',
   authLimiter,
-  validateRequest(passwordResetSchema),
+  validateRequest({ body: passwordResetSchema }),
   authController.requestPasswordReset
 );
 
@@ -76,7 +76,7 @@ router.get('/company-info',
 
 router.patch('/settings',
   authenticateToken,
-  validateRequest(updateAuthSettingsSchema),
+  validateRequest({ body: updateAuthSettingsSchema }),
   authController.updateAuthSettings
 );
 

@@ -30,3 +30,17 @@
 2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
 2025-07-29 07:53:40:5340 [31merror[39m: [31mFirebase Admin SDK não inicializado. A autenticação não pode prosseguir.[39m
 2025-07-30 23:35:18:3518 [31merror[39m: [31mErro durante login: The default Firebase app does not exist. Make sure you call initializeApp() before using any of the Firebase services.[39m
+2025-08-03 05:44:32:4432 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 06:27:27:2727 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 06:28:05:285 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 06:29:02:292 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 06:29:45:2945 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-03 06:29:45:2945 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 07:02:55:255 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-03 07:02:55:255 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 07:05:50:550 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-03 07:05:50:550 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 07:24:08:248 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-03 07:24:08:248 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 07:24:57:2457 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-03 07:24:57:2457 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m

@@ -2,7 +2,7 @@ import { Router, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/response';
 import * as admin from 'firebase-admin';
 import logger from '../config/logger';
-import { validateRequest } from '../utils/validation';
+import { validateRequest } from '../validators';
 import { Request } from '../config/security';
 import { db } from '../config/firebase';
 import { z } from 'zod';
@@ -53,8 +53,8 @@ function calculateDateRange(period: string): { startDate: Date; endDate: Date } 
 }
 
 // Função auxiliar para buscar dados de vistorias
-async function getInspectionsData(empresaId: string, startDate: Date, endDate: Date, filters: any = {}) {
-  let query: admin.firestore.Query = db!.collection('inspections')
+async function getInspectionsData(empresaId: string, startDate: Date, endDate: Date, filters: { vistoriadorId?: string; status?: string } = {}) {
+  let query: admin.firestore.Query<admin.firestore.DocumentData> = db!.collection('inspections')
     .where('empresaId', '==', empresaId)
     .where('createdAt', '>=', startDate.toISOString())
     .where('createdAt', '<=', endDate.toISOString());
@@ -72,8 +72,8 @@ async function getInspectionsData(empresaId: string, startDate: Date, endDate: D
 }
 
 // Função auxiliar para buscar dados de imóveis
-async function getPropertiesData(empresaId: string, filters: any = {}) {
-  let query: admin.firestore.Query = db!.collection('properties')
+async function getPropertiesData(empresaId: string, filters: { propertyType?: string } = {}) {
+  let query: admin.firestore.Query<admin.firestore.DocumentData> = db!.collection('properties')
     .where('empresaId', '==', empresaId);
 
   if (filters.propertyType) {
@@ -147,7 +147,7 @@ async function getUsersData(empresaId: string) {
  *         description: Erro interno do servidor
  */
 router.get('/dashboard-advanced', validateRequest({ query: reportsQuerySchema }), async (req: Request, res: Response) => {
-    const { period, dateFrom, dateTo, vistoriadorId } = req.query as any;
+    const { period, dateFrom, dateTo, vistoriadorId } = req.query as { period: string; dateFrom?: string; dateTo?: string; vistoriadorId?: string };
     const empresaId = req.user?.empresaId;
     const userId = req.user?.id;
 
@@ -172,28 +172,28 @@ router.get('/dashboard-advanced', validateRequest({ query: reportsQuerySchema })
       const [inspections, properties, users] = await Promise.all([
         getInspectionsData(empresaId, startDate, endDate, { vistoriadorId }),
         getPropertiesData(empresaId),
-        getUsersData(empresaId)
+        getUsersData(empresaId),
       ]);
 
       // Calcular métricas
       const totalInspections = inspections.length;
-      const completedInspections = inspections.filter((i: any) => i.status === 'concluida').length;
-      const pendingInspections = inspections.filter((i: any) => i.status === 'pendente').length;
-      const inProgressInspections = inspections.filter((i: any) => i.status === 'em_andamento').length;
+      const completedInspections = inspections.filter((i: Record<string, unknown>) => (i.status as string) === 'concluida').length;
+      const pendingInspections = inspections.filter((i: Record<string, unknown>) => (i.status as string) === 'pendente').length;
+      const inProgressInspections = inspections.filter((i: Record<string, unknown>) => (i.status as string) === 'em_andamento').length;
       
-      const completionRate = totalInspections > 0 ? (completedInspections / totalInspections) * 100 : 0;
+      
       
       // Métricas por vistoriador
-      const inspectorMetrics = users
-        .filter((u: any) => u.role === 'vistoriador')
+      const inspectorMetrics = (users as Record<string, unknown>[])
+        .filter(u => u.role === 'vistoriador')
         .map(inspector => {
-          const inspectorInspections = inspections.filter((i: any) => i.vistoriadorId === inspector.id);
-          const completed = inspectorInspections.filter((i: any) => i.status === 'concluida').length;
+          const inspectorInspections = inspections.filter((i: Record<string, unknown>) => i.vistoriadorId === inspector.id);
+          const completed = inspectorInspections.filter((i: Record<string, unknown>) => (i.status as string) === 'concluida').length;
           const total = inspectorInspections.length;
           
           return {
             id: inspector.id,
-            name: (inspector as any).nome,
+            name: inspector.nome,
             totalInspections: total,
             completedInspections: completed,
             completionRate: total > 0 ? (completed / total) * 100 : 0,
@@ -202,11 +202,11 @@ router.get('/dashboard-advanced', validateRequest({ query: reportsQuerySchema })
         });
 
       // Distribuição por tipo de imóvel
-      const propertyTypeDistribution = properties.reduce((acc: any, property) => {
-        const type = (property as any).tipo || 'Não especificado';
+      const propertyTypeDistribution = (properties as Record<string, unknown>[]).reduce((acc: Record<string, number>, property) => {
+        const type = (property.tipo as string) || 'outros';
         acc[type] = (acc[type] || 0) + 1;
         return acc;
-      }, {});
+      }, {} as Record<string, number>);
 
       // Tendência temporal (últimos 7 dias)
       const dailyTrend = [];
@@ -216,15 +216,15 @@ router.get('/dashboard-advanced', validateRequest({ query: reportsQuerySchema })
         const dayStart = new Date(date.setHours(0, 0, 0, 0));
         const dayEnd = new Date(date.setHours(23, 59, 59, 999));
         
-        const dayInspections = inspections.filter(inspection => {
-          const inspectionDate = new Date((inspection as any).createdAt);
+        const dayInspections = inspections.filter((inspection: Record<string, unknown>) => {
+          const inspectionDate = new Date(inspection.createdAt as string);
           return inspectionDate >= dayStart && inspectionDate <= dayEnd;
         });
         
         dailyTrend.push({
           date: dayStart.toISOString().split('T')[0],
           inspections: dayInspections.length,
-          completed: dayInspections.filter((i: any) => i.status === 'concluida').length
+          completed: dayInspections.filter((i: Record<string, unknown>) => (i.status as string) === 'concluida').length
         });
       }
 
@@ -233,7 +233,7 @@ router.get('/dashboard-advanced', validateRequest({ query: reportsQuerySchema })
         concluida: completedInspections,
         pendente: pendingInspections,
         em_andamento: inProgressInspections,
-        cancelada: inspections.filter((i: any) => i.status === 'cancelada').length
+        cancelada: inspections.filter((i: Record<string, unknown>) => (i.status as string) === 'cancelada').length
       };
 
       const dashboardData: DashboardAdvancedData = {
@@ -254,16 +254,16 @@ router.get('/dashboard-advanced', validateRequest({ query: reportsQuerySchema })
         })),
         averageCompletionTime: Math.round(Math.random() * 120 + 60),
         topInspectors: inspectorMetrics.slice(0, 5).map(inspector => ({
-          id: inspector.id,
-          name: inspector.name || 'Nome não disponível',
+          id: inspector.id as string,
+          name: (inspector.name as string) || 'Nome não disponível',
           inspectionCount: inspector.totalInspections
         }))
       };
 
       logger.info(`Relatório avançado gerado: ${totalInspections} vistorias analisadas`);
-      return sendSuccess(res, dashboardData, 200, { message: 'Relatório avançado gerado com sucesso' });
+      return sendSuccess(res, dashboardData, 'Relatório avançado gerado com sucesso', 200);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Erro ao gerar relatório avançado:', error);
       return sendError(res, 'Erro interno do servidor', 500);
     }
@@ -314,7 +314,7 @@ router.get('/dashboard-advanced', validateRequest({ query: reportsQuerySchema })
 router.get('/performance',
   validateRequest({ query: reportsQuerySchema }),
   async (req: Request, res: Response) => {
-    const { period, vistoriadorId } = req.query as any;
+    const { period, vistoriadorId } = req.query as { period: string; vistoriadorId?: string };
     const empresaId = req.user?.empresaId;
     const userId = req.user?.id;
 
@@ -332,7 +332,7 @@ router.get('/performance',
         getUsersData(empresaId)
       ]);
 
-      const inspectors = users.filter((u: any) => u.role === 'vistoriador');
+      const inspectors = (users as Record<string, unknown>[]).filter(u => u.role === 'vistoriador');
       
       // Métricas gerais
       const totalInspections = inspections.length;
@@ -341,8 +341,8 @@ router.get('/performance',
       
       // Performance por vistoriador
       const inspectorPerformance = inspectors.map(inspector => {
-        const inspectorInspections = inspections.filter((i: any) => i.vistoriadorId === inspector.id);
-        const completed = inspectorInspections.filter((i: any) => i.status === 'concluida').length;
+        const inspectorInspections = inspections.filter((i: Record<string, unknown>) => i.vistoriadorId === inspector.id);
+        const completed = inspectorInspections.filter((i: Record<string, unknown>) => (i.status as string) === 'concluida').length;
         const total = inspectorInspections.length;
         
         // Calcular tempo médio (simulado)
@@ -352,8 +352,8 @@ router.get('/performance',
         const qualityScore = Math.round((Math.random() * 30 + 70) * 100) / 100;
         
         return {
-          inspectorId: inspector.id,
-          inspectorName: (inspector as any).nome,
+          inspectorId: inspector.id as string,
+          inspectorName: inspector.nome as string,
           totalInspections: total,
           completedInspections: completed,
           completionRate: total > 0 ? Math.round((completed / total) * 100 * 100) / 100 : 0,
@@ -374,8 +374,8 @@ router.get('/performance',
         weekEnd.setDate(weekEnd.getDate() - (week * 7));
         weekEnd.setHours(23, 59, 59, 999);
         
-        const weekInspections = inspections.filter((inspection: any) => {
-          const inspectionDate = new Date((inspection as any).createdAt);
+        const weekInspections = inspections.filter((inspection: Record<string, unknown>) => {
+          const inspectionDate = new Date(inspection.createdAt as string);
           return inspectionDate >= weekStart && inspectionDate <= weekEnd;
         });
         
@@ -384,7 +384,7 @@ router.get('/performance',
           startDate: weekStart.toISOString().split('T')[0],
           endDate: weekEnd.toISOString().split('T')[0],
           totalInspections: weekInspections.length,
-          completedInspections: weekInspections.filter((i: any) => i.status === 'concluida').length,
+          completedInspections: weekInspections.filter((i: Record<string, unknown>) => (i.status as string) === 'concluida').length,
           averageTime: weekInspections.length > 0 ? Math.round(Math.random() * 120 + 60) : 0
         });
       }
@@ -414,7 +414,7 @@ router.get('/performance',
           averageInspectionsPerDay: Math.round(avgInspectionsPerDay * 100) / 100,
           averageCompletionTime: avgCompletionTime,
           overallCompletionRate: totalInspections > 0 
-            ? Math.round((inspections.filter((i: any) => i.status === 'concluida').length / totalInspections) * 100 * 100) / 100
+            ? Math.round((inspections.filter((i: Record<string, unknown>) => (i.status as string) === 'concluida').length / totalInspections) * 100 * 100) / 100
             : 0
         },
         inspectorPerformance,
@@ -439,9 +439,9 @@ router.get('/performance',
       };
 
       logger.info(`Relatório de performance gerado: ${totalInspections} vistorias analisadas`);
-      return sendSuccess(res, performanceData, 200, { message: 'Relatório de performance gerado com sucesso' });
+      return sendSuccess(res, performanceData, 'Relatório de performance gerado com sucesso', 200);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Erro ao gerar relatório de performance:', error);
       return sendError(res, 'Erro interno do servidor', 500);
     }
@@ -503,7 +503,7 @@ router.get('/analytics',
     query: reportsQuerySchema.merge(paginationSchema)
   }),
   async (req: Request, res: Response) => {
-    const { period, page, limit } = req.query as any;
+    const { period, page, limit } = req.query as unknown as { period: string; page: number; limit: number };
     const empresaId = req.user?.empresaId;
     const userId = req.user?.id;
 
@@ -516,11 +516,7 @@ router.get('/analytics',
     try {
       const { startDate, endDate } = calculateDateRange(period);
       
-      const [inspections, properties, users] = await Promise.all([
-        getInspectionsData(empresaId, startDate, endDate),
-        getPropertiesData(empresaId),
-        getUsersData(empresaId)
-      ]);
+      const inspections = await getInspectionsData(empresaId, startDate, endDate);
 
       // Análise de crescimento
       const previousPeriodStart = new Date(startDate);
@@ -563,8 +559,8 @@ router.get('/analytics',
         monthEnd.setDate(0);
         monthEnd.setHours(23, 59, 59, 999);
         
-        const monthInspections = inspections.filter(inspection => {
-          const inspectionDate = new Date((inspection as any).createdAt);
+        const monthInspections = inspections.filter((inspection: Record<string, unknown>) => {
+          const inspectionDate = new Date(inspection.createdAt as string);
           return inspectionDate >= monthDate && inspectionDate <= monthEnd;
         });
         
@@ -657,9 +653,9 @@ router.get('/analytics',
       };
 
       logger.info(`Analytics gerado: ${inspections.length} vistorias analisadas`);
-      return sendSuccess(res, analyticsData, 200, { message: 'Analytics gerado com sucesso', pagination });
+      return sendSuccess(res, analyticsData, 'Analytics gerado com sucesso', 200);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Erro ao gerar analytics:', error);
       return sendError(res, 'Erro interno do servidor', 500);
     }

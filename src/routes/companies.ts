@@ -78,7 +78,7 @@ router.use(authenticateToken);
 router.get('/', 
   generalLimiter,
   requireRole(['admin']),
-  companyController.list
+  companyController.listAll
 );
 
 /**
@@ -88,7 +88,7 @@ router.get('/',
 router.post('/',
   createLimiter,
   requireRole(['admin']),
-  validateRequest(createCompanySchema),
+  validateRequest({ body: createCompanySchema.shape.body }),
   companyController.create
 );
 
@@ -107,7 +107,7 @@ router.get('/:id',
  */
 router.put('/:id',
   generalLimiter,
-  validateRequest(updateCompanySchema),
+  validateRequest({ body: updateCompanySchema.shape.body }),
   companyController.update
 );
 
@@ -118,7 +118,7 @@ router.put('/:id',
 router.patch('/:id/status',
   generalLimiter,
   requireRole(['admin']),
-  validateRequest(updateStatusSchema),
+  validateRequest({ body: updateStatusSchema.shape.body }),
   companyController.updateStatus
 );
 
@@ -129,7 +129,7 @@ router.patch('/:id/status',
 router.patch('/:id/configuracoes',
   generalLimiter,
   requireRole(['admin']),
-  validateRequest(updateConfiguracoesSchema),
+  validateRequest({ body: updateConfiguracoesSchema.shape.body }),
   companyController.updateConfiguracoes
 );
 
@@ -140,7 +140,7 @@ router.patch('/:id/configuracoes',
 router.patch('/:id/plano',
   generalLimiter,
   requireRole(['admin']),
-  validateRequest(updatePlanoSchema),
+  validateRequest({ body: updatePlanoSchema.shape.body }),
   companyController.updatePlano
 );
 

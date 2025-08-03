@@ -1,22 +1,29 @@
 import { Request, Response, NextFunction } from 'express';
 import * as admin from 'firebase-admin';
+import { z } from 'zod';
 import { UserService } from '../services/UserService';
 import { sendSuccess, sendError } from '../utils/response';
 import { AuthenticatedRequest } from '../middlewares/auth';
 import logger from '../config/logger';
-import { CustomError, createValidationError, createAuthError } from '../middlewares/errorHandler';
+import { CustomError, createAuthError, createValidationError } from '../middlewares/errorHandler';
+import { isFirebaseInitialized } from '../config/firebase';
 
 export class AuthController {
-  private userService: UserService;
+  private static instance: AuthController;
 
-  constructor() {
-    this.userService = new UserService();
+  private userService: UserService | null = null;
+
+  private getUserService(): UserService {
+    if (!this.userService) {
+      this.userService = new UserService();
+    }
+    return this.userService;
   }
 
   /**
    * Verificar token Firebase e extrair claims
    */
-  verifyToken = async (req: Request, res: Response, next: NextFunction) => {
+  verifyToken = async (req: Request, res: Response) => {
     try {
       const { token } = req.body;
 
@@ -24,11 +31,24 @@ export class AuthController {
         throw createValidationError('Token é obrigatório');
       }
 
+      // Verificar se o Firebase foi inicializado
+      if (!isFirebaseInitialized()) {
+        logger.warn('Firebase não inicializado - retornando dados mock para desenvolvimento');
+        return sendSuccess(res, {
+          uid: 'dev-user-id',
+          email: 'dev@example.com',
+          empresaId: 'dev-empresa-id',
+          papel: 'admin',
+          ativo: true,
+          nome: 'Usuário de Desenvolvimento'
+        });
+      }
+
       // Verificar token no Firebase
       const decodedToken = await admin.auth().verifyIdToken(token);
       
       // Buscar dados do usuário no Firestore
-      const user = await this.userService.getUserById(decodedToken.uid);
+      const user = await this.getUserService().getUserById(decodedToken.uid);
       
       if (!user) {
         throw createAuthError('Usuário não encontrado');
@@ -39,7 +59,7 @@ export class AuthController {
       }
 
       // Atualizar último login
-      await this.userService.updateLastLogin(decodedToken.uid);
+      await this.getUserService().updateLastLogin(decodedToken.uid);
 
       // Preparar dados de resposta
       const userData = {
@@ -63,10 +83,10 @@ export class AuthController {
       });
       
       return sendSuccess(res, userData, 'Token verificado com sucesso');
-    } catch (error) {
+    } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido ao validar token';
       logger.error('Erro ao validar token:', { error: errorMessage });
-      return sendError(res, 401, 'Token inválido ou expirado.');
+      return sendError(res, 'Token inválido ou expirado.', 401);
     }
   };
 
@@ -77,7 +97,7 @@ export class AuthController {
     try {
       const { uid } = req.user!;
 
-      const user = await this.userService.getUserById(uid);
+      const user = await this.getUserService().getUserById(uid);
       
       if (!user) {
         throw createAuthError('Usuário não encontrado');
@@ -101,7 +121,7 @@ export class AuthController {
       };
       
       return sendSuccess(res, userData, 'Dados do usuário obtidos com sucesso');
-    } catch (error) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -114,7 +134,7 @@ export class AuthController {
       const { uid } = req.user!;
 
       // Buscar dados atualizados do usuário
-      const user = await this.userService.getUserById(uid);
+      const user = await this.getUserService().getUserById(uid);
       
       if (!user) {
         throw createAuthError('Usuário não encontrado');
@@ -124,11 +144,15 @@ export class AuthController {
         throw createAuthError('Usuário desativado');
       }
 
-      // Atualizar claims customizados no Firebase
-      await admin.auth().setCustomUserClaims(uid, {
-        empresaId: user.empresaId,
-        papel: user.papel
-      });
+      // Atualizar claims customizados no Firebase (se inicializado)
+      if (isFirebaseInitialized()) {
+        await admin.auth().setCustomUserClaims(uid, {
+          empresaId: user.empresaId,
+          papel: user.papel
+        });
+      } else {
+        logger.warn('Firebase não inicializado - pulando atualização de claims');
+      }
 
       logger.info(`Claims atualizados:`, { uid, empresaId: user.empresaId, papel: user.papel });
       
@@ -138,7 +162,7 @@ export class AuthController {
         papel: user.papel,
         updatedAt: new Date().toISOString()
       }, 'Claims atualizados com sucesso');
-    } catch (error) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -150,13 +174,17 @@ export class AuthController {
     try {
       const { uid } = req.user!;
 
-      // Revogar todos os tokens do usuário
-      await admin.auth().revokeRefreshTokens(uid);
+      // Revogar todos os tokens do usuário (se Firebase inicializado)
+      if (isFirebaseInitialized()) {
+        await admin.auth().revokeRefreshTokens(uid);
+      } else {
+        logger.warn('Firebase não inicializado - pulando revogação de tokens');
+      }
 
       logger.info(`Logout realizado:`, { uid });
       
       return sendSuccess(res, null, 'Logout realizado com sucesso');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Erro no logout:', error);
       next(new CustomError('Erro no logout', 500));
     }
@@ -167,21 +195,18 @@ export class AuthController {
    */
   checkPermission = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
+      const permissionSchema = z.object({
+        action: z.enum(['create', 'read', 'update', 'delete']),
+        resource: z.enum(['user', 'company', 'inspection']),
+      });
+
       const { uid } = req.user!;
-      const { action, resource } = req.query;
+      const { action, resource } = permissionSchema.parse(req.query);
 
-      if (!action || !resource) {
-        throw createValidationError('Action e resource são obrigatórios');
-      }
-
-      const hasPermission = await this.userService.hasPermission(
-        uid,
-        action as any,
-        resource as any
-      );
+      const hasPermission = await this.getUserService().hasPermission(uid, action, resource);
       
       return sendSuccess(res, { hasPermission }, 'Permissão verificada');
-    } catch (error) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -191,14 +216,11 @@ export class AuthController {
    */
   requestPasswordReset = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email } = req.body;
-
-      if (!email) {
-        throw createValidationError('Email é obrigatório');
-      }
+      const emailSchema = z.object({ email: z.string().email('Email inválido') });
+      const { email } = emailSchema.parse(req.body);
 
       // Verificar se o usuário existe
-      const user = await this.userService.findByEmail(email);
+      const user = await this.getUserService().findByEmail(email);
       if (!user) {
         // Por segurança, não revelar se o email existe ou não
         return sendSuccess(res, null, 'Se o email existir, um link de reset será enviado');
@@ -209,12 +231,12 @@ export class AuthController {
       }
 
       // Gerar link de reset
-      await this.userService.resetPassword(email);
+      await this.getUserService().resetPassword(email);
       
       logger.info(`Reset de senha solicitado:`, { email });
       
       return sendSuccess(res, null, 'Link de reset de senha enviado com sucesso');
-    } catch (error) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -227,7 +249,7 @@ export class AuthController {
       const { uid, empresaId, papel } = req.user!;
 
       // Verificar se o usuário ainda existe e está ativo
-      const user = await this.userService.getUserById(uid);
+      const user = await this.getUserService().getUserById(uid);
       
       if (!user) {
         throw createAuthError('Usuário não encontrado');
@@ -249,7 +271,7 @@ export class AuthController {
         papel: user.papel,
         lastValidation: new Date().toISOString()
       }, 'Sessão válida');
-    } catch (error) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -269,7 +291,7 @@ export class AuthController {
       };
       
       return sendSuccess(res, companyInfo, 'Informações da empresa obtidas');
-    } catch (error) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -286,7 +308,7 @@ export class AuthController {
         throw createValidationError('Configurações são obrigatórias');
       }
 
-      const user = await this.userService.updateUser(uid, { configuracoes }, uid);
+      const user = await this.getUserService().updateUser(uid, { configuracoes }, uid);
       
       logger.info(`Configurações de auth atualizadas:`, { uid });
       
@@ -294,8 +316,17 @@ export class AuthController {
         uid: user.uid,
         configuracoes: user.configuracoes
       }, 'Configurações atualizadas com sucesso');
-    } catch (error) {
+    } catch (error: unknown) {
       next(error);
     }
   };
+
+  public static getInstance(): AuthController {
+    if (!AuthController.instance) {
+      AuthController.instance = new AuthController();
+    }
+    return AuthController.instance;
+  }
 }
+
+export const authController = AuthController.getInstance();

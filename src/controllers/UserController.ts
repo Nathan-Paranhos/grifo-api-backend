@@ -1,21 +1,26 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
+import * as z from 'zod';
 import { UserService, CreateUserData, UpdateUserData } from '../services/UserService';
 import { sendSuccess, sendError } from '../utils/response';
 import { AuthenticatedRequest } from '../middlewares/auth';
 import logger from '../config/logger';
-import { CustomError, createValidationError, createForbiddenError } from '../middlewares/errorHandler';
+import { createForbiddenError, createValidationError } from '../middlewares/errorHandler';
+import { listUsersQuerySchema } from '../validators/users/listUsers.schema';
 
-export class UserController {
-  private userService: UserService;
+class UserController {
+  private userService: UserService | null = null;
 
-  constructor() {
-    this.userService = new UserService();
+  private getUserService(): UserService {
+    if (!this.userService) {
+      this.userService = new UserService();
+    }
+    return this.userService;
   }
 
   /**
    * Criar novo usuário
    */
-  create = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  create = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { empresaId, uid, papel } = req.user!;
       
@@ -26,17 +31,21 @@ export class UserController {
 
       const data: CreateUserData = req.body;
       
+      if (!empresaId) {
+        throw createValidationError('ID da empresa é obrigatório');
+      }
+      
       // Garantir que o usuário seja criado para a empresa do admin
       data.empresaId = empresaId;
 
-      const user = await this.userService.createUser(data, uid);
+      const user = await this.getUserService().createUser(data, uid);
       
       // Remover dados sensíveis da resposta
-      const { ...userResponse } = user;
+
       
       logger.info(`Usuário criado:`, { uid: user.uid, email: data.email, empresaId, createdBy: uid });
       
-      return sendSuccess(res, userResponse, 'Usuário criado com sucesso', 201);
+      return sendSuccess(res, user, 'Usuário criado com sucesso', 201);
     } catch (error) {
       next(error);
     }
@@ -45,12 +54,12 @@ export class UserController {
   /**
    * Buscar usuário por UID
    */
-  getById = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  getById = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { empresaId, uid: currentUid, papel } = req.user!;
       const { uid } = req.params;
 
-      const user = await this.userService.getUserById(uid);
+      const user = await this.getUserService().getUserById(uid);
       
       if (!user) {
         return sendError(res, 'Usuário não encontrado', 404);
@@ -75,11 +84,11 @@ export class UserController {
   /**
    * Buscar perfil do usuário atual
    */
-  getProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  getProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { uid } = req.user!;
 
-      const user = await this.userService.getUserById(uid);
+      const user = await this.getUserService().getUserById(uid);
       
       if (!user) {
         return sendError(res, 'Usuário não encontrado', 404);
@@ -94,7 +103,7 @@ export class UserController {
   /**
    * Listar usuários da empresa
    */
-  list = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  list = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { empresaId, papel } = req.user!;
       
@@ -103,23 +112,13 @@ export class UserController {
         throw createForbiddenError('Apenas administradores podem listar usuários');
       }
 
-      const {
-        limit = '20',
-        offset = '0',
-        papel: filterPapel,
-        ativo
-      } = req.query;
+      const options = listUsersQuerySchema.parse(req.query);
 
-      const options = {
-        limit: parseInt(limit as string),
-        offset: parseInt(offset as string),
-        papel: filterPapel as string,
-        ativo: ativo !== undefined ? ativo === 'true' : undefined
-      };
+      if (!empresaId) {
+        throw createValidationError('ID da empresa é obrigatório');
+      }
 
-      const users = await this.userService.getUsersByEmpresa(empresaId, options);
-      
-      return sendSuccess(res, users, 'Usuários listados com sucesso');
+      return sendSuccess(res, await this.getUserService().getUsersByEmpresa(empresaId, options), 'Usuários listados com sucesso');
     } catch (error) {
       next(error);
     }
@@ -128,7 +127,7 @@ export class UserController {
   /**
    * Atualizar usuário
    */
-  update = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  update = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { empresaId, uid: currentUid, papel } = req.user!;
       const { uid } = req.params;
@@ -140,7 +139,7 @@ export class UserController {
       }
 
       // Verificar se o usuário existe e é da mesma empresa
-      const existingUser = await this.userService.getUserById(uid);
+      const existingUser = await this.getUserService().getUserById(uid);
       if (!existingUser) {
         return sendError(res, 'Usuário não encontrado', 404);
       }
@@ -155,7 +154,7 @@ export class UserController {
         delete data.ativo;
       }
 
-      const user = await this.userService.updateUser(uid, data, currentUid);
+      const user = await this.getUserService().updateUser(uid, data, currentUid);
       
       logger.info(`Usuário atualizado:`, { uid, updatedBy: currentUid });
       
@@ -168,7 +167,7 @@ export class UserController {
   /**
    * Atualizar perfil do usuário atual
    */
-  updateProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  updateProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { uid } = req.user!;
       const data: UpdateUserData = req.body;
@@ -177,7 +176,7 @@ export class UserController {
       delete data.papel;
       delete data.ativo;
 
-      const user = await this.userService.updateUser(uid, data, uid);
+      const user = await this.getUserService().updateUser(uid, data, uid);
       
       logger.info(`Perfil atualizado:`, { uid });
       
@@ -188,25 +187,26 @@ export class UserController {
   };
 
   /**
-   * Desativar usuário
+   * Atualizar status do usuário (ativo/inativo)
    */
-  deactivate = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  updateStatus = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { empresaId, uid: currentUid, papel } = req.user!;
       const { uid } = req.params;
+      const { ativo } = z.object({ ativo: z.boolean() }).parse(req.body);
 
-      // Apenas admins podem desativar usuários
+      // Apenas admins podem alterar o status
       if (papel !== 'admin') {
-        throw createForbiddenError('Apenas administradores podem desativar usuários');
+        throw createForbiddenError('Apenas administradores podem alterar o status do usuário');
       }
 
       // Não pode desativar a si mesmo
-      if (uid === currentUid) {
+      if (uid === currentUid && !ativo) {
         throw createValidationError('Você não pode desativar sua própria conta');
       }
 
       // Verificar se o usuário existe e é da mesma empresa
-      const existingUser = await this.userService.getUserById(uid);
+      const existingUser = await this.getUserService().getUserById(uid);
       if (!existingUser) {
         return sendError(res, 'Usuário não encontrado', 404);
       }
@@ -215,44 +215,12 @@ export class UserController {
         throw createForbiddenError('Usuário não pertence à sua empresa');
       }
 
-      const user = await this.userService.deactivateUser(uid, currentUid);
+      const user = await this.getUserService().updateUser(uid, { ativo }, currentUid);
       
-      logger.info(`Usuário desativado:`, { uid, deactivatedBy: currentUid });
+      const action = ativo ? 'reativado' : 'desativado';
+      logger.info(`Usuário ${action}:`, { uid, updatedBy: currentUid });
       
-      return sendSuccess(res, user, 'Usuário desativado com sucesso');
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  /**
-   * Reativar usuário
-   */
-  reactivate = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      const { empresaId, uid: currentUid, papel } = req.user!;
-      const { uid } = req.params;
-
-      // Apenas admins podem reativar usuários
-      if (papel !== 'admin') {
-        throw createForbiddenError('Apenas administradores podem reativar usuários');
-      }
-
-      // Verificar se o usuário existe e é da mesma empresa
-      const existingUser = await this.userService.getUserById(uid);
-      if (!existingUser) {
-        return sendError(res, 'Usuário não encontrado', 404);
-      }
-
-      if (existingUser.empresaId !== empresaId) {
-        throw createForbiddenError('Usuário não pertence à sua empresa');
-      }
-
-      const user = await this.userService.reactivateUser(uid, currentUid);
-      
-      logger.info(`Usuário reativado:`, { uid, reactivatedBy: currentUid });
-      
-      return sendSuccess(res, user, 'Usuário reativado com sucesso');
+      return sendSuccess(res, user, `Usuário ${action} com sucesso`);
     } catch (error) {
       next(error);
     }
@@ -261,7 +229,7 @@ export class UserController {
   /**
    * Deletar usuário permanentemente
    */
-  delete = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  delete = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { empresaId, uid: currentUid, papel } = req.user!;
       const { uid } = req.params;
@@ -277,7 +245,7 @@ export class UserController {
       }
 
       // Verificar se o usuário existe e é da mesma empresa
-      const existingUser = await this.userService.getUserById(uid);
+      const existingUser = await this.getUserService().getUserById(uid);
       if (!existingUser) {
         return sendError(res, 'Usuário não encontrado', 404);
       }
@@ -286,7 +254,7 @@ export class UserController {
         throw createForbiddenError('Usuário não pertence à sua empresa');
       }
 
-      await this.userService.deleteUser(uid, currentUid);
+      await this.getUserService().deleteUser(uid, currentUid);
       
       logger.info(`Usuário deletado:`, { uid, deletedBy: currentUid });
       
@@ -299,20 +267,18 @@ export class UserController {
   /**
    * Alterar papel do usuário
    */
-  changeRole = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  changeRole = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { empresaId, uid: currentUid, papel } = req.user!;
       const { uid } = req.params;
-      const { papel: newRole } = req.body;
+      const { papel: newRole } = z.object({ papel: z.enum(['admin', 'corretor', 'leitor']) }).parse(req.body);
 
       // Apenas admins podem alterar papéis
       if (papel !== 'admin') {
         throw createForbiddenError('Apenas administradores podem alterar papéis');
       }
 
-      if (!newRole) {
-        throw createValidationError('Papel é obrigatório');
-      }
+
 
       // Não pode alterar seu próprio papel
       if (uid === currentUid) {
@@ -320,7 +286,7 @@ export class UserController {
       }
 
       // Verificar se o usuário existe e é da mesma empresa
-      const existingUser = await this.userService.getUserById(uid);
+      const existingUser = await this.getUserService().getUserById(uid);
       if (!existingUser) {
         return sendError(res, 'Usuário não encontrado', 404);
       }
@@ -329,7 +295,7 @@ export class UserController {
         throw createForbiddenError('Usuário não pertence à sua empresa');
       }
 
-      const user = await this.userService.updateUser(uid, { papel: newRole }, currentUid);
+      const user = await this.getUserService().updateUser(uid, { papel: newRole }, currentUid);
       
       logger.info(`Papel do usuário alterado:`, { uid, newRole, changedBy: currentUid });
       
@@ -342,7 +308,7 @@ export class UserController {
   /**
    * Obter estatísticas de usuários
    */
-  getStats = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  getStats = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { empresaId, papel } = req.user!;
       
@@ -351,7 +317,11 @@ export class UserController {
         throw createForbiddenError('Apenas administradores podem ver estatísticas');
       }
 
-      const stats = await this.userService.getUserStats(empresaId);
+      if (!empresaId) {
+        throw createValidationError('ID da empresa é obrigatório');
+      }
+
+      const stats = await this.getUserService().getUserStats(empresaId);
       
       return sendSuccess(res, stats, 'Estatísticas obtidas com sucesso');
     } catch (error) {
@@ -362,17 +332,15 @@ export class UserController {
   /**
    * Resetar senha do usuário
    */
-  resetPassword = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  resetPassword = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { empresaId, uid: currentUid, papel } = req.user!;
-      const { email } = req.body;
+      const { email } = z.object({ email: z.string().email() }).parse(req.body);
 
-      if (!email) {
-        throw createValidationError('Email é obrigatório');
-      }
+
 
       // Verificar se o usuário existe e é da mesma empresa
-      const existingUser = await this.userService.findByEmail(email);
+      const existingUser = await this.getUserService().findByEmail(email);
       if (!existingUser) {
         return sendError(res, 'Usuário não encontrado', 404);
       }
@@ -386,7 +354,7 @@ export class UserController {
         throw createForbiddenError('Usuário não pertence à sua empresa');
       }
 
-      await this.userService.resetPassword(email);
+      await this.getUserService().resetPassword(email);
       
       logger.info(`Reset de senha solicitado:`, { email, requestedBy: currentUid });
       
@@ -399,24 +367,73 @@ export class UserController {
   /**
    * Verificar permissões do usuário
    */
-  checkPermission = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  checkPermission = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
       const { uid } = req.user!;
-      const { action, resource } = req.query;
+      const { action, resource } = z.object({
+        action: z.enum(['create', 'read', 'update', 'delete']),
+        resource: z.enum(['user', 'inspection', 'company']),
+      }).parse(req.query);
 
-      if (!action || !resource) {
-        throw createValidationError('Action e resource são obrigatórios');
-      }
 
-      const hasPermission = await this.userService.hasPermission(
-        uid,
-        action as any,
-        resource as any
-      );
+
+      const hasPermission = await this.getUserService().hasPermission(uid, action, resource);
       
       return sendSuccess(res, { hasPermission }, 'Permissão verificada');
     } catch (error) {
       next(error);
     }
   };
+
+  /**
+   * Desativar usuário
+   */
+  deactivate = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+    try {
+      const { empresaId, uid, papel } = req.user!;
+      const { id } = req.params;
+      
+      // Apenas admins podem desativar usuários
+      if (papel !== 'admin') {
+        throw createForbiddenError('Apenas administradores podem desativar usuários');
+      }
+
+      await this.getUserService().deactivateUser(id, uid);
+      
+      logger.info(`Usuário desativado:`, { targetUid: id, empresaId, actionBy: uid });
+      
+      return sendSuccess(res, null, 'Usuário desativado com sucesso');
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Reativar usuário
+   */
+  reactivate = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+    try {
+      const { empresaId, uid, papel } = req.user!;
+      const { id } = req.params;
+      
+      // Apenas admins podem reativar usuários
+      if (papel !== 'admin') {
+        throw createForbiddenError('Apenas administradores podem reativar usuários');
+      }
+
+      await this.getUserService().reactivateUser(id, uid);
+      
+      logger.info(`Usuário reativado:`, { targetUid: id, empresaId, actionBy: uid });
+      
+      return sendSuccess(res, null, 'Usuário reativado com sucesso');
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // Alias para o método delete
+  remove = this.delete;
 }
+
+export { UserController };
+export const userController = new UserController();

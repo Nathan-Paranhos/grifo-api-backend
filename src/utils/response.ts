@@ -4,15 +4,14 @@ interface ApiResponse<T> {
   success: boolean;
   data: T | null;
   error: string | null;
-  [key: string]: any;
 }
 
-export const sendSuccess = <T>(res: Response, data: T, statusCode = 200, extra: Record<string, any> = {}) => {
-  const response: ApiResponse<T> = {
+export const sendSuccess = <T>(res: Response, data: T, message?: string, statusCode = 200) => {
+  const response: ApiResponse<T> & { message?: string } = {
     success: true,
     data,
     error: null,
-    ...extra,
+    ...(message && { message }),
   };
   res.status(statusCode).json(response);
 };

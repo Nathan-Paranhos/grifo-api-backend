@@ -64,7 +64,7 @@ export class CompanyService {
 
       // Se tem data de vencimento, converter para Timestamp
       if (plano.dataVencimento) {
-        (plano as any).dataVencimento = admin.firestore.Timestamp.fromDate(plano.dataVencimento);
+        (plano as { dataVencimento?: admin.firestore.Timestamp | Date }).dataVencimento = admin.firestore.Timestamp.fromDate(plano.dataVencimento as Date);
       }
 
       const companyData: Omit<Company, 'id' | 'createdAt' | 'updatedAt' | 'empresaId'> = {
@@ -171,10 +171,10 @@ export class CompanyService {
       }
 
       // Usar método específico do repository que não filtra por empresaId
-      await this.companyRepository.collection.doc(id).update({
+      await this.companyRepository.update(id, id, {
         ...updateData,
         updatedAt: admin.firestore.Timestamp.now()
-      });
+      } as Partial<Company>);
       
       logger.info(`Empresa atualizada:`, { id, changes: Object.keys(updateData) });
       
@@ -228,7 +228,7 @@ export class CompanyService {
     try {
       // Se tem data de vencimento, converter para Timestamp
       if (plano?.dataVencimento && plano.dataVencimento instanceof Date) {
-        (plano as any).dataVencimento = admin.firestore.Timestamp.fromDate(plano.dataVencimento);
+        (plano as { dataVencimento?: admin.firestore.Timestamp | Date }).dataVencimento = admin.firestore.Timestamp.fromDate(plano.dataVencimento);
       }
 
       return await this.companyRepository.updatePlano(id, plano);
@@ -325,6 +325,46 @@ export class CompanyService {
   }
 
   /**
+   * Incrementar contador de usuários
+   */
+  async incrementUsuarios(empresaId: string): Promise<void> {
+    try {
+      const company = await this.getCompanyById(empresaId);
+      const currentCount = company.usuariosCount || 0;
+      
+      await this.companyRepository.update(empresaId, empresaId, {
+        usuariosCount: currentCount + 1,
+        updatedAt: admin.firestore.Timestamp.now()
+      });
+      
+      logger.info(`Contador de usuários incrementado para empresa ${empresaId}`);
+    } catch (error) {
+      logger.error(`Erro ao incrementar usuários da empresa ${empresaId}:`, error);
+      throw new CustomError('Erro ao atualizar contador de usuários', 500);
+    }
+  }
+
+  /**
+   * Decrementar contador de usuários
+   */
+  async decrementUsuarios(empresaId: string): Promise<void> {
+    try {
+      const company = await this.getCompanyById(empresaId);
+      const currentCount = company.usuariosCount || 0;
+      
+      await this.companyRepository.update(empresaId, empresaId, {
+        usuariosCount: Math.max(0, currentCount - 1),
+        updatedAt: admin.firestore.Timestamp.now()
+      });
+      
+      logger.info(`Contador de usuários decrementado para empresa ${empresaId}`);
+    } catch (error) {
+      logger.error(`Erro ao decrementar usuários da empresa ${empresaId}:`, error);
+      throw new CustomError('Erro ao atualizar contador de usuários', 500);
+    }
+  }
+
+  /**
    * Buscar estatísticas globais (para superadmin)
    */
   async getGlobalStats() {
@@ -346,11 +386,11 @@ export class CompanyService {
       await this.getCompanyById(id);
       
       // Usar soft delete do repository base
-      await this.companyRepository.collection.doc(id).update({
+      await this.companyRepository.update(id, id, {
         ativo: false,
         status: 'cancelada',
         updatedAt: admin.firestore.Timestamp.now()
-      });
+      } as Partial<Company>);
       
       logger.info(`Empresa deletada:`, { id });
       

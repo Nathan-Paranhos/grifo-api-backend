@@ -1,7 +1,15 @@
 import * as admin from 'firebase-admin';
-import { CompanyService } from './CompanyService';
+import { getDbSafe, isFirebaseInitialized } from '../config/firebase';
 import logger from '../config/logger';
 import { CustomError, createNotFoundError, createValidationError, createForbiddenError } from '../middlewares/errorHandler';
+
+// Interface para evitar dependência circular
+interface ICompanyService {
+  incrementUsuarios(empresaId: string): Promise<void>;
+  decrementUsuarios(empresaId: string): Promise<void>;
+  canCreateUser(empresaId: string): Promise<boolean>;
+  getCompanyById(id: string): Promise<{ id: string; status: string; [key: string]: unknown }>;
+}
 
 export interface User {
   uid: string;
@@ -42,14 +50,29 @@ export interface UpdateUserData {
 export class UserService {
   private db: admin.firestore.Firestore;
   private auth: admin.auth.Auth;
-  private companyService: CompanyService;
+  private companyService: ICompanyService;
   private collection: admin.firestore.CollectionReference;
 
-  constructor() {
-    this.db = admin.firestore();
-    this.auth = admin.auth();
-    this.companyService = new CompanyService();
-    this.collection = this.db.collection('usuarios');
+  constructor(companyService?: ICompanyService) {
+    if (isFirebaseInitialized()) {
+      const db = getDbSafe();
+      if (db) {
+        this.db = db;
+        this.auth = admin.auth();
+        this.collection = this.db.collection('usuarios');
+      } else {
+        throw new CustomError('Firebase não está disponível', 503);
+      }
+    } else {
+      throw new CustomError('Firebase não foi inicializado', 503);
+    }
+    this.companyService = companyService || this.createCompanyService();
+  }
+
+  private createCompanyService(): ICompanyService {
+    // Lazy loading para evitar dependência circular
+    const { CompanyService } = require('./CompanyService');
+    return new CompanyService();
   }
 
   /**

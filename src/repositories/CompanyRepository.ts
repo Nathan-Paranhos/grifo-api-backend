@@ -59,7 +59,7 @@ export class CompanyRepository extends BaseRepository<Company> {
         vistoriasCount: 0
       };
 
-      const docRef = await this.collection.add(docData);
+      const docRef = await this.getCollection().add(docData);
       
       // Atualizar o empresaId com o ID do documento
       await docRef.update({ empresaId: docRef.id });
@@ -83,7 +83,7 @@ export class CompanyRepository extends BaseRepository<Company> {
    */
   async findByIdDirect(id: string): Promise<Company | null> {
     try {
-      const doc = await this.collection.doc(id).get();
+      const doc = await this.getCollection().doc(id).get();
       
       if (!doc.exists) {
         return null;
@@ -104,7 +104,7 @@ export class CompanyRepository extends BaseRepository<Company> {
    */
   async findByCnpj(cnpj: string): Promise<Company | null> {
     try {
-      const snapshot = await this.collection
+      const snapshot = await this.getCollection()
         .where('cnpj', '==', cnpj)
         .limit(1)
         .get();
@@ -129,7 +129,7 @@ export class CompanyRepository extends BaseRepository<Company> {
    */
   async findByEmail(email: string): Promise<Company | null> {
     try {
-      const snapshot = await this.collection
+      const snapshot = await this.getCollection()
         .where('email', '==', email)
         .limit(1)
         .get();
@@ -154,7 +154,7 @@ export class CompanyRepository extends BaseRepository<Company> {
    */
   async findByProprietario(proprietarioId: string): Promise<Company[]> {
     try {
-      const snapshot = await this.collection
+      const snapshot = await this.getCollection()
         .where('proprietarioId', '==', proprietarioId)
         .where('ativo', '==', true)
         .orderBy('createdAt', 'desc')
@@ -175,7 +175,7 @@ export class CompanyRepository extends BaseRepository<Company> {
    */
   async findAll(options: QueryOptions = {}) {
     try {
-      let query: admin.firestore.Query = this.collection;
+      let query: admin.firestore.Query = this.getCollection();
 
       // Aplicar filtros where
       if (options.where) {
@@ -221,7 +221,7 @@ export class CompanyRepository extends BaseRepository<Company> {
         throw new CustomError('Empresa não encontrada', 404);
       }
 
-      await this.collection.doc(id).update({
+      await this.getCollection().doc(id).update({
         status,
         updatedAt: admin.firestore.Timestamp.now()
       });
@@ -249,7 +249,7 @@ export class CompanyRepository extends BaseRepository<Company> {
         throw new CustomError('Empresa não encontrada', 404);
       }
 
-      await this.collection.doc(id).update({
+      await this.getCollection().doc(id).update({
         configuracoes: {
           ...empresa.configuracoes,
           ...configuracoes
@@ -277,7 +277,7 @@ export class CompanyRepository extends BaseRepository<Company> {
         throw new CustomError('Empresa não encontrada', 404);
       }
 
-      await this.collection.doc(id).update({
+      await this.getCollection().doc(id).update({
         plano,
         updatedAt: admin.firestore.Timestamp.now()
       });
@@ -297,7 +297,7 @@ export class CompanyRepository extends BaseRepository<Company> {
    */
   async incrementUsuarios(id: string): Promise<void> {
     try {
-      await this.collection.doc(id).update({
+      await this.getCollection().doc(id).update({
         usuariosCount: admin.firestore.FieldValue.increment(1),
         updatedAt: admin.firestore.Timestamp.now()
       });
@@ -311,7 +311,7 @@ export class CompanyRepository extends BaseRepository<Company> {
    */
   async decrementUsuarios(id: string): Promise<void> {
     try {
-      await this.collection.doc(id).update({
+      await this.getCollection().doc(id).update({
         usuariosCount: admin.firestore.FieldValue.increment(-1),
         updatedAt: admin.firestore.Timestamp.now()
       });
@@ -325,7 +325,7 @@ export class CompanyRepository extends BaseRepository<Company> {
    */
   async incrementVistorias(id: string): Promise<void> {
     try {
-      await this.collection.doc(id).update({
+      await this.getCollection().doc(id).update({
         vistoriasCount: admin.firestore.FieldValue.increment(1),
         updatedAt: admin.firestore.Timestamp.now()
       });
@@ -340,10 +340,10 @@ export class CompanyRepository extends BaseRepository<Company> {
   async getGlobalStats() {
     try {
       const [total, ativas, suspensas, canceladas] = await Promise.all([
-        this.collection.get().then(snap => snap.size),
-        this.collection.where('status', '==', 'ativa').get().then(snap => snap.size),
-        this.collection.where('status', '==', 'suspensa').get().then(snap => snap.size),
-        this.collection.where('status', '==', 'cancelada').get().then(snap => snap.size)
+        this.getCollection().get().then(snap => snap.size),
+        this.getCollection().where('status', '==', 'ativa').get().then(snap => snap.size),
+        this.getCollection().where('status', '==', 'suspensa').get().then(snap => snap.size),
+        this.getCollection().where('status', '==', 'cancelada').get().then(snap => snap.size)
       ]);
 
       return {

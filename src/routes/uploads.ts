@@ -2,7 +2,7 @@ import { Router, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/response';
 import * as admin from 'firebase-admin';
 import logger from '../config/logger';
-import { validateRequest } from '../utils/validation';
+import { validateRequest } from '../validators';
 import { Request } from '../config/security';
 import { db } from '../config/firebase';
 import { z } from 'zod';
@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
 });
 
 // Filtros para tipos de arquivo
-const imageFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const imageFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
@@ -41,7 +41,7 @@ const imageFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterC
   }
 };
 
-const documentFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const documentFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   const allowedTypes = [
     'application/pdf',
     'application/msword',
@@ -154,7 +154,8 @@ router.post('/images',
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
     const empresaId = req.user?.empresaId;
-    const { category = 'image' } = req.body;
+    const category = req.body?.category || 'image';
+
     const files = req.files as Express.Multer.File[];
 
     if (!userId || !empresaId) {
@@ -186,7 +187,7 @@ router.post('/images',
           url: `${baseUrl}/uploads/${file.filename}`,
           uploadedBy: userId,
           empresaId,
-          category: 'image',
+          category,
           createdAt: new Date().toISOString()
         };
 
@@ -201,9 +202,9 @@ router.post('/images',
       await batch.commit();
 
       logger.info(`${files.length} imagens salvas com sucesso`);
-      return sendSuccess(res, uploadedFiles, 201, { message: 'Imagens enviadas com sucesso' });
+      return sendSuccess(res, uploadedFiles, 'Imagens enviadas com sucesso', 201);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Erro ao salvar informações dos arquivos:', error);
       
       // Limpar arquivos em caso de erro
@@ -293,7 +294,8 @@ router.post('/documents',
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
     const empresaId = req.user?.empresaId;
-    const { category = 'document' } = req.body;
+    const category = req.body?.category || 'document';
+
     const files = req.files as Express.Multer.File[];
 
     if (!userId || !empresaId) {
@@ -325,7 +327,7 @@ router.post('/documents',
           url: `${baseUrl}/uploads/${file.filename}`,
           uploadedBy: userId,
           empresaId,
-          category: 'document',
+          category,
           createdAt: new Date().toISOString()
         };
 
@@ -340,9 +342,9 @@ router.post('/documents',
       await batch.commit();
 
       logger.info(`${files.length} documentos salvos com sucesso`);
-      return sendSuccess(res, uploadedFiles, 201, { message: 'Documentos enviados com sucesso' });
+      return sendSuccess(res, uploadedFiles, 'Documentos enviados com sucesso', 201);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Erro ao salvar informações dos arquivos:', error);
       
       // Limpar arquivos em caso de erro
@@ -449,9 +451,9 @@ router.delete('/:id',
       await fileRef.delete();
 
       logger.info(`Arquivo ${id} removido com sucesso`);
-      return sendSuccess(res, null, 200, { message: 'Arquivo removido com sucesso' });
+      return sendSuccess(res, null, 'Arquivo removido com sucesso', 200);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Erro ao remover arquivo:', error);
       return sendError(res, 'Erro interno do servidor', 500);
     }
@@ -574,9 +576,9 @@ router.get('/',
       };
 
       logger.info(`${files.length} arquivos recuperados com sucesso`);
-      return sendSuccess(res, response, 200, { message: 'Arquivos recuperados com sucesso' });
+      return sendSuccess(res, response, 'Arquivos recuperados com sucesso', 200);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Erro ao listar arquivos:', error);
       return sendError(res, 'Erro interno do servidor', 500);
     }

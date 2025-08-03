@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import * as admin from 'firebase-admin';
 import logger from '../config/logger';
 import { sendError } from '../utils/response';
+import { isFirebaseInitialized } from '../config/firebase';
 
 export interface AuthenticatedRequest extends Request {
   user?: {
@@ -9,7 +10,7 @@ export interface AuthenticatedRequest extends Request {
     email?: string;
     empresaId?: string;
     papel?: string;
-    claims?: any;
+    claims?: Record<string, unknown>;
   };
 }
 
@@ -28,6 +29,20 @@ export const authenticateToken = async (
     if (!token) {
       logger.warn('Token não fornecido');
       return sendError(res, 'Token de acesso requerido', 401);
+    }
+
+    // Verificar se o Firebase foi inicializado
+    if (!isFirebaseInitialized()) {
+      logger.warn('Firebase não inicializado - modo desenvolvimento');
+      // Em modo desenvolvimento sem Firebase, criar um token mock
+      req.user = {
+        uid: 'dev-user-id',
+        email: 'dev@example.com',
+        empresaId: 'dev-empresa-id',
+        papel: 'admin',
+        claims: {}
+      };
+      return next();
     }
 
     // Verificar token com Firebase Admin

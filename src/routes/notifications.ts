@@ -2,11 +2,11 @@ import { Router, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/response';
 import * as admin from 'firebase-admin';
 import logger from '../config/logger';
-import { validateRequest } from '../utils/validation';
+import { validateRequest } from '../validators';
 import { requireEmpresa, Request } from '../config/security';
 import { db } from '../config/firebase';
 import { z } from 'zod';
-import { Notification, PaginatedResponse, PaginationOptions } from '../types';
+import { Notification, PaginatedResponse } from '../types';
 
 
 
@@ -87,7 +87,7 @@ router.get('/',
   requireEmpresa,
   validateRequest({ query: notificationsQuerySchema }),
   async (req: Request, res: Response) => {
-    const { page = 1, limit = 10, read, type } = req.query as any;
+    const { page = 1, limit = 10, read, type } = req.query as { page?: number; limit?: number; read?: boolean; type?: 'inspection' | 'contestation' | 'system' | 'reminder' };
     const userId = req.user?.id;
     const empresaId = req.user?.empresaId;
 
@@ -159,7 +159,7 @@ router.get('/',
       };
 
       logger.info(`Notificações recuperadas com sucesso: ${notifications.length} itens`);
-      return sendSuccess(res, paginatedResponse, 200, { message: 'Notificações recuperadas com sucesso' });
+      return sendSuccess(res, paginatedResponse, 'Notificações recuperadas com sucesso', 200);
 
     } catch (error) {
       logger.error('Erro ao buscar notificações:', error);
@@ -242,7 +242,7 @@ router.put('/:id/read',
       });
 
       logger.info(`Notificação ${id} marcada como lida com sucesso`);
-      return sendSuccess(res, null, 200, { message: 'Notificação marcada como lida' });
+      return sendSuccess(res, null, 'Notificação marcada como lida', 200);
 
     } catch (error) {
       logger.error('Erro ao marcar notificação como lida:', error);
@@ -317,7 +317,7 @@ router.put('/mark-all-read',
       await batch.commit();
 
       logger.info(`${updatedCount} notificações marcadas como lidas`);
-      return sendSuccess(res, { updatedCount }, 200, { message: 'Todas as notificações foram marcadas como lidas' });
+      return sendSuccess(res, { updatedCount }, 'Todas as notificações foram marcadas como lidas', 200);
 
     } catch (error) {
       logger.error('Erro ao marcar todas as notificações como lidas:', error);

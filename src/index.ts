@@ -14,9 +14,8 @@ if (process.env.NODE_ENV !== 'production') {
 // Importar configurações
 import { corsOptions } from './config/security';
 import logger from './config/logger';
-import { initializeFirebase } from './config/firebase';
 import { initializeDatabase } from './config/database';
-import { initializePortal } from './config/portal';
+import { initializeFirebase } from './config/firebase';
 import { setupSwagger } from './config/swagger';
 
 // Importar middlewares
@@ -24,20 +23,7 @@ import { generalLimiter } from './middlewares/rateLimiter';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
 import { requestLogger } from './middlewares/requestLogger';
 
-// Importar rotas refatoradas
-import apiRoutes from './routes';
 
-// Importar rotas legadas (para compatibilidade)
-import healthRoutes from './routes/health';
-import dashboardRoutes from './routes/dashboard';
-import propertiesRoutes from './routes/properties';
-import syncRoutes from './routes/sync';
-import contestationRoutes from './routes/contestation';
-import notificationsRoutes from './routes/notifications';
-import uploadsRoutes from './routes/uploads';
-import exportsRoutes from './routes/exports';
-import reportsRoutes from './routes/reports';
-import { authenticateToken } from './config/security';
 
 // Criar diretório de logs se não existir
 const logDir = path.join(__dirname, '../logs');
@@ -69,52 +55,32 @@ app.use(generalLimiter);
 // Middleware de logging
 app.use(requestLogger);
 
-// Rotas principais da API (nova arquitetura)
-app.use('/api', apiRoutes);
-
-// Legacy routes for mobile app compatibility (rotas antigas)
-const apiLegacy = express.Router();
-
-// Aplicar autenticação às rotas legadas
-apiLegacy.use(authenticateToken);
-
-apiLegacy.use('/dashboard', dashboardRoutes);
-apiLegacy.use('/properties', propertiesRoutes);
-apiLegacy.use('/sync', syncRoutes);
-apiLegacy.use('/contestations', contestationRoutes);
-apiLegacy.use('/notifications', notificationsRoutes);
-apiLegacy.use('/uploads', uploadsRoutes);
-apiLegacy.use('/exports', exportsRoutes);
-apiLegacy.use('/reports', reportsRoutes);
-
-// Rotas de saúde legadas
-app.use('/api/health', healthRoutes);
-
-
-app.use('/api/legacy', apiLegacy);
-
-// Middleware para rotas não encontradas
-app.use(notFoundHandler);
-
-// Middleware global de tratamento de erros
-app.use(errorHandler);
-
-// Setup Swagger
-setupSwagger(app);
-
 const startServer = async () => {
   try {
-    logger.info('Initializing Database...');
-    await initializeDatabase();
-    logger.info('Database initialized.');
-
-    logger.info('Initializing Portal...');
-    await initializePortal();
-    logger.info('Portal initialized.');
-
+    // Inicializar Firebase primeiro
     logger.info('Initializing Firebase...');
     await initializeFirebase();
     logger.info('Firebase initialized successfully.');
+
+    // Inicializar banco de dados PostgreSQL
+    logger.info('Attempting to initialize Database...');
+    await initializeDatabase();
+    logger.info('Database initialized successfully.');
+
+    // Importar rotas após inicialização do Firebase
+    const apiRoutes = (await import('./routes')).default;
+    
+    // Configurar rotas
+    app.use('/api', apiRoutes);
+    
+    // Middleware para rotas não encontradas
+    app.use(notFoundHandler);
+    
+    // Middleware global de tratamento de erros
+    app.use(errorHandler);
+    
+    // Setup Swagger
+    setupSwagger(app);
 
     app.listen(PORT, () => {
       logger.info(`Server is running on port ${PORT}`);
@@ -182,11 +148,11 @@ app.get('/', (req, res) => {
 });
 
 // Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: Error, req: express.Request, res: express.Response) => {
   logger.error(`Erro: ${err.message}`);
   logger.error(err.stack);
   
-  res.status(err.status || 500).json({
+  res.status((err as any).status || 500).json({
     success: false,
     error: NODE_ENV === 'production' ? 'Erro interno do servidor' : err.message
   });

@@ -54,6 +54,11 @@ const options = {
               type: 'string',
               description: 'Telefone de contato'
             },
+            status: {
+              type: 'string',
+              enum: ['ativa', 'suspensa', 'cancelada'],
+              description: 'Status da empresa'
+            },
             address: {
               type: 'object',
               properties: {
@@ -74,7 +79,7 @@ const options = {
               description: 'Data de última atualização'
             }
           },
-          required: ['empresaId', 'name', 'cnpj']
+          required: ['empresaId', 'name', 'cnpj', 'status']
         },
         User: {
           type: 'object',
@@ -233,6 +238,200 @@ const options = {
               description: 'Tem página anterior'
             }
           }
+        },
+        Property: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              description: 'ID único da propriedade'
+            },
+            empresaId: {
+              type: 'string',
+              description: 'ID da empresa'
+            },
+            address: {
+              type: 'string',
+              description: 'Endereço completo'
+            },
+            city: {
+              type: 'string',
+              description: 'Cidade'
+            },
+            state: {
+              type: 'string',
+              description: 'Estado'
+            },
+            zipCode: {
+              type: 'string',
+              description: 'CEP'
+            },
+            propertyType: {
+              type: 'string',
+              description: 'Tipo da propriedade'
+            },
+            status: {
+              type: 'string',
+              enum: ['ativa', 'inativa', 'pendente'],
+              description: 'Status da propriedade'
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Data de criação'
+            }
+          },
+          required: ['id', 'empresaId', 'address', 'city', 'state']
+        },
+        Inspection: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              description: 'ID único da vistoria'
+            },
+            propertyId: {
+              type: 'string',
+              description: 'ID da propriedade'
+            },
+            empresaId: {
+              type: 'string',
+              description: 'ID da empresa'
+            },
+            inspectorId: {
+              type: 'string',
+              description: 'ID do vistoriador'
+            },
+            type: {
+              type: 'string',
+              enum: ['entrada', 'saida', 'intermediaria'],
+              description: 'Tipo da vistoria'
+            },
+            status: {
+              type: 'string',
+              enum: ['agendada', 'em_andamento', 'concluida', 'cancelada'],
+              description: 'Status da vistoria'
+            },
+            scheduledDate: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Data agendada'
+            },
+            completedDate: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Data de conclusão'
+            },
+            observations: {
+              type: 'string',
+              description: 'Observações da vistoria'
+            },
+            photos: {
+              type: 'array',
+              items: {
+                type: 'string'
+              },
+              description: 'URLs das fotos'
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Data de criação'
+            }
+          },
+          required: ['id', 'propertyId', 'empresaId', 'type', 'status']
+        },
+        Contestation: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              description: 'ID único da contestação'
+            },
+            inspectionId: {
+              type: 'string',
+              description: 'ID da vistoria'
+            },
+            userId: {
+              type: 'string',
+              description: 'ID do usuário que contestou'
+            },
+            reason: {
+              type: 'string',
+              description: 'Motivo da contestação'
+            },
+            description: {
+              type: 'string',
+              description: 'Descrição detalhada'
+            },
+            status: {
+              type: 'string',
+              enum: ['pendente', 'em_analise', 'aprovada', 'rejeitada'],
+              description: 'Status da contestação'
+            },
+            attachments: {
+              type: 'array',
+              items: {
+                type: 'string'
+              },
+              description: 'Anexos da contestação'
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Data de criação'
+            }
+          },
+          required: ['id', 'inspectionId', 'userId', 'reason', 'status']
+        },
+        ApiResponse: {
+          type: 'object',
+          properties: {
+            success: {
+              type: 'boolean',
+              description: 'Indica se a operação foi bem-sucedida'
+            },
+            message: {
+              type: 'string',
+              description: 'Mensagem de resposta'
+            },
+            data: {
+              type: 'object',
+              description: 'Dados da resposta'
+            },
+            error: {
+              type: 'object',
+              description: 'Detalhes do erro (se houver)'
+            }
+          },
+          required: ['success']
+        },
+        ErrorResponse: {
+          type: 'object',
+          properties: {
+            success: {
+              type: 'boolean',
+              example: false
+            },
+            message: {
+              type: 'string',
+              description: 'Mensagem de erro'
+            },
+            error: {
+              type: 'object',
+              properties: {
+                code: {
+                  type: 'string',
+                  description: 'Código do erro'
+                },
+                details: {
+                  type: 'string',
+                  description: 'Detalhes do erro'
+                }
+              }
+            }
+          },
+          required: ['success', 'message']
         }
       }
     },

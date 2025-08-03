@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import logger from '../config/logger';
 import { sendError } from '../utils/response';
 
@@ -11,12 +11,12 @@ export interface AppError extends Error {
  * Middleware global de tratamento de erros
  */
 export const errorHandler = (
-  error: AppError,
+  error: Error | CustomError,
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
-  let { statusCode = 500, message } = error;
+  let statusCode = (error as CustomError).statusCode || 500;
+  let message = error.message;
 
   // Log do erro
   logger.error('Error Handler:', {

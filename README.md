@@ -4,6 +4,18 @@
 
 API backend robusta e escalável para o sistema Grifo, responsável por gerenciar toda a lógica de negócio, autenticação de usuários, persistência de dados e integração com aplicativo móvel e portal web.
 
+## 🚀 Tecnologias
+
+- **Node.js** - Runtime JavaScript
+- **TypeScript** - Superset tipado do JavaScript
+- **Express.js** - Framework web
+- **Firebase Firestore** - Banco de dados NoSQL
+- **Firebase Admin** - Autenticação e storage
+- **JWT** - Autenticação via tokens
+- **Swagger** - Documentação da API
+- **Winston** - Sistema de logs
+- **Zod** - Validação de schemas
+
 [![Deploy Status](https://img.shields.io/badge/deploy-active-brightgreen)](https://grifo-api.onrender.com)
 [![Node.js](https://img.shields.io/badge/node.js-18+-green)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.3+-blue)](https://www.typescriptlang.org/)

@@ -393,3 +393,56 @@
 2025-08-01 08:48:49:4849 [32minfo[39m: [32mOrigin: undefined[39m
 2025-08-01 08:48:49:4849 [32minfo[39m: [32mMethod: GET[39m
 2025-08-01 08:48:49:4849 [32minfo[39m: [32mURL: /?ide_webview_request_time=1754027340445[39m
+2025-08-01 16:45:38:4538 [32minfo[39m: [32mOrigin: undefined[39m
+2025-08-01 16:45:38:4538 [32minfo[39m: [32mMethod: GET[39m
+2025-08-01 16:45:38:4538 [32minfo[39m: [32mURL: /?ide_webview_request_time=1754077537892[39m
+2025-08-03 05:44:32:4432 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-03 05:44:32:4432 [33mwarn[39m: [33mFirebase credentials appear to be test/development credentials. Continuing without Firebase.[39m
+2025-08-03 05:44:32:4432 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-03 05:44:32:4432 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-03 05:44:32:4432 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 06:27:27:2727 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-03 06:27:27:2727 [33mwarn[39m: [33mFirebase credentials appear to be test/development credentials. Continuing without Firebase.[39m
+2025-08-03 06:27:27:2727 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-03 06:27:27:2727 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-03 06:28:05:285 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-03 06:28:05:285 [33mwarn[39m: [33mFirebase credentials appear to be test/development credentials. Continuing without Firebase.[39m
+2025-08-03 06:28:05:285 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-03 06:28:05:285 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-03 06:28:05:285 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 06:29:02:292 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-03 06:29:02:292 [33mwarn[39m: [33mFirebase credentials appear to be test/development credentials. Continuing without Firebase.[39m
+2025-08-03 06:29:02:292 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-03 06:29:02:292 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-03 06:29:45:2945 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-03 06:29:45:2945 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-03 06:29:45:2945 [33mwarn[39m: [33mContinuing without Firebase. Some features may not be available.[39m
+2025-08-03 06:29:45:2945 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-03 06:29:45:2945 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-03 07:02:54:254 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-03 07:02:55:255 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-03 07:02:55:255 [33mwarn[39m: [33mContinuing without Firebase. Some features may not be available.[39m
+2025-08-03 07:02:55:255 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-03 07:02:55:255 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-03 07:05:50:550 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-03 07:05:50:550 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-03 07:05:50:550 [33mwarn[39m: [33mContinuing without Firebase. Some features may not be available.[39m
+2025-08-03 07:05:50:550 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-03 07:05:50:550 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-03 07:24:08:248 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-03 07:24:08:248 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-03 07:24:08:248 [33mwarn[39m: [33mContinuing without Firebase. Some features may not be available.[39m
+2025-08-03 07:24:08:248 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-03 07:24:08:248 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-03 07:24:57:2457 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-03 07:24:57:2457 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-03 07:24:57:2457 [33mwarn[39m: [33mContinuing without Firebase. Some features may not be available.[39m
+2025-08-03 07:24:57:2457 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-03 07:24:57:2457 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-03 07:24:57:2457 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 07:24:57:2457 [32minfo[39m: [32mDatabase PostgreSQL inicializado com sucesso[39m
+2025-08-03 07:24:57:2457 [32minfo[39m: [32mDatabase initialized successfully.[39m
+2025-08-03 07:25:02:252 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-03 07:25:02:252 [32minfo[39m: [32mServer is running on port 3006[39m
+2025-08-03 07:25:02:252 [32minfo[39m: [32mEnvironment: development[39m
+2025-08-03 07:25:02:252 [32minfo[39m: [32mCORS Origin: http://localhost:3000,http://localhost:3001,http://localhost:5173[39m

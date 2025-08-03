@@ -13,7 +13,7 @@ export interface Notification {
     inspectionId?: string;
     contestationId?: string;
     propertyId?: string;
-    [key: string]: any;
+    [key: string]: string | undefined;
   };
 }
 
@@ -42,7 +42,7 @@ export interface ExportOptions {
     status?: string;
     vistoriadorId?: string;
     propertyType?: string;
-    [key: string]: any;
+    [key: string]: string | undefined;
   };
 }
 
@@ -202,7 +202,7 @@ export interface PaginatedResponse<T> {
 }
 
 // Tipos para resposta da API
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   message: string;

@@ -68,7 +68,7 @@ class PortalManager {
   }
 
   // Sincronizar dados com o portal
-  public async syncData(type: string, data: any): Promise<any> {
+  public async syncData(type: string, data: Record<string, unknown>): Promise<Record<string, unknown>> {
     if (!this.isAvailable()) {
       throw new Error('Portal not available');
     }
@@ -105,10 +105,13 @@ class PortalManager {
         await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
       }
     }
+    
+    // Este ponto nunca deve ser alcançado, mas é necessário para satisfazer o TypeScript
+    throw new Error('All sync attempts failed');
   }
 
   // Buscar dados do portal
-  public async fetchData(endpoint: string, params?: Record<string, any>): Promise<any> {
+  public async fetchData(endpoint: string, params?: Record<string, unknown>): Promise<Record<string, unknown>> {
     if (!this.isAvailable()) {
       throw new Error('Portal not available');
     }
@@ -146,7 +149,7 @@ class PortalManager {
     type: string;
     title: string;
     message: string;
-    data?: any;
+    data?: Record<string, unknown>;
   }): Promise<void> {
     if (!this.isAvailable()) {
       logger.warn('Portal not available, notification not sent', { notification });
@@ -162,7 +165,7 @@ class PortalManager {
   }
 
   // Sincronizar vistoria com o portal
-  public async syncInspection(inspection: any): Promise<void> {
+  public async syncInspection(inspection: Record<string, unknown>): Promise<void> {
     if (!this.isAvailable()) {
       logger.warn('Portal not available, inspection not synced', { inspectionId: inspection.id });
       return;
@@ -177,7 +180,7 @@ class PortalManager {
   }
 
   // Sincronizar usuário com o portal
-  public async syncUser(user: any): Promise<void> {
+  public async syncUser(user: Record<string, unknown>): Promise<void> {
     if (!this.isAvailable()) {
       logger.warn('Portal not available, user not synced', { userId: user.id });
       return;
@@ -192,7 +195,7 @@ class PortalManager {
   }
 
   // Buscar configurações da empresa do portal
-  public async getCompanySettings(empresaId: string): Promise<any> {
+  public async getCompanySettings(empresaId: string): Promise<Record<string, unknown> | null> {
     if (!this.isAvailable()) {
       return null;
     }

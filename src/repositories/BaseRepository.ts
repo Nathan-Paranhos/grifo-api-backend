@@ -1,5 +1,5 @@
 import * as admin from 'firebase-admin';
-import { db } from '../config/firebase';
+import { getDb, getDbSafe, firebaseInitialized } from '../config/firebase';
 import logger from '../config/logger';
 import { CustomError } from '../middlewares/errorHandler';
 
@@ -19,7 +19,7 @@ export interface QueryOptions {
   where?: Array<{
     field: string;
     operator: admin.firestore.WhereFilterOp;
-    value: any;
+    value: unknown;
   }>;
 }
 
@@ -33,12 +33,21 @@ export interface PaginatedResult<T> {
 }
 
 export abstract class BaseRepository<T extends BaseEntity> {
-  protected collection: admin.firestore.CollectionReference;
   protected collectionName: string;
 
   constructor(collectionName: string) {
     this.collectionName = collectionName;
-    this.collection = db!.collection(collectionName);
+  }
+
+  protected getCollection(): admin.firestore.CollectionReference {
+    if (!firebaseInitialized) {
+      throw new Error('Firebase não foi inicializado. Alguns recursos podem não estar disponíveis.');
+    }
+    const db = getDbSafe();
+    if (!db) {
+      throw new Error('Firebase não está disponível em modo desenvolvimento.');
+    }
+    return db.collection(this.collectionName);
   }
 
   /**
@@ -54,7 +63,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
         ativo: data.ativo ?? true
       };
 
-      const docRef = await this.collection.add(docData);
+      const docRef = await this.getCollection().add(docData);
       const doc = await docRef.get();
       
       logger.info(`Documento criado em ${this.collectionName}:`, { id: docRef.id, empresaId: data.empresaId });
@@ -74,7 +83,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
    */
   async findById(id: string, empresaId: string): Promise<T | null> {
     try {
-      const doc = await this.collection.doc(id).get();
+      const doc = await this.getCollection().doc(id).get();
       
       if (!doc.exists) {
         return null;
@@ -103,7 +112,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
    */
   async findByEmpresa(empresaId: string, options: QueryOptions = {}): Promise<PaginatedResult<T>> {
     try {
-      let query: admin.firestore.Query = this.collection
+      let query: admin.firestore.Query = this.getCollection()
         .where('empresaId', '==', empresaId);
 
       // Aplicar filtros where
@@ -141,7 +150,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
       })) as T[];
 
       // Contar total (para paginação)
-      const totalSnapshot = await this.collection
+      const totalSnapshot = await this.getCollection()
         .where('empresaId', '==', empresaId)
         .get();
       const total = totalSnapshot.size;
@@ -186,7 +195,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
         updatedAt: admin.firestore.Timestamp.now()
       };
 
-      await this.collection.doc(id).update(updateData);
+      await this.getCollection().doc(id).update(updateData);
       
       logger.info(`Documento atualizado em ${this.collectionName}:`, { id, empresaId });
       
@@ -224,7 +233,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
         throw new CustomError(`${this.collectionName} não encontrado`, 404);
       }
 
-      await this.collection.doc(id).delete();
+      await this.getCollection().doc(id).delete();
       logger.info(`Hard delete em ${this.collectionName}:`, { id, empresaId });
       return true;
     } catch (error) {
@@ -239,7 +248,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
    */
   async count(empresaId: string, filters?: QueryOptions['where']): Promise<number> {
     try {
-      let query: admin.firestore.Query = this.collection
+      let query: admin.firestore.Query = this.getCollection()
         .where('empresaId', '==', empresaId);
 
       if (filters) {

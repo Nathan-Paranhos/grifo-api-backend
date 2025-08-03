@@ -2,13 +2,10 @@ import helmet from 'helmet';
 // import { rateLimit } from 'express-rate-limit'; // Temporariamente desabilitado
 import { Express, Request as ExpressRequest, Response, NextFunction } from 'express';
 import cors from 'cors';
-import rateLimit from 'express-rate-limit';
 import * as jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import * as firebase from './firebase';
 import { db } from './firebase';
 import logger from './logger';
-import validator from 'validator';
 import DOMPurify from 'isomorphic-dompurify';
 import admin from 'firebase-admin';
 
@@ -146,11 +143,13 @@ export const verifyJWT = (token: string): JWTPayload | null => {
     
     logger.debug(`JWT verificado para usuário ${decoded.uid}`);
     return decoded;
-  } catch (error: any) {
-    if (error.name === 'TokenExpiredError') {
-      logger.warn('JWT expirado');
-    } else if (error.name === 'JsonWebTokenError') {
-      logger.warn('JWT inválido');
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'name' in error) {
+      if (error.name === 'TokenExpiredError') {
+        logger.warn('JWT expirado');
+      } else if (error.name === 'JsonWebTokenError') {
+        logger.warn('JWT inválido');
+      }
     } else {
       logger.error('Erro ao verificar JWT:', error);
     }
@@ -167,11 +166,13 @@ export const verifyRefreshToken = (token: string): RefreshTokenPayload | null =>
     
     logger.debug(`Refresh token verificado para usuário ${decoded.uid}`);
     return decoded;
-  } catch (error: any) {
-    if (error.name === 'TokenExpiredError') {
-      logger.warn('Refresh token expirado');
-    } else if (error.name === 'JsonWebTokenError') {
-      logger.warn('Refresh token inválido');
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'name' in error) {
+      if (error.name === 'TokenExpiredError') {
+        logger.warn('Refresh token expirado');
+      } else if (error.name === 'JsonWebTokenError') {
+        logger.warn('Refresh token inválido');
+      }
     } else {
       logger.error('Erro ao verificar refresh token:', error);
     }
@@ -245,7 +246,7 @@ export const jwtAuthMiddleware = async (req: Request, res: Response, next: NextF
     logger.debug(`Usuário autenticado via JWT: ${decoded.uid}`);
     return next();
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Erro durante a verificação do JWT:', error);
     return res.status(401).json({ 
       success: false, 
@@ -257,9 +258,13 @@ export const jwtAuthMiddleware = async (req: Request, res: Response, next: NextF
 /**
  * Extrai informações do token sem verificar (para debug)
  */
-export const decodeJWTWithoutVerification = (token: string): any => {
+export const decodeJWTWithoutVerification = (token: string): Record<string, unknown> | null => {
   try {
-    return jwt.decode(token);
+    const decoded = jwt.decode(token);
+    if (typeof decoded === 'object' && decoded !== null) {
+      return decoded as Record<string, unknown>;
+    }
+    return null;
   } catch (error) {
     logger.error('Erro ao decodificar JWT:', error);
     return null;
@@ -271,13 +276,13 @@ export const decodeJWTWithoutVerification = (token: string): any => {
  */
 export const isTokenNearExpiry = (token: string, thresholdMinutes: number = 5): boolean => {
   try {
-    const decoded = jwt.decode(token) as any;
+    const decoded = jwt.decode(token) as Record<string, unknown> | null;
     if (!decoded || !decoded.exp) {
       return true;
     }
     
     const now = Math.floor(Date.now() / 1000);
-    const timeUntilExpiry = decoded.exp - now;
+    const timeUntilExpiry = (decoded.exp as number) - now;
     const thresholdSeconds = thresholdMinutes * 60;
     
     return timeUntilExpiry <= thresholdSeconds;
@@ -309,7 +314,7 @@ export const sanitizeInput = (req: Request, res: Response, next: NextFunction) =
   
   // Sanitizar query parameters
   if (req.query && typeof req.query === 'object') {
-    req.query = sanitizeObject(req.query);
+    req.query = sanitizeObject(req.query) as any;
   }
   
   next();
@@ -326,7 +331,7 @@ const sanitizeObject = (obj: any): any => {
   }
   
   if (obj && typeof obj === 'object') {
-    const sanitized: any = {};
+    const sanitized: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
       // Sanitizar a chave também
       const cleanKey = DOMPurify.sanitize(key);

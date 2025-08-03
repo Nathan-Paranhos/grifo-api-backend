@@ -8,18 +8,60 @@ export type { CreateInspectionData, UpdateInspectionData, InspectionFilters } fr
 export type { CreateCompanyData, UpdateCompanyData } from './CompanyService';
 export type { CreateUserData, UpdateUserData, User } from './UserService';
 
-// Service instances (singletons)
-const inspectionService = new InspectionService();
-const companyService = new CompanyService();
-const userService = new UserService();
+// Export PropertyService
+export { propertyService } from './PropertyService';
 
-export {
-  inspectionService,
-  companyService,
-  userService
+// Service instances (singletons)
+// Lazy loading para evitar inicialização prematura dos serviços
+let _inspectionService: any = null;
+let _companyService: any = null;
+let _userService: any = null;
+
+export const getInspectionService = () => {
+  if (!_inspectionService) {
+    const { InspectionService } = require('./InspectionService');
+    _inspectionService = new InspectionService();
+  }
+  return _inspectionService;
+};
+
+export const getCompanyService = () => {
+  if (!_companyService) {
+    const { CompanyService } = require('./CompanyService');
+    _companyService = new CompanyService();
+  }
+  return _companyService;
+};
+
+export const getUserService = () => {
+  if (!_userService) {
+    const { UserService } = require('./UserService');
+    _userService = new UserService(getCompanyService());
+  }
+  return _userService;
+};
+
+// Manter compatibilidade com código existente
+export const inspectionService = {
+  get: getInspectionService
+};
+export const companyService = {
+  get: getCompanyService
+};
+export const userService = {
+  get: getUserService
 };
 
 // Factory functions
-export const createInspectionService = () => new InspectionService();
-export const createCompanyService = () => new CompanyService();
-export const createUserService = () => new UserService();
+export const createInspectionService = () => {
+  const { InspectionService } = require('./InspectionService');
+  return new InspectionService();
+};
+export const createCompanyService = () => {
+  const { CompanyService } = require('./CompanyService');
+  return new CompanyService();
+};
+export const createUserService = () => {
+  const { UserService } = require('./UserService');
+  return new UserService();
+};

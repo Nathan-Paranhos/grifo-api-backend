@@ -7,6 +7,15 @@ import authRoutes from './auth';
 import inspectionRoutes from './inspections';
 import companyRoutes from './companies';
 import userRoutes from './users';
+import dashboardRoutes from './dashboard';
+import propertiesRoutes from './properties';
+import syncRoutes from './sync';
+import contestationRoutes from './contestation';
+import notificationsRoutes from './notifications';
+import uploadsRoutes from './uploads';
+import exportsRoutes from './exports';
+import reportsRoutes from './reports';
+import healthRoutes from './health';
 
 const router = Router();
 
@@ -18,16 +27,15 @@ router.use('/auth', authRoutes);
 router.use('/inspections', inspectionRoutes);
 router.use('/companies', companyRoutes);
 router.use('/users', userRoutes);
-
-// Rota de health check
-router.get('/health', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'API Grifo Vistorias está funcionando',
-    timestamp: new Date().toISOString(),
-    version: process.env.npm_package_version || '1.0.0'
-  });
-});
+router.use('/dashboard', dashboardRoutes);
+router.use('/properties', propertiesRoutes);
+router.use('/sync', syncRoutes);
+router.use('/contestations', contestationRoutes);
+router.use('/notifications', notificationsRoutes);
+router.use('/uploads', uploadsRoutes);
+router.use('/exports', exportsRoutes);
+router.use('/reports', reportsRoutes);
+router.use('/health', healthRoutes);
 
 // Middleware para rotas não encontradas
 router.use(notFoundHandler);

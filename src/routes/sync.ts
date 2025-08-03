@@ -1,8 +1,22 @@
 import { Router, Response } from 'express';
 import { sendSuccess, sendError } from '../utils/response';
 import logger from '../config/logger';
-import { validateRequest, syncSchema, syncStatusSchema } from '../utils/validation';
+import { validateRequest } from '../validators';
+import { syncSchema, syncStatusSchema } from '../validators/sync';
 import { Request } from '../config/security';
+
+// Adicionando interfaces para tipagem
+interface Photo {
+  uri: string;
+  [key: string]: unknown;
+}
+
+interface Inspection {
+  id: string;
+  tipo: string;
+  fotos?: Photo[];
+  [key: string]: unknown;
+}
 
 const router = Router();
 
@@ -34,7 +48,7 @@ router.get('/', async (req: Request, res: Response) => {
       }
     };
     
-    return sendSuccess(res, syncInfo, 200, { timestamp: new Date().toISOString() });
+    return sendSuccess(res, syncInfo, 'Informações de sincronização obtidas com sucesso', 200);
     
   } catch (error: unknown) {
     logger.error('Error retrieving sync info', error);
@@ -55,7 +69,7 @@ router.get('/', async (req: Request, res: Response) => {
 const measurePerformance = async <T>(
   operation: string,
   fn: () => Promise<T>,
-  metadata?: any
+  metadata?: Record<string, unknown>
 ): Promise<T> => {
   const startTime = Date.now();
   try {
@@ -75,7 +89,7 @@ const measurePerformance = async <T>(
 interface DbTransaction {
   commit: () => Promise<void>;
   rollback: () => Promise<void>;
-  saveInspection: (inspection: any) => Promise<string>;
+  saveInspection: (inspection: Inspection) => Promise<string>;
   updateStats: (empresaId: string, tipo: string) => Promise<void>;
 }
 
@@ -92,7 +106,7 @@ const simulateDbTransaction = async (): Promise<DbTransaction> => {
       await new Promise(resolve => setTimeout(resolve, 30));
       logger.info('Transaction rolled back');
     },
-    saveInspection: async (inspection: any) => {
+    saveInspection: async (inspection: Inspection) => {
       // Simular salvamento no banco de dados
       await new Promise(resolve => setTimeout(resolve, 20));
       
@@ -100,10 +114,11 @@ const simulateDbTransaction = async (): Promise<DbTransaction> => {
       
       return `cloud_${inspection.id}`;
     },
-    updateStats: async (empresaId: string, tipo: string) => {
+    updateStats: async () => {
       // Simular atualização de estatísticas
       await new Promise(resolve => setTimeout(resolve, 10));
     }
+
   };
 };
 
@@ -142,7 +157,7 @@ async function withRetry<T>(
   }
   
   throw lastError;
-};
+}
 
 // Endpoint para sincronização de inspeções
 router.post('/sync', validateRequest({ body: syncSchema }), async (req: Request, res: Response) => {
@@ -174,7 +189,7 @@ router.post('/sync', validateRequest({ body: syncSchema }), async (req: Request,
     // Processar cada lote sequencialmente
     for (const batch of batches) {
       // Processar inspeções do lote em paralelo para melhor performance
-       const batchPromises = batch.map(async (inspection: any) => {
+       const batchPromises = batch.map(async (inspection: Inspection) => {
         try {
           logger.info('Processing inspection', { id: inspection.id, tipo: inspection.tipo });
           
@@ -191,7 +206,7 @@ router.post('/sync', validateRequest({ body: syncSchema }), async (req: Request,
             
             // 2. Upload de fotos para o Firebase Storage
             // Em produção: const photoUrls = await uploadPhotosToStorage(inspection.fotos, inspection.id, empresaId);
-            const photoUrls = inspection.fotos?.map((_: any, index: number) => 
+            const photoUrls = inspection.fotos?.map((_: Photo, index: number) => 
               `https://storage.googleapis.com/grifo-vistorias/${empresaId}/${inspection.id}/photo_${index}.jpg`
             ) || [];
             
@@ -270,7 +285,7 @@ router.post('/sync', validateRequest({ body: syncSchema }), async (req: Request,
     const durationMs = Date.now() - startTime;
     logger.info('Sync process completed', { durationMs, successCount: syncResults.length, errorCount: errors.length });
 
-    return sendSuccess(res, { syncResults, errors, durationMs }, 200, { message: 'Sincronização concluída' });
+    return sendSuccess(res, { syncResults, errors, durationMs }, 'Sincronização concluída', 200);
 
   } catch (error: unknown) {
     logger.error('Error during sync process', { error: error instanceof Error ? error.message : 'Unknown error' });
@@ -285,7 +300,7 @@ router.post('/sync', validateRequest({ body: syncSchema }), async (req: Request,
 });
 
 // Endpoint para verificar status de sincronização
-router.get('/status', validateRequest({ query: syncStatusSchema }), async (req: Request, res: Response) => {
+router.post('/status', validateRequest({ body: syncStatusSchema }), async (req: Request, res: Response) => {
   try {
     const { empresaId, vistoriadorId } = req.query as unknown as { empresaId: string, vistoriadorId?: string };
     

@@ -57,13 +57,8 @@ class DatabaseManager {
         this.isConnected = false;
       });
 
-      // Testa conexão com timeout
-      await Promise.race([
-        this.testConnection(),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout na conexão do banco')), 5000)
-        )
-      ]);
+      // Testa conexão diretamente
+      await this.testConnection();
       logger.info('Database PostgreSQL inicializado com sucesso');
 
     } catch (error) {
@@ -103,7 +98,7 @@ class DatabaseManager {
     }
   }
 
-  public async query(text: string, params?: any[]): Promise<any> {
+  public async query<T extends import('pg').QueryResultRow = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<import('pg').QueryResult<T>> {
     if (!this.pool || !this.isConnected) {
       throw new Error('Banco PostgreSQL não disponível');
     }
@@ -149,7 +144,7 @@ class DatabaseManager {
   }
 
   // Métodos específicos para o sistema Grifo
-  public async getEmpresaById(empresaId: string): Promise<any> {
+  public async getEmpresaById(empresaId: string): Promise<unknown> {
     const result = await this.query(
       'SELECT * FROM empresas WHERE id = $1 AND ativo = true',
       [empresaId]
@@ -157,7 +152,7 @@ class DatabaseManager {
     return result.rows[0] || null;
   }
 
-  public async getUsersByEmpresa(empresaId: string): Promise<any[]> {
+  public async getUsersByEmpresa(empresaId: string): Promise<unknown[]> {
     const result = await this.query(
       'SELECT * FROM usuarios WHERE empresa_id = $1 AND ativo = true ORDER BY nome',
       [empresaId]
@@ -165,7 +160,7 @@ class DatabaseManager {
     return result.rows;
   }
 
-  public async getInspectionsByEmpresa(empresaId: string, limit = 50, offset = 0): Promise<any[]> {
+  public async getInspectionsByEmpresa(empresaId: string, limit = 50, offset = 0): Promise<unknown[]> {
     const result = await this.query(
       'SELECT * FROM vistorias WHERE empresa_id = $1 ORDER BY criado_em DESC LIMIT $2 OFFSET $3',
       [empresaId, limit, offset]
@@ -173,7 +168,7 @@ class DatabaseManager {
     return result.rows;
   }
 
-  public async getDashboardStats(empresaId: string, vistoriadorId?: string): Promise<any> {
+  public async getDashboardStats(empresaId: string, vistoriadorId?: string): Promise<unknown> {
     let query = `
       SELECT 
         COUNT(*) as total,
@@ -203,7 +198,7 @@ class DatabaseManager {
     search?: string;
     role?: string;
     ativo?: boolean;
-  } = {}): Promise<{ users: any[]; total: number }> {
+  } = {}): Promise<{ users: Record<string, unknown>[]; total: number }> {
     if (!this.pool || !this.isConnected) {
       throw new Error('Banco PostgreSQL não disponível');
     }
@@ -214,7 +209,7 @@ class DatabaseManager {
     const client = await this.pool.connect();
     try {
       let whereClause = 'WHERE empresa_id = $1';
-      const params: any[] = [empresaId];
+      const params: unknown[] = [empresaId];
       let paramIndex = 2;
 
       if (search) {
@@ -270,7 +265,7 @@ class DatabaseManager {
     role: string;
     telefone?: string;
     ativo?: boolean;
-  }): Promise<any> {
+  }): Promise<Record<string, unknown>> {
     if (!this.pool || !this.isConnected) {
       throw new Error('Banco PostgreSQL não disponível');
     }

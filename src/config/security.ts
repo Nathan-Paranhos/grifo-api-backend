@@ -37,15 +37,17 @@ export const requireEmpresa = (req: Request, res: Response, next: NextFunction) 
 import 'dotenv/config';
 
 // Configuração do CORS
-const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [];
+const allowedOrigins = (process.env.CORS_ORIGINS || process.env.CORS_ORIGIN)?.split(',') || [];
 
 export const corsOptions = {
   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-    // permitir requisições sem origin em ambientes de não produção (ex: Postman) ou se a lista de origens estiver vazia
-    if (!origin && process.env.NODE_ENV !== 'production') {
-        return callback(null, true);
+    // Permitir requisições sem origin (health checks, Postman, etc.)
+    if (!origin) {
+      return callback(null, true);
     }
-    if (allowedOrigins.includes(origin!)) {
+    
+    // Verificar se a origem está na lista de origens permitidas
+    if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       logger.error(`Tentativa de acesso CORS de origem não permitida: ${origin}`);

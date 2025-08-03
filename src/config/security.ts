@@ -37,26 +37,38 @@ export const requireEmpresa = (req: Request, res: Response, next: NextFunction) 
 import 'dotenv/config';
 
 // Configuração do CORS
-const allowedOrigins = (process.env.CORS_ORIGINS || process.env.CORS_ORIGIN)?.split(',') || [];
+const corsOriginsEnv = process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || '';
+const allowedOrigins = corsOriginsEnv.split(',').map(origin => origin.trim()).filter(origin => origin.length > 0);
+
+// Log das origens permitidas para debug
+logger.info(`Origens CORS permitidas: ${allowedOrigins.join(', ')}`);
 
 export const corsOptions = {
   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
     // Permitir requisições sem origin (health checks, Postman, etc.)
     if (!origin) {
+      logger.debug('Requisição sem origin permitida (health check/Postman)');
       return callback(null, true);
     }
     
     // Verificar se a origem está na lista de origens permitidas
-    if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+    if (allowedOrigins.length === 0) {
+      logger.warn('Nenhuma origem CORS configurada - permitindo todas');
+      return callback(null, true);
+    }
+    
+    if (allowedOrigins.includes(origin)) {
+      logger.debug(`Origem CORS permitida: ${origin}`);
       callback(null, true);
     } else {
       logger.error(`Tentativa de acesso CORS de origem não permitida: ${origin}`);
+      logger.error(`Origens permitidas: ${allowedOrigins.join(', ')}`);
       callback(new Error('Origem não permitida pelo CORS'));
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Authorization', 'Content-Type'],
+  allowedHeaders: ['Authorization', 'Content-Type', 'X-Requested-With'],
 };
 
 // Configuração do rate limiter geral (temporariamente desabilitado)

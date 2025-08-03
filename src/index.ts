@@ -25,14 +25,16 @@ import { requestLogger } from './middlewares/requestLogger';
 
 
 
-// Criar diretório de logs se não existir
-const logDir = path.join(__dirname, '../logs');
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir, { recursive: true });
+// Criar diretório de logs se não existir (apenas em desenvolvimento)
+if (process.env.NODE_ENV !== 'production') {
+  const logDir = path.join(__dirname, '../logs');
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir, { recursive: true });
+  }
 }
 
 const app = express();
-const PORT = process.env.PORT || 3006;
+const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
 
@@ -72,12 +74,6 @@ const startServer = async () => {
     
     // Configurar rotas
     app.use('/api', apiRoutes);
-    
-    // Middleware para rotas não encontradas
-    app.use(notFoundHandler);
-    
-    // Middleware global de tratamento de erros
-    app.use(errorHandler);
     
     // Setup Swagger
     setupSwagger(app);
@@ -147,27 +143,11 @@ app.get('/', (req, res) => {
   });
 });
 
-// Error handling middleware
-app.use((err: Error, req: express.Request, res: express.Response) => {
-  logger.error(`Erro: ${err.message}`);
-  logger.error(err.stack);
-  
-  res.status((err as any).status || 500).json({
-    success: false,
-    error: NODE_ENV === 'production' ? 'Erro interno do servidor' : err.message
-  });
-});
-
-// Handle 404 routes - garantir resposta JSON
-app.use((req, res) => {
-  logger.warn(`Rota não encontrada: ${req.method} ${req.url}`);
-  res.status(404).json({
-    success: false,
-    error: 'Recurso não encontrado',
-    message: `Endpoint ${req.method} ${req.url} não existe`,
-    timestamp: new Date().toISOString()
-  });
-});
+    // Middleware para rotas não encontradas
+    app.use(notFoundHandler);
+    
+    // Middleware global de tratamento de erros
+    app.use(errorHandler);
 
 // Firebase já foi inicializado na primeira função startServer
 

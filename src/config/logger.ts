@@ -40,27 +40,32 @@ const format = winston.format.combine(
 const transports = [
   // Console para todos os logs
   new winston.transports.Console(),
-  
-  // Arquivo para logs de erro
-  new winston.transports.File({
-    filename: 'logs/error.log',
-    level: 'error',
-    maxsize: 5242880, // 5MB
-    maxFiles: 5,
-    tailable: true,
-  }),
-  
-  // Arquivo para todos os logs
-  new winston.transports.File({
-    filename: 'logs/combined.log',
-    maxsize: 10485760, // 10MB
-    maxFiles: 5,
-    tailable: true,
-  }),
-  
-  // Arquivo para todos os logs
-  new winston.transports.File({ filename: 'logs/all.log' }),
 ];
+
+// Adicionar transportes de arquivo apenas em desenvolvimento
+if (process.env.NODE_ENV !== 'production') {
+  transports.push(
+    // Arquivo para logs de erro
+    new winston.transports.File({
+      filename: 'logs/error.log',
+      level: 'error',
+      maxsize: 5242880, // 5MB
+      maxFiles: 5,
+      tailable: true,
+    }),
+    
+    // Arquivo para todos os logs
+    new winston.transports.File({
+      filename: 'logs/combined.log',
+      maxsize: 10485760, // 10MB
+      maxFiles: 5,
+      tailable: true,
+    }),
+    
+    // Arquivo para todos os logs (backup)
+    new winston.transports.File({ filename: 'logs/all.log' })
+  );
+}
 
 // Criar a instância do logger
 const logger = winston.createLogger({

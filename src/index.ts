@@ -23,6 +23,9 @@ import { generalLimiter } from './middlewares/rateLimiter';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
 import { requestLogger } from './middlewares/requestLogger';
 
+// Importar rotas
+import apiRoutes from './routes';
+
 
 
 // Criar diretório de logs se não existir (apenas em desenvolvimento)
@@ -69,10 +72,7 @@ const startServer = async () => {
     await initializeDatabase();
     logger.info('Database initialized successfully.');
 
-    // Importar rotas após inicialização do Firebase
-    const apiRoutes = (await import('./routes')).default;
-    
-    // Configurar rotas
+    // Configurar rotas após inicialização do Firebase
     app.use('/api', apiRoutes);
     
     // Setup Swagger

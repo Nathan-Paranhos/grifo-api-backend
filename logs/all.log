@@ -446,3 +446,6 @@
 2025-08-03 07:25:02:252 [32minfo[39m: [32mServer is running on port 3006[39m
 2025-08-03 07:25:02:252 [32minfo[39m: [32mEnvironment: development[39m
 2025-08-03 07:25:02:252 [32minfo[39m: [32mCORS Origin: http://localhost:3000,http://localhost:3001,http://localhost:5173[39m
+2025-08-03 09:15:32:1532 [32minfo[39m: [32mIncoming request[39m
+2025-08-03 09:15:32:1532 [32minfo[39m: [32mRequest completed[39m
+2025-08-03 09:15:32:1532 [31merror[39m: [31mTentativa de acesso CORS de origem não permitida: http://localhost:3006[39m

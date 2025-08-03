@@ -1,5 +1,5 @@
 import * as ExcelJS from 'exceljs';
-import PDFDocument from 'pdfkit';
+import * as PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
 import { AppError } from '../errors/AppError';
@@ -50,7 +50,7 @@ class FileGeneratorService {
         fs.mkdirSync(exportDir, { recursive: true });
       }
 
-      const doc = new PDFDocument();
+      const doc = new (PDFDocument as any)();
       const stream = fs.createWriteStream(filePath);
       doc.pipe(stream);
 

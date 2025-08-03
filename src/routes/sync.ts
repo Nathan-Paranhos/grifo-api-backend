@@ -171,14 +171,14 @@ router.post('/sync', validateRequest({ body: syncSchema }), async (req: Request,
     logger.info('Sync request received', { count: pendingInspections.length, vistoriadorId, empresaId });
 
     // Estrutura para armazenar resultados e erros
-    const syncResults = [];
-    const errors = [];
+    const syncResults: any[] = [];
+    const errors: any[] = [];
 
     logger.info('Starting sync process', { count: pendingInspections.length, vistoriadorId, empresaId });
 
     // Processar inspeções em lotes para melhor performance
     const BATCH_SIZE = 5;
-    const batches = [];
+    const batches: Inspection[][] = [];
     
     for (let i = 0; i < pendingInspections.length; i += BATCH_SIZE) {
       batches.push(pendingInspections.slice(i, i + BATCH_SIZE));
@@ -206,7 +206,7 @@ router.post('/sync', validateRequest({ body: syncSchema }), async (req: Request,
             
             // 2. Upload de fotos para o Firebase Storage
             // Em produção: const photoUrls = await uploadPhotosToStorage(inspection.fotos, inspection.id, empresaId);
-            const photoUrls = inspection.fotos?.map((_: Photo, index: number) => 
+            const photoUrls = inspection.fotos?.map((_: any, index: number) => 
               `https://storage.googleapis.com/grifo-vistorias/${empresaId}/${inspection.id}/photo_${index}.jpg`
             ) || [];
             
@@ -274,9 +274,9 @@ router.post('/sync', validateRequest({ body: syncSchema }), async (req: Request,
       // Processar resultados do lote
       for (const result of batchResults) {
         if (result.success) {
-          syncResults.push(result.result);
+          syncResults.push((result as any).result);
         } else {
-          errors.push(result.error);
+          errors.push((result as any).error);
         }
       }
     }

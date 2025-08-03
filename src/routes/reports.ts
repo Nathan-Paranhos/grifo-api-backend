@@ -177,18 +177,18 @@ router.get('/dashboard-advanced', validateRequest({ query: reportsQuerySchema })
 
       // Calcular métricas
       const totalInspections = inspections.length;
-      const completedInspections = inspections.filter((i: Record<string, unknown>) => (i.status as string) === 'concluida').length;
-      const pendingInspections = inspections.filter((i: Record<string, unknown>) => (i.status as string) === 'pendente').length;
-      const inProgressInspections = inspections.filter((i: Record<string, unknown>) => (i.status as string) === 'em_andamento').length;
+      const completedInspections = inspections.filter((i: any) => i.status === 'concluida').length;
+      const pendingInspections = inspections.filter((i: any) => i.status === 'pendente').length;
+      const inProgressInspections = inspections.filter((i: any) => i.status === 'em_andamento').length;
       
       
       
       // Métricas por vistoriador
-      const inspectorMetrics = (users as Record<string, unknown>[])
-        .filter(u => u.role === 'vistoriador')
-        .map(inspector => {
-          const inspectorInspections = inspections.filter((i: Record<string, unknown>) => i.vistoriadorId === inspector.id);
-          const completed = inspectorInspections.filter((i: Record<string, unknown>) => (i.status as string) === 'concluida').length;
+      const inspectorMetrics = (users as any[])
+        .filter((u: any) => u.role === 'vistoriador')
+        .map((inspector: any) => {
+          const inspectorInspections = inspections.filter((i: any) => i.vistoriadorId === inspector.id);
+          const completed = inspectorInspections.filter((i: any) => i.status === 'concluida').length;
           const total = inspectorInspections.length;
           
           return {
@@ -202,21 +202,21 @@ router.get('/dashboard-advanced', validateRequest({ query: reportsQuerySchema })
         });
 
       // Distribuição por tipo de imóvel
-      const propertyTypeDistribution = (properties as Record<string, unknown>[]).reduce((acc: Record<string, number>, property) => {
-        const type = (property.tipo as string) || 'outros';
+      const propertyTypeDistribution = (properties as any[]).reduce((acc: Record<string, number>, property: any) => {
+        const type = property.tipo || 'outros';
         acc[type] = (acc[type] || 0) + 1;
         return acc;
       }, {} as Record<string, number>);
 
       // Tendência temporal (últimos 7 dias)
-      const dailyTrend = [];
+      const dailyTrend: Array<{ date: string; inspections: number; completed: number }> = [];
       for (let i = 6; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
         const dayStart = new Date(date.setHours(0, 0, 0, 0));
         const dayEnd = new Date(date.setHours(23, 59, 59, 999));
         
-        const dayInspections = inspections.filter((inspection: Record<string, unknown>) => {
+        const dayInspections = inspections.filter((inspection: any) => {
           const inspectionDate = new Date(inspection.createdAt as string);
           return inspectionDate >= dayStart && inspectionDate <= dayEnd;
         });
@@ -224,7 +224,7 @@ router.get('/dashboard-advanced', validateRequest({ query: reportsQuerySchema })
         dailyTrend.push({
           date: dayStart.toISOString().split('T')[0],
           inspections: dayInspections.length,
-          completed: dayInspections.filter((i: Record<string, unknown>) => (i.status as string) === 'concluida').length
+          completed: dayInspections.filter((i: any) => i.status === 'concluida').length
         });
       }
 
@@ -233,7 +233,7 @@ router.get('/dashboard-advanced', validateRequest({ query: reportsQuerySchema })
         concluida: completedInspections,
         pendente: pendingInspections,
         em_andamento: inProgressInspections,
-        cancelada: inspections.filter((i: Record<string, unknown>) => (i.status as string) === 'cancelada').length
+        cancelada: inspections.filter((i: any) => i.status === 'cancelada').length
       };
 
       const dashboardData: DashboardAdvancedData = {
@@ -364,7 +364,7 @@ router.get('/performance',
       });
 
       // Tendências semanais
-      const weeklyTrends = [];
+      const weeklyTrends: Array<{ week: string; startDate: string; endDate: string; totalInspections: number; completedInspections: number; averageTime: number }> = [];
       for (let week = 3; week >= 0; week--) {
         const weekStart = new Date();
         weekStart.setDate(weekStart.getDate() - (week * 7 + 6));
@@ -547,7 +547,7 @@ router.get('/analytics',
       });
 
       // Análise de sazonalidade
-      const seasonalityData = [];
+      const seasonalityData: Array<{ month: string; inspections: number; revenue: number }> = [];
       for (let month = 11; month >= 0; month--) {
         const monthDate = new Date();
         monthDate.setMonth(monthDate.getMonth() - month);
@@ -559,7 +559,7 @@ router.get('/analytics',
         monthEnd.setDate(0);
         monthEnd.setHours(23, 59, 59, 999);
         
-        const monthInspections = inspections.filter((inspection: Record<string, unknown>) => {
+        const monthInspections = inspections.filter((inspection: any) => {
           const inspectionDate = new Date(inspection.createdAt as string);
           return inspectionDate >= monthDate && inspectionDate <= monthEnd;
         });

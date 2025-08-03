@@ -44,3 +44,4 @@
 2025-08-03 07:24:08:248 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
 2025-08-03 07:24:57:2457 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
 2025-08-03 07:24:57:2457 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 09:15:32:1532 [31merror[39m: [31mTentativa de acesso CORS de origem não permitida: http://localhost:3006[39m

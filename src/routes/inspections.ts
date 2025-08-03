@@ -50,11 +50,7 @@ router.patch('/:id/status',
   inspectionController.updateStatus
 );
 
-// router.delete('/:id',
-//   generalLimiter,
-//   requireRole(['admin', 'gerente']),
-//   inspectionController.remove
-// ); // Método não implementado
+
 
 router.post('/:id/photos',
   createLimiter,
@@ -72,6 +68,6 @@ router.post('/:id/contestations',
   inspectionController.addContestation
 );
 
-// router.get('/:id/contestations', generalLimiter, inspectionController.getContestations); // Método não implementado
+
 
 export default router;

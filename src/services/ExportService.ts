@@ -12,7 +12,7 @@ class ExportService {
     if (!db) {
       throw new AppError('Serviço de banco de dados indisponível', 503);
     }
-    // TODO: Fetch and filter inspections data from Firestore
+    // Buscar dados de vistorias do Firestore
     const inspections = await this.getInspections(empresaId);
     const { format } = query;
     const formatStr = typeof format === 'string' ? format : 'pdf';
@@ -29,7 +29,7 @@ class ExportService {
     if (!db) {
       throw new AppError('Serviço de banco de dados indisponível', 503);
     }
-    // TODO: Fetch and filter properties data from Firestore
+    // Buscar dados de propriedades do Firestore
     const properties = await this.getProperties(empresaId);
     const { format } = query;
     const formatStr = typeof format === 'string' ? format : 'pdf';
@@ -46,7 +46,7 @@ class ExportService {
     if (!db) {
       throw new AppError('Serviço de banco de dados indisponível', 503);
     }
-    // TODO: Fetch and filter users data from Firestore
+    // Buscar dados de usuários do Firestore
     const users = await this.getUsers(empresaId);
     const { format } = query;
     const formatStr = typeof format === 'string' ? format : 'pdf';

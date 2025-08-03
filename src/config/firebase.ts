@@ -80,11 +80,7 @@ export const verifyFirebaseToken = async (
     // Verificar o token com o Firebase Admin SDK
     const decodedToken = await admin.auth().verifyIdToken(token, true); // checkRevoked = true
     
-    logger.debug('Token Firebase verificado com sucesso:', {
-      uid: decodedToken.uid,
-      email: decodedToken.email,
-      exp: new Date(decodedToken.exp * 1000).toISOString()
-    });
+    // Token Firebase verificado com sucesso
     
     return decodedToken;
   } catch (error: unknown) {

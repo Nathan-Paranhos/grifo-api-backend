@@ -30,7 +30,7 @@ export const requireEmpresa = (req: Request, res: Response, next: NextFunction) 
     });
   }
   
-  logger.debug(`Empresa validada: ${empresaId} para usuário ${req.user?.id}`);
+  // Empresa validada com sucesso
   next();
 };
 
@@ -105,7 +105,7 @@ export const generateJWT = (payload: Omit<JWTPayload, 'iat' | 'exp'>): string =>
       expiresIn: JWT_EXPIRES_IN
     } as jwt.SignOptions);
     
-    logger.debug(`JWT gerado para usuário ${payload.uid}`);
+    // JWT gerado com sucesso
     return token;
   } catch (error) {
     logger.error('Erro ao gerar JWT:', error);
@@ -128,7 +128,7 @@ export const generateRefreshToken = (uid: string): string => {
       expiresIn: JWT_REFRESH_EXPIRES_IN
     } as jwt.SignOptions);
     
-    logger.debug(`Refresh token gerado para usuário ${uid}`);
+    // Refresh token gerado com sucesso
     return refreshToken;
   } catch (error) {
     logger.error('Erro ao gerar refresh token:', error);
@@ -143,7 +143,7 @@ export const verifyJWT = (token: string): JWTPayload | null => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
     
-    logger.debug(`JWT verificado para usuário ${decoded.uid}`);
+    // JWT verificado com sucesso
     return decoded;
   } catch (error: unknown) {
     if (error && typeof error === 'object' && 'name' in error) {
@@ -166,7 +166,7 @@ export const verifyRefreshToken = (token: string): RefreshTokenPayload | null =>
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as RefreshTokenPayload;
     
-    logger.debug(`Refresh token verificado para usuário ${decoded.uid}`);
+    // Refresh token verificado com sucesso
     return decoded;
   } catch (error: unknown) {
     if (error && typeof error === 'object' && 'name' in error) {
@@ -245,7 +245,7 @@ export const jwtAuthMiddleware = async (req: Request, res: Response, next: NextF
       empresaId: decoded.empresaId
     };
 
-    logger.debug(`Usuário autenticado via JWT: ${decoded.uid}`);
+    // Usuário autenticado via JWT
     return next();
 
   } catch (error: unknown) {
@@ -258,7 +258,7 @@ export const jwtAuthMiddleware = async (req: Request, res: Response, next: NextF
 };
 
 /**
- * Extrai informações do token sem verificar (para debug)
+ * Extrai informações do token sem verificar
  */
 export const decodeJWTWithoutVerification = (token: string): Record<string, unknown> | null => {
   try {
@@ -491,7 +491,7 @@ export async function authenticateToken(req: Request, res: Response, next: NextF
       empresaId: empresaId,
     };
 
-    logger.debug(`Token Firebase verificado para usuário: ${uid}, role: ${role}, empresaId: ${empresaId}`);
+    // Token Firebase verificado com sucesso
     next();
   } catch (err) {
     logger.error('Erro ao verificar token Firebase:', err);

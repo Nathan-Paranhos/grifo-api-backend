@@ -16,6 +16,7 @@ import uploadsRoutes from './uploads';
 import exportsRoutes from './exports';
 import reportsRoutes from './reports';
 import healthRoutes from './health';
+import v1Routes from './v1';
 
 const router = Router();
 
@@ -36,6 +37,9 @@ router.use('/uploads', uploadsRoutes);
 router.use('/exports', exportsRoutes);
 router.use('/reports', reportsRoutes);
 router.use('/health', healthRoutes);
+
+// Rotas versionadas v1 (para compatibilidade com portal)
+router.use('/v1', v1Routes);
 
 // Middleware para rotas não encontradas
 router.use(notFoundHandler);

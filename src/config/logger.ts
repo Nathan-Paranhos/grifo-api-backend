@@ -37,7 +37,7 @@ const format = winston.format.combine(
 );
 
 // Definir os transportes para os logs
-const transports = [
+const transports: winston.transport[] = [
   // Console para todos os logs
   new winston.transports.Console(),
 ];

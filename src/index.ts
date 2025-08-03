@@ -60,6 +60,9 @@ app.use(generalLimiter);
 // Middleware de logging
 app.use(requestLogger);
 
+// Configurar rotas antes da inicialização
+app.use('/api', apiRoutes);
+
 const startServer = async () => {
   try {
     // Inicializar Firebase primeiro
@@ -71,9 +74,6 @@ const startServer = async () => {
     logger.info('Attempting to initialize Database...');
     await initializeDatabase();
     logger.info('Database initialized successfully.');
-
-    // Configurar rotas após inicialização do Firebase
-    app.use('/api', apiRoutes);
     
     // Setup Swagger
     setupSwagger(app);

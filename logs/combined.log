@@ -449,3 +449,75 @@
 2025-08-03 09:15:32:1532 [32minfo[39m: [32mIncoming request[39m
 2025-08-03 09:15:32:1532 [32minfo[39m: [32mRequest completed[39m
 2025-08-03 09:15:32:1532 [31merror[39m: [31mTentativa de acesso CORS de origem não permitida: http://localhost:3006[39m
+2025-08-03 19:04:27:427 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-03 19:04:29:429 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-03 19:04:29:429 [33mwarn[39m: [33mContinuing without Firebase. Some features may not be available.[39m
+2025-08-03 19:04:29:429 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-03 19:04:29:429 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-03 19:04:29:429 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 19:04:29:429 [32minfo[39m: [32mDatabase PostgreSQL inicializado com sucesso[39m
+2025-08-03 19:04:29:429 [32minfo[39m: [32mDatabase initialized successfully.[39m
+2025-08-03 19:04:29:429 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-03 19:04:29:429 [32minfo[39m: [32mServer is running on port 3006[39m
+2025-08-03 19:04:29:429 [32minfo[39m: [32mEnvironment: development[39m
+2025-08-03 19:04:29:429 [32minfo[39m: [32mCORS Origin: http://localhost:3000,http://localhost:3001,http://localhost:5173[39m
+2025-08-03 19:05:29:529 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-03 19:05:29:529 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-03 19:05:29:529 [33mwarn[39m: [33mContinuing without Firebase. Some features may not be available.[39m
+2025-08-03 19:05:29:529 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-03 19:05:29:529 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-03 19:05:29:529 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 19:05:29:529 [32minfo[39m: [32mDatabase PostgreSQL inicializado com sucesso[39m
+2025-08-03 19:05:29:529 [32minfo[39m: [32mDatabase initialized successfully.[39m
+2025-08-03 19:05:29:529 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-03 19:05:29:529 [32minfo[39m: [32mServer is running on port 3006[39m
+2025-08-03 19:05:29:529 [32minfo[39m: [32mEnvironment: development[39m
+2025-08-03 19:05:29:529 [32minfo[39m: [32mCORS Origin: http://localhost:3000,http://localhost:3001,http://localhost:5173[39m
+2025-08-03 19:05:47:547 [32minfo[39m: [32mIncoming request[39m
+2025-08-03 19:05:47:547 [33mwarn[39m: [33mRota não encontrada: GET /api/health[39m
+2025-08-03 19:05:47:547 [32minfo[39m: [32mRequest completed[39m
+2025-08-03 19:05:47:547 [33mwarn[39m: [33mRequest error[39m
+2025-08-03 19:06:04:64 [32minfo[39m: [32mIncoming request[39m
+2025-08-03 19:06:04:64 [33mwarn[39m: [33mRota não encontrada: GET /api/health[39m
+2025-08-03 19:06:04:64 [32minfo[39m: [32mRequest completed[39m
+2025-08-03 19:06:04:64 [33mwarn[39m: [33mRequest error[39m
+2025-08-03 19:06:24:624 [32minfo[39m: [32mIncoming request[39m
+2025-08-03 19:06:24:624 [33mwarn[39m: [33mRota não encontrada: GET /api/health/[39m
+2025-08-03 19:06:24:624 [32minfo[39m: [32mRequest completed[39m
+2025-08-03 19:06:24:624 [33mwarn[39m: [33mRequest error[39m
+2025-08-03 19:06:29:629 [32minfo[39m: [32mIncoming request[39m
+2025-08-03 19:06:29:629 [33mwarn[39m: [33mRota não encontrada: GET /api/auth[39m
+2025-08-03 19:06:29:629 [32minfo[39m: [32mRequest completed[39m
+2025-08-03 19:06:29:629 [33mwarn[39m: [33mRequest error[39m
+2025-08-03 19:08:34:834 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-03 19:08:34:834 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-03 19:08:34:834 [33mwarn[39m: [33mContinuing without Firebase. Some features may not be available.[39m
+2025-08-03 19:08:34:834 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-03 19:08:34:834 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-03 19:08:34:834 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-03 19:08:34:834 [32minfo[39m: [32mDatabase PostgreSQL inicializado com sucesso[39m
+2025-08-03 19:08:34:834 [32minfo[39m: [32mDatabase initialized successfully.[39m
+2025-08-03 19:08:34:834 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-03 19:08:34:834 [32minfo[39m: [32mServer is running on port 3006[39m
+2025-08-03 19:08:34:834 [32minfo[39m: [32mEnvironment: development[39m
+2025-08-03 19:08:34:834 [32minfo[39m: [32mCORS Origin: http://localhost:3000,http://localhost:3001,http://localhost:5173[39m
+2025-08-03 19:08:53:853 [32minfo[39m: [32mIncoming request[39m
+2025-08-03 19:08:53:853 [32minfo[39m: [32mIncoming request[39m
+2025-08-03 19:08:53:853 [32minfo[39m: [32mVerificação de saúde da API solicitada[39m
+2025-08-03 19:08:53:853 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-08-03 19:08:53:853 [32minfo[39m: [32mRequest completed[39m
+2025-08-03 19:08:53:853 [32minfo[39m: [32mRequest completed[39m
+2025-08-03 19:09:02:92 [32minfo[39m: [32mIncoming request[39m
+2025-08-03 19:09:02:92 [32minfo[39m: [32mIncoming request[39m
+2025-08-03 19:09:02:92 [33mwarn[39m: [33mRota não encontrada: GET /auth[39m
+2025-08-03 19:09:02:92 [32minfo[39m: [32mRequest completed[39m
+2025-08-03 19:09:02:92 [33mwarn[39m: [33mRequest error[39m
+2025-08-03 19:09:02:92 [32minfo[39m: [32mRequest completed[39m
+2025-08-03 19:09:02:92 [33mwarn[39m: [33mRequest error[39m
+2025-08-03 19:09:08:98 [32minfo[39m: [32mIncoming request[39m
+2025-08-03 19:09:08:98 [32minfo[39m: [32mIncoming request[39m
+2025-08-03 19:09:08:98 [33mwarn[39m: [33mToken não fornecido[39m
+2025-08-03 19:09:08:98 [32minfo[39m: [32mRequest completed[39m
+2025-08-03 19:09:08:98 [33mwarn[39m: [33mRequest error[39m
+2025-08-03 19:09:08:98 [32minfo[39m: [32mRequest completed[39m
+2025-08-03 19:09:08:98 [33mwarn[39m: [33mRequest error[39m

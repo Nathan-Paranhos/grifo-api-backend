@@ -59,9 +59,13 @@ router.get('/', (req, res) => {
     services: {
         firebase: firebaseInitialized ? 'connected' : 'disconnected',
         firestore: firebaseInitialized ? 'available' : 'unavailable',
-        postgresql: databaseManager.isAvailable() ? 'connected' : 'disconnected',
+        postgresql: databaseManager.isAvailable() ? 'connected' : 'disconnected (opcional)',
         portal: portalManager.isAvailable() ? 'connected' : 'disconnected'
       },
+    database: {
+      primary: 'Firebase/Firestore',
+      secondary: 'PostgreSQL (opcional para relatórios)'
+    },
     memory: {
       used: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`,
       total: `${Math.round(process.memoryUsage().heapTotal / 1024 / 1024)} MB`

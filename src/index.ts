@@ -60,7 +60,10 @@ app.use(generalLimiter);
 // Middleware de logging
 app.use(requestLogger);
 
-// Configurar rotas antes da inicialização
+// Setup Swagger antes das rotas
+setupSwagger(app);
+
+// Configurar rotas
 app.use('/api', apiRoutes);
 
 const startServer = async () => {
@@ -74,9 +77,6 @@ const startServer = async () => {
     logger.info('Attempting to initialize Database...');
     await initializeDatabase();
     logger.info('Database initialized successfully.');
-    
-    // Setup Swagger
-    setupSwagger(app);
 
     app.listen(PORT, () => {
       logger.info(`Server is running on port ${PORT}`);

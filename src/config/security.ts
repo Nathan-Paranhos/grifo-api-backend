@@ -45,30 +45,36 @@ logger.info(`Origens CORS permitidas: ${allowedOrigins.join(', ')}`);
 
 export const corsOptions = {
   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-    // Permitir requisições sem origin (health checks, Postman, etc.)
-    if (!origin) {
-      logger.debug('Requisição sem origin permitida (health check/Postman)');
-      return callback(null, true);
-    }
-    
-    // Verificar se a origem está na lista de origens permitidas
-    if (allowedOrigins.length === 0) {
-      logger.warn('Nenhuma origem CORS configurada - permitindo todas');
-      return callback(null, true);
-    }
-    
-    if (allowedOrigins.includes(origin)) {
-      logger.debug(`Origem CORS permitida: ${origin}`);
-      callback(null, true);
-    } else {
-      logger.error(`Tentativa de acesso CORS de origem não permitida: ${origin}`);
-      logger.error(`Origens permitidas: ${allowedOrigins.join(', ')}`);
-      callback(new Error('Origem não permitida pelo CORS'));
+    try {
+      // Permitir requisições sem origin (health checks, Postman, etc.)
+      if (!origin) {
+        logger.debug('Requisição sem origin permitida (health check/Postman)');
+        return callback(null, true);
+      }
+      
+      // Verificar se a origem está na lista de origens permitidas
+      if (allowedOrigins.length === 0) {
+        logger.warn('Nenhuma origem CORS configurada - permitindo todas');
+        return callback(null, true);
+      }
+      
+      if (allowedOrigins.includes(origin)) {
+        logger.debug(`Origem CORS permitida: ${origin}`);
+        return callback(null, true);
+      } else {
+        logger.error(`Tentativa de acesso CORS de origem não permitida: ${origin}`);
+        logger.error(`Origens permitidas: ${allowedOrigins.join(', ')}`);
+        return callback(null, false); // Mudança: retornar false em vez de erro
+      }
+    } catch (error) {
+      logger.error('Erro na verificação CORS:', error);
+      return callback(null, false);
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Authorization', 'Content-Type', 'X-Requested-With'],
+  optionsSuccessStatus: 200 // Para suportar navegadores legados
 };
 
 // Configuração do rate limiter geral (temporariamente desabilitado)

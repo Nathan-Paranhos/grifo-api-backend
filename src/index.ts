@@ -66,33 +66,6 @@ setupSwagger(app);
 // Configurar rotas
 app.use('/api', apiRoutes);
 
-const startServer = async () => {
-  try {
-    // Inicializar Firebase primeiro
-    logger.info('Initializing Firebase...');
-    await initializeFirebase();
-    logger.info('Firebase initialized successfully.');
-
-    // Inicializar banco de dados PostgreSQL
-    logger.info('Attempting to initialize Database...');
-    await initializeDatabase();
-    logger.info('Database initialized successfully.');
-
-    app.listen(PORT, () => {
-      logger.info(`Server is running on port ${PORT}`);
-      logger.info(`Environment: ${NODE_ENV}`);
-      logger.info(`CORS Origin: ${CORS_ORIGIN}`);
-    });
-
-  } catch (error) {
-    logger.error('Failed to start server:', error);
-    process.exit(1);
-  }
-};
-
-startServer();
-
-
 // Rota raiz com informações da API
 app.get('/', (req, res) => {
   res.json({
@@ -143,11 +116,37 @@ app.get('/', (req, res) => {
   });
 });
 
-    // Middleware para rotas não encontradas
-    app.use(notFoundHandler);
-    
-    // Middleware global de tratamento de erros
-    app.use(errorHandler);
+// Middleware para rotas não encontradas
+app.use(notFoundHandler);
+
+// Middleware global de tratamento de erros
+app.use(errorHandler);
+
+const startServer = async () => {
+  try {
+    // Inicializar Firebase primeiro
+    logger.info('Initializing Firebase...');
+    await initializeFirebase();
+    logger.info('Firebase initialized successfully.');
+
+    // Inicializar banco de dados PostgreSQL
+    logger.info('Attempting to initialize Database...');
+    await initializeDatabase();
+    logger.info('Database initialized successfully.');
+
+    app.listen(PORT, () => {
+      logger.info(`Server is running on port ${PORT}`);
+      logger.info(`Environment: ${NODE_ENV}`);
+      logger.info(`CORS Origin: ${CORS_ORIGIN}`);
+    });
+
+  } catch (error) {
+    logger.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 // Firebase já foi inicializado na primeira função startServer
 

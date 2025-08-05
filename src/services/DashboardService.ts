@@ -1,4 +1,4 @@
-import { db } from '../config/firebase';
+import { getDbSafe, isFirebaseInitialized } from '../config/firebase';
 import logger from '../config/logger';
 import { AppError } from '../errors/AppError';
 
@@ -6,6 +6,11 @@ type Inspection = { id: string; vistoriadorId?: string; status?: string; [key: s
 
 class DashboardService {
   public async getStats(empresaId: string, vistoriadorId?: string): Promise<Record<string, unknown>> {
+    if (!isFirebaseInitialized()) {
+      throw new AppError('Firebase não está disponível em modo desenvolvimento', 503);
+    }
+    
+    const db = getDbSafe();
     if (!db) {
       throw new AppError('Serviço de banco de dados indisponível', 503);
     }

@@ -6,19 +6,25 @@ let db: admin.firestore.Firestore | undefined;
 let firebaseInitialized = false;
 
 export const initializeFirebase = async (): Promise<void> => {
+  logger.info('Starting Firebase initialization...');
+  
   if (firebaseInitialized) {
     logger.info('Firebase already initialized.');
     return;
   }
 
   try {
+    logger.info('Reading Firebase credentials from environment...');
     const credentialsJson = process.env.FIREBASE_CREDENTIALS;
     if (!credentialsJson) {
       logger.warn('FIREBASE_CREDENTIALS environment variable not set. Continuing without Firebase.');
+      firebaseInitialized = false;
       return;
     }
 
+    logger.info('Parsing Firebase credentials...');
     const serviceAccount = JSON.parse(credentialsJson);
+    logger.info(`Firebase project_id: ${serviceAccount.project_id}`);
     
     // Verificar se as credenciais são de teste/desenvolvimento
     if (serviceAccount.private_key === 'test-private-key' || 

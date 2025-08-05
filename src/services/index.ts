@@ -2,13 +2,14 @@
 export { InspectionService } from './InspectionService';
 export { CompanyService } from './CompanyService';
 export { UserService } from './UserService';
+export { PropertyService } from './PropertyService';
 
 // Types
 export type { CreateInspectionData, UpdateInspectionData, InspectionFilters } from './InspectionService';
 export type { CreateCompanyData, UpdateCompanyData } from './CompanyService';
 export type { CreateUserData, UpdateUserData, User } from './UserService';
 
-// Export PropertyService
+// Export PropertyService instance
 export { propertyService } from './PropertyService';
 
 // Service instances (singletons)

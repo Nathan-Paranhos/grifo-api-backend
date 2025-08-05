@@ -10,12 +10,16 @@ class PropertyController {
     try {
       const { search, limit } = req.query;
       const empresaId = req.user?.empresaId as string;
-      const properties = await propertyService.list({ 
+      const properties = await propertyService.list(
         empresaId,
-        search: search as string,
-        limit: limit ? parseInt(limit as string) : 10
-      });
-      sendSuccess(res, properties.data, undefined, 200);
+        search as string
+      );
+      
+      // Apply limit if provided
+      const limitNum = limit ? parseInt(limit as string) : 10;
+      const limitedProperties = properties.slice(0, limitNum);
+      
+      sendSuccess(res, limitedProperties, undefined, 200);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
       const statusCode = error instanceof Error && 'statusCode' in error ? (error as { statusCode: number }).statusCode : 500;

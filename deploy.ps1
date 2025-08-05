@@ -30,20 +30,20 @@ if ($gitStatus) {
 
 # Fazer push para o GitHub
 Write-Host "📤 Enviando para o GitHub..." -ForegroundColor Blue
-try {
-    git push origin main
+git push origin main
+if ($LASTEXITCODE -eq 0) {
     Write-Host "✅ Push realizado com sucesso!" -ForegroundColor Green
-} catch {
-    Write-Host "❌ Erro ao fazer push: $_" -ForegroundColor Red
+} else {
+    Write-Host "❌ Erro ao fazer push" -ForegroundColor Red
     exit 1
 }
 
 # Verificar se o build local funciona
 Write-Host "🔨 Testando build local..." -ForegroundColor Blue
-try {
-    npm run build
+npm run build
+if ($LASTEXITCODE -eq 0) {
     Write-Host "✅ Build local bem-sucedido!" -ForegroundColor Green
-} catch {
+} else {
     Write-Host "⚠️  Aviso: Build local falhou. Verifique os erros antes do deploy." -ForegroundColor Yellow
 }
 

@@ -27,6 +27,7 @@ router.use(requestLogger);
 router.use('/auth', authRoutes);
 router.use('/inspections', inspectionRoutes);
 router.use('/companies', companyRoutes);
+router.use('/empresas', companyRoutes); // Alias para compatibilidade
 router.use('/users', userRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/properties', propertiesRoutes);

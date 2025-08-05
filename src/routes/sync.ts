@@ -21,6 +21,60 @@ interface Inspection {
 const router = Router();
 
 /**
+ * @route GET /api/sync/info
+ * @desc Obtém informações de sincronização (público)
+ * @access Public
+ */
+router.get('/info', async (req: Request, res: Response) => {
+  try {
+    const syncInfo = {
+      apiVersion: '1.0.0',
+      syncVersion: '2.1.0',
+      supportedFormats: ['json'],
+      maxBatchSize: 50,
+      timeoutMs: 30000,
+      status: 'operational',
+      lastUpdate: new Date().toISOString()
+    };
+    
+    return sendSuccess(res, syncInfo, 'Informações de sincronização obtidas', 200);
+  } catch (error: unknown) {
+    logger.error('Error retrieving sync info', error);
+    return sendError(res, 'Erro ao obter informações de sincronização');
+  }
+});
+
+/**
+ * @route GET /api/sync/version
+ * @desc Obtém versão da API de sincronização (público)
+ * @access Public
+ */
+router.get('/version', async (req: Request, res: Response) => {
+  try {
+    const versionInfo = {
+      apiVersion: '1.0.0',
+      syncVersion: '2.1.0',
+      buildDate: '2024-01-15',
+      features: [
+        'batch_sync',
+        'photo_upload',
+        'offline_support',
+        'real_time_status'
+      ],
+      compatibility: {
+        minAppVersion: '1.0.0',
+        maxBatchSize: 50
+      }
+    };
+    
+    return sendSuccess(res, versionInfo, 'Versão da API obtida', 200);
+  } catch (error: unknown) {
+    logger.error('Error retrieving version info', error);
+    return sendError(res, 'Erro ao obter versão da API');
+  }
+});
+
+/**
  * @route GET /api/sync
  * @desc Obtém informações de sincronização
  * @access Private

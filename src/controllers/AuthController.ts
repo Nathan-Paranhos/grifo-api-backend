@@ -178,6 +178,61 @@ export class AuthController {
   };
 
   /**
+   * Registrar novo usuário
+   */
+  register = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, password, nome, telefone, empresaId } = req.body;
+
+      if (!email || !password || !nome) {
+        throw createValidationError('Email, senha e nome são obrigatórios');
+      }
+
+      // Verificar se o usuário já existe
+      const existingUser = await this.getUserService().findByEmail(email);
+      if (existingUser) {
+        throw createValidationError('Usuário já existe com este email');
+      }
+
+      // Criar usuário no Firebase (se inicializado)
+      let firebaseUser;
+      if (isFirebaseInitialized()) {
+        firebaseUser = await admin.auth().createUser({
+          email,
+          password,
+          displayName: nome
+        });
+      } else {
+        logger.warn('Firebase não inicializado - criando usuário mock');
+        firebaseUser = { uid: `mock-${Date.now()}` };
+      }
+
+      // Criar usuário no banco de dados
+      const userData = {
+        email,
+        nome,
+        telefone: telefone || '',
+        empresaId: empresaId || 'default-empresa',
+        papel: 'corretor' as const,
+        password
+      };
+
+      const user = await this.getUserService().createUser(userData, firebaseUser.uid);
+      
+      logger.info(`Usuário registrado:`, { uid: firebaseUser.uid, email });
+      
+      return sendSuccess(res, {
+        uid: user.uid,
+        email: user.email,
+        nome: user.nome,
+        empresaId: user.empresaId
+      }, 'Usuário registrado com sucesso', 201);
+    } catch (error: unknown) {
+      next(error);
+    }
+  };
+
+  /**
    * Logout (revogar token)
    */
   logout = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {

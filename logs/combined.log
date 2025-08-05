@@ -521,3 +521,526 @@
 2025-08-03 19:09:08:98 [33mwarn[39m: [33mRequest error[39m
 2025-08-03 19:09:08:98 [32minfo[39m: [32mRequest completed[39m
 2025-08-03 19:09:08:98 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 07:47:34:4734 [32minfo[39m: [32mOrigens CORS permitidas: http://localhost:3000, http://localhost:3001, http://localhost:5173[39m
+2025-08-05 07:47:41:4741 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-05 07:47:41:4741 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-05 07:47:41:4741 [32minfo[39m: [32mStarting Firebase initialization...[39m
+2025-08-05 07:47:41:4741 [32minfo[39m: [32mReading Firebase credentials from environment...[39m
+2025-08-05 07:47:41:4741 [32minfo[39m: [32mParsing Firebase credentials...[39m
+2025-08-05 07:47:41:4741 [32minfo[39m: [32mFirebase project_id: grifo-dev[39m
+2025-08-05 07:47:42:4742 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-05 07:47:42:4742 [33mwarn[39m: [33mContinuing without Firebase. Some features may not be available.[39m
+2025-08-05 07:47:43:4743 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-05 07:47:43:4743 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-05 07:47:43:4743 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-05 07:47:43:4743 [32minfo[39m: [32mDatabase PostgreSQL inicializado com sucesso[39m
+2025-08-05 07:47:43:4743 [32minfo[39m: [32mDatabase initialized successfully.[39m
+2025-08-05 07:47:43:4743 [32minfo[39m: [32mServer is running on port 3006[39m
+2025-08-05 07:47:43:4743 [32minfo[39m: [32mEnvironment: development[39m
+2025-08-05 07:47:43:4743 [32minfo[39m: [32mCORS Origin: http://localhost:3000,http://localhost:3001,http://localhost:5173[39m
+2025-08-05 07:48:04:484 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 07:48:04:484 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 07:48:04:484 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 07:48:04:484 [31merror[39m: [31mTentativa de acesso CORS de origem não permitida: http://localhost:3006[39m
+2025-08-05 07:48:04:484 [31merror[39m: [31mOrigens permitidas: http://localhost:3000, http://localhost:3001, http://localhost:5173[39m
+2025-08-05 07:48:04:484 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 07:48:04:484 [33mwarn[39m: [33mRota não encontrada: GET /@vite/client[39m
+2025-08-05 07:48:04:484 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 07:48:04:484 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 08:16:15:1615 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 08:16:15:1615 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 08:16:15:1615 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 08:16:15:1615 [31merror[39m: [31mTentativa de acesso CORS de origem não permitida: http://localhost:3006[39m
+2025-08-05 08:16:15:1615 [31merror[39m: [31mOrigens permitidas: http://localhost:3000, http://localhost:3001, http://localhost:5173[39m
+2025-08-05 08:16:15:1615 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 08:16:15:1615 [33mwarn[39m: [33mRota não encontrada: GET /@vite/client[39m
+2025-08-05 08:16:15:1615 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 08:16:15:1615 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:34:18:3418 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 18:34:18:3418 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:18:3418 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:19:3419 [32minfo[39m: [32mVerificação de saúde da API solicitada[39m
+2025-08-05 18:34:19:3419 [32minfo[39m: [32mVerificação de saúde da API bem-sucedida[39m
+2025-08-05 18:34:19:3419 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:19:3419 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:19:3419 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 18:34:19:3419 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:19:3419 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:19:3419 [33mwarn[39m: [33mFirebase não inicializado - modo desenvolvimento[39m
+2025-08-05 18:34:19:3419 [31merror[39m: [31mErro ao obter estatísticas do dashboard: Erro desconhecido[39m
+2025-08-05 18:34:19:3419 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:19:3419 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:34:19:3419 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:19:3419 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:34:19:3419 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 18:34:19:3419 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:19:3419 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:19:3419 [33mwarn[39m: [33mFirebase não inicializado - modo desenvolvimento[39m
+2025-08-05 18:34:19:3419 [31merror[39m: [31mErro ao listar propriedades: Firebase não inicializado[39m
+2025-08-05 18:34:19:3419 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:19:3419 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:34:19:3419 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:19:3419 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:34:19:3419 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 18:34:19:3419 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:19:3419 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:19:3419 [33mwarn[39m: [33mFirebase não inicializado - modo desenvolvimento[39m
+2025-08-05 18:34:19:3419 [31merror[39m: [31mErro ao buscar documentos em inspections: Firebase não foi inicializado. Alguns recursos podem não estar disponíveis.[39m
+2025-08-05 18:34:19:3419 [31merror[39m: [31mErro ao buscar vistorias com filtros: Erro ao buscar inspections[39m
+2025-08-05 18:34:19:3419 [31merror[39m: [31mErro ao listar vistorias: Erro ao buscar vistorias[39m
+2025-08-05 18:34:20:3420 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:20:3420 [33mwarn[39m: [33mFirebase não inicializado - modo desenvolvimento[39m
+2025-08-05 18:34:20:3420 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:20:3420 [33mwarn[39m: [33mFirebase não inicializado - modo desenvolvimento[39m
+2025-08-05 18:34:20:3420 [31merror[39m: [31mErro ao listar empresas: Firebase não foi inicializado. Alguns recursos podem não estar disponíveis.[39m
+2025-08-05 18:34:20:3420 [31merror[39m: [31mErro ao listar empresas: Erro ao listar empresas[39m
+2025-08-05 18:34:20:3420 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:20:3420 [33mwarn[39m: [33mAcesso negado - usuário undefined sem empresa associada[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:20:3420 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:20:3420 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:34:20:3420 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:20:3420 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:20:3420 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:34:20:3420 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:20:3420 [33mwarn[39m: [33mRota não encontrada: GET /exports[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:20:3420 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:20:3420 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:34:20:3420 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:20:3420 [33mwarn[39m: [33mRota não encontrada: GET /reports[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:20:3420 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:34:20:3420 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:20:3420 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:34:21:3421 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 18:34:21:3421 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:21:3421 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:34:21:3421 [33mwarn[39m: [33mFirebase não inicializado - modo desenvolvimento[39m
+2025-08-05 18:34:21:3421 [33mwarn[39m: [33mValidação falhou: [{"code":"invalid_type","expected":"object","received":"undefined","path":["body"],"message":"Required"}][39m
+2025-08-05 18:34:21:3421 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:21:3421 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:34:21:3421 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:34:21:3421 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 18:38:33:3833 [32minfo[39m: [32mOrigens CORS permitidas: http://localhost:3000, http://localhost:3001, http://localhost:5173[39m
+2025-08-05 18:40:38:4038 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-05 18:40:38:4038 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-05 18:40:38:4038 [32minfo[39m: [32mStarting Firebase initialization...[39m
+2025-08-05 18:40:38:4038 [32minfo[39m: [32mReading Firebase credentials from environment...[39m
+2025-08-05 18:40:38:4038 [32minfo[39m: [32mParsing Firebase credentials...[39m
+2025-08-05 18:40:38:4038 [32minfo[39m: [32mFirebase project_id: grifo-dev[39m
+2025-08-05 18:40:40:4040 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-05 18:40:40:4040 [33mwarn[39m: [33mContinuing without Firebase. Some features may not be available.[39m
+2025-08-05 18:40:40:4040 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-05 18:40:40:4040 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-05 18:38:33:3833 [32minfo[39m: [32mOrigens CORS permitidas: http://localhost:3000, http://localhost:3001, http://localhost:5173[39m
+2025-08-05 18:40:37:4037 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-05 18:40:37:4037 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-05 18:40:37:4037 [32minfo[39m: [32mStarting Firebase initialization...[39m
+2025-08-05 18:40:37:4037 [32minfo[39m: [32mReading Firebase credentials from environment...[39m
+2025-08-05 18:40:37:4037 [32minfo[39m: [32mParsing Firebase credentials...[39m
+2025-08-05 18:40:37:4037 [32minfo[39m: [32mFirebase project_id: grifo-dev[39m
+2025-08-05 18:40:40:4040 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-05 18:40:40:4040 [33mwarn[39m: [33mContinuing without Firebase. Some features may not be available.[39m
+2025-08-05 18:40:40:4040 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-05 18:40:40:4040 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-05 18:40:40:4040 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-05 18:40:40:4040 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-05 18:40:40:4040 [32minfo[39m: [32mDatabase PostgreSQL inicializado com sucesso[39m
+2025-08-05 18:40:40:4040 [32minfo[39m: [32mDatabase initialized successfully.[39m
+2025-08-05 18:40:40:4040 [32minfo[39m: [32mServer is running on port 3006[39m
+2025-08-05 18:40:40:4040 [32minfo[39m: [32mEnvironment: development[39m
+2025-08-05 18:40:40:4040 [32minfo[39m: [32mCORS Origin: http://localhost:3000,http://localhost:3001,http://localhost:5173[39m
+2025-08-05 18:40:43:4043 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 18:40:43:4043 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:40:43:4043 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:40:43:4043 [31merror[39m: [31mTentativa de acesso CORS de origem não permitida: http://localhost:3006[39m
+2025-08-05 18:40:43:4043 [31merror[39m: [31mOrigens permitidas: http://localhost:3000, http://localhost:3001, http://localhost:5173[39m
+2025-08-05 18:40:43:4043 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 18:40:43:4043 [33mwarn[39m: [33mRota não encontrada: GET /@vite/client[39m
+2025-08-05 18:40:43:4043 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 18:40:43:4043 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:14:22:1422 [32minfo[39m: [32mOrigens CORS permitidas: http://localhost:3000, http://localhost:3001, http://localhost:5173[39m
+2025-08-05 19:14:29:1429 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-05 19:14:29:1429 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-05 19:14:29:1429 [32minfo[39m: [32mStarting Firebase initialization...[39m
+2025-08-05 19:14:29:1429 [32minfo[39m: [32mReading Firebase credentials from environment...[39m
+2025-08-05 19:14:29:1429 [32minfo[39m: [32mParsing Firebase credentials...[39m
+2025-08-05 19:14:30:1430 [32minfo[39m: [32mFirebase project_id: grifo-dev[39m
+2025-08-05 19:14:31:1431 [31merror[39m: [31mFailed to initialize Firebase Admin SDK. Failed to parse private key: Error: Too few bytes to read ASN.1 value.[39m
+2025-08-05 19:14:31:1431 [33mwarn[39m: [33mContinuing without Firebase. Some features may not be available.[39m
+2025-08-05 19:14:31:1431 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-05 19:14:31:1431 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-05 19:14:31:1431 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-05 19:14:31:1431 [32minfo[39m: [32mDatabase PostgreSQL inicializado com sucesso[39m
+2025-08-05 19:14:31:1431 [32minfo[39m: [32mDatabase initialized successfully.[39m
+2025-08-05 19:14:31:1431 [32minfo[39m: [32mServer is running on port 3006[39m
+2025-08-05 19:14:31:1431 [32minfo[39m: [32mEnvironment: development[39m
+2025-08-05 19:14:31:1431 [32minfo[39m: [32mCORS Origin: http://localhost:3000,http://localhost:3001,http://localhost:5173[39m
+2025-08-05 19:14:53:1453 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:14:53:1453 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:14:53:1453 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:14:53:1453 [33mwarn[39m: [33mToken não fornecido[39m
+2025-08-05 19:14:53:1453 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:14:53:1453 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:14:53:1453 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:14:53:1453 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:14:59:1459 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:14:59:1459 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:14:59:1459 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:15:01:151 [31merror[39m: [31mTentativa de acesso CORS de origem não permitida: http://localhost:3006[39m
+2025-08-05 19:15:01:151 [31merror[39m: [31mOrigens permitidas: http://localhost:3000, http://localhost:3001, http://localhost:5173[39m
+2025-08-05 19:15:01:151 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:15:01:151 [33mwarn[39m: [33mRota não encontrada: GET /@vite/client[39m
+2025-08-05 19:15:01:151 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:15:01:151 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:20:43:2043 [32minfo[39m: [32mOrigens CORS permitidas: http://localhost:3000, http://localhost:3001, http://localhost:5173[39m
+2025-08-05 19:20:51:2051 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-05 19:20:51:2051 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-05 19:20:51:2051 [32minfo[39m: [32mStarting Firebase initialization...[39m
+2025-08-05 19:20:51:2051 [32minfo[39m: [32mReading Firebase credentials from environment...[39m
+2025-08-05 19:20:51:2051 [32minfo[39m: [32mParsing Firebase credentials...[39m
+2025-08-05 19:20:51:2051 [32minfo[39m: [32mFirebase project_id: banco-visionaria[39m
+2025-08-05 19:20:52:2052 [32minfo[39m: [32mFirebase Admin SDK initialized successfully.[39m
+2025-08-05 19:20:57:2057 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-05 19:20:57:2057 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-05 19:20:57:2057 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-05 19:20:57:2057 [32minfo[39m: [32mDatabase PostgreSQL inicializado com sucesso[39m
+2025-08-05 19:20:57:2057 [32minfo[39m: [32mDatabase initialized successfully.[39m
+2025-08-05 19:20:57:2057 [32minfo[39m: [32mServer is running on port 3006[39m
+2025-08-05 19:20:57:2057 [32minfo[39m: [32mEnvironment: development[39m
+2025-08-05 19:20:57:2057 [32minfo[39m: [32mCORS Origin: http://localhost:3000,http://localhost:3001,http://localhost:5173[39m
+2025-08-05 19:21:15:2115 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:21:15:2115 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:21:15:2115 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:21:15:2115 [33mwarn[39m: [33mToken não fornecido[39m
+2025-08-05 19:21:15:2115 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:21:15:2115 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:21:15:2115 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:21:15:2115 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:21:20:2120 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:21:20:2120 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:21:20:2120 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:21:20:2120 [31merror[39m: [31mTentativa de acesso CORS de origem não permitida: http://localhost:3006[39m
+2025-08-05 19:21:20:2120 [31merror[39m: [31mOrigens permitidas: http://localhost:3000, http://localhost:3001, http://localhost:5173[39m
+2025-08-05 19:21:20:2120 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:21:20:2120 [33mwarn[39m: [33mRota não encontrada: GET /@vite/client[39m
+2025-08-05 19:21:20:2120 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:21:20:2120 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:07:237 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:23:07:237 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:07:237 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:23:07:237 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:07:237 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:10:2310 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:23:10:2310 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:10:2310 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:10:2310 [33mwarn[39m: [33mToken não fornecido[39m
+2025-08-05 19:23:10:2310 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:10:2310 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:10:2310 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:10:2310 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:14:2314 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:23:14:2314 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:14:2314 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:14:2314 [33mwarn[39m: [33mToken não fornecido[39m
+2025-08-05 19:23:14:2314 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:14:2314 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:14:2314 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:14:2314 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:18:2318 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:23:18:2318 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:18:2318 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:18:2318 [33mwarn[39m: [33mToken não fornecido[39m
+2025-08-05 19:23:18:2318 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:18:2318 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:18:2318 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:18:2318 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:23:2323 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:23:23:2323 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:23:2323 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:23:2323 [33mwarn[39m: [33mToken não fornecido[39m
+2025-08-05 19:23:23:2323 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:23:2323 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:23:2323 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:23:2323 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:28:2328 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:23:28:2328 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:28:2328 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:28:2328 [33mwarn[39m: [33mRota não encontrada: GET /dashboard[39m
+2025-08-05 19:23:28:2328 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:28:2328 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:28:2328 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:28:2328 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:38:2338 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:23:38:2338 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:38:2338 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:38:2338 [33mwarn[39m: [33mToken não fornecido[39m
+2025-08-05 19:23:38:2338 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:38:2338 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:38:2338 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:38:2338 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:42:2342 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:23:42:2342 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:42:2342 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:42:2342 [33mwarn[39m: [33mAcesso negado - usuário undefined sem empresa associada[39m
+2025-08-05 19:23:42:2342 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:42:2342 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:42:2342 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:42:2342 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:47:2347 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:23:47:2347 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:47:2347 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:47:2347 [33mwarn[39m: [33mRota não encontrada: GET /reports[39m
+2025-08-05 19:23:47:2347 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:47:2347 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:47:2347 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:47:2347 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:51:2351 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:23:51:2351 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:51:2351 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:51:2351 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:51:2351 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:51:2351 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:51:2351 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:55:2355 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:23:55:2355 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:55:2355 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:55:2355 [33mwarn[39m: [33mRota não encontrada: GET /exports[39m
+2025-08-05 19:23:55:2355 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:55:2355 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:55:2355 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:55:2355 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:59:2359 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:23:59:2359 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:59:2359 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:23:59:2359 [33mwarn[39m: [33mUsuário undefined sem empresaId[39m
+2025-08-05 19:23:59:2359 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:59:2359 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:23:59:2359 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:23:59:2359 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:24:03:243 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:24:03:243 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:24:03:243 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:24:03:243 [32minfo[39m: [32mSync info request received[39m
+2025-08-05 19:24:03:243 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:24:03:243 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:24:07:247 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:24:07:247 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:24:07:247 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:24:07:247 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:24:07:247 [33mwarn[39m: [33mRota não encontrada: GET /[39m
+2025-08-05 19:24:07:247 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:24:07:247 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:24:07:247 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:24:07:247 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:24:07:247 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:24:07:247 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:24:21:2421 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:24:21:2421 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:24:21:2421 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:24:21:2421 [33mwarn[39m: [33mRota não encontrada: POST /auth/login[39m
+2025-08-05 19:24:21:2421 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:24:21:2421 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:24:21:2421 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:24:21:2421 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:24:36:2436 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:24:36:2436 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:24:36:2436 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:24:36:2436 [33mwarn[39m: [33mValidação falhou: [{"code":"invalid_type","expected":"object","received":"undefined","path":["body"],"message":"Required"}][39m
+2025-08-05 19:24:36:2436 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:24:36:2436 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:24:36:2436 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:24:36:2436 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:24:40:2440 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:24:40:2440 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:24:40:2440 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:24:40:2440 [33mwarn[39m: [33mValidação falhou: [{"code":"invalid_type","expected":"object","received":"undefined","path":["body"],"message":"Required"}][39m
+2025-08-05 19:24:40:2440 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:24:40:2440 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:24:40:2440 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:24:40:2440 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:24:48:2448 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:24:48:2448 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:24:48:2448 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:24:48:2448 [33mwarn[39m: [33mValidação falhou: [{"code":"invalid_type","expected":"object","received":"undefined","path":["body"],"message":"Required"}][39m
+2025-08-05 19:24:48:2448 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:24:48:2448 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:24:48:2448 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:24:48:2448 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:25:04:254 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:25:04:254 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:25:04:254 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:25:04:254 [33mwarn[39m: [33mValidação falhou: [{"code":"invalid_type","expected":"object","received":"undefined","path":["body"],"message":"Required"}][39m
+2025-08-05 19:25:04:254 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:25:04:254 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:25:04:254 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:25:04:254 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:25:20:2520 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:25:20:2520 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:25:20:2520 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:25:20:2520 [33mwarn[39m: [33mValidação falhou: [{"code":"invalid_type","expected":"object","received":"undefined","path":["body"],"message":"Required"}][39m
+2025-08-05 19:25:20:2520 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:25:20:2520 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:25:20:2520 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:25:20:2520 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:43:06:436 [32minfo[39m: [32mOrigens CORS permitidas: http://localhost:3000, http://localhost:3001, http://localhost:5173[39m
+2025-08-05 19:43:11:4311 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-05 19:43:11:4311 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-05 19:43:11:4311 [32minfo[39m: [32mStarting Firebase initialization...[39m
+2025-08-05 19:43:11:4311 [32minfo[39m: [32mReading Firebase credentials from environment...[39m
+2025-08-05 19:43:11:4311 [32minfo[39m: [32mParsing Firebase credentials...[39m
+2025-08-05 19:43:11:4311 [32minfo[39m: [32mFirebase project_id: banco-visionaria[39m
+2025-08-05 19:43:11:4311 [32minfo[39m: [32mFirebase Admin SDK initialized successfully.[39m
+2025-08-05 19:43:11:4311 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-05 19:43:11:4311 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-05 19:43:11:4311 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-05 19:43:11:4311 [32minfo[39m: [32mDatabase PostgreSQL inicializado com sucesso[39m
+2025-08-05 19:43:11:4311 [32minfo[39m: [32mDatabase initialized successfully.[39m
+2025-08-05 19:43:11:4311 [32minfo[39m: [32mServer is running on port 3006[39m
+2025-08-05 19:43:11:4311 [32minfo[39m: [32mEnvironment: development[39m
+2025-08-05 19:43:11:4311 [32minfo[39m: [32mCORS Origin: http://localhost:3000,http://localhost:3001,http://localhost:5173[39m
+2025-08-05 19:43:27:4327 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:43:27:4327 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:43:27:4327 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:43:27:4327 [33mwarn[39m: [33mValidação falhou: [{"code":"invalid_type","expected":"object","received":"undefined","path":["body"],"message":"Required"}][39m
+2025-08-05 19:43:27:4327 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:43:27:4327 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:43:27:4327 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:43:27:4327 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:44:44:4444 [32minfo[39m: [32mOrigens CORS permitidas: http://localhost:3000, http://localhost:3001, http://localhost:5173[39m
+2025-08-05 19:44:48:4448 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-05 19:44:48:4448 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-05 19:44:48:4448 [32minfo[39m: [32mStarting Firebase initialization...[39m
+2025-08-05 19:44:48:4448 [32minfo[39m: [32mReading Firebase credentials from environment...[39m
+2025-08-05 19:44:48:4448 [32minfo[39m: [32mParsing Firebase credentials...[39m
+2025-08-05 19:44:48:4448 [32minfo[39m: [32mFirebase project_id: banco-visionaria[39m
+2025-08-05 19:44:49:4449 [32minfo[39m: [32mFirebase Admin SDK initialized successfully.[39m
+2025-08-05 19:44:49:4449 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-05 19:44:49:4449 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-05 19:44:49:4449 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-05 19:44:49:4449 [32minfo[39m: [32mDatabase PostgreSQL inicializado com sucesso[39m
+2025-08-05 19:44:49:4449 [32minfo[39m: [32mDatabase initialized successfully.[39m
+2025-08-05 19:44:49:4449 [32minfo[39m: [32mServer is running on port 3006[39m
+2025-08-05 19:44:49:4449 [32minfo[39m: [32mEnvironment: development[39m
+2025-08-05 19:44:49:4449 [32minfo[39m: [32mCORS Origin: http://localhost:3000,http://localhost:3001,http://localhost:5173[39m
+2025-08-05 19:44:56:4456 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:44:56:4456 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:44:56:4456 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:45:02:452 [31merror[39m: [31mErro ao validar token:[39m
+2025-08-05 19:45:02:452 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:45:02:452 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:45:02:452 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:45:02:452 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:45:32:4532 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:45:32:4532 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:45:32:4532 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:45:32:4532 [33mwarn[39m: [33mRota não encontrada: POST /auth/login[39m
+2025-08-05 19:45:32:4532 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:45:32:4532 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:45:32:4532 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:45:32:4532 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:46:32:4632 [32minfo[39m: [32mOrigens CORS permitidas: http://localhost:3000, http://localhost:3001, http://localhost:5173[39m
+2025-08-05 19:46:35:4635 [32minfo[39m: [32mSwagger docs available at /api-docs[39m
+2025-08-05 19:46:35:4635 [32minfo[39m: [32mInitializing Firebase...[39m
+2025-08-05 19:46:35:4635 [32minfo[39m: [32mStarting Firebase initialization...[39m
+2025-08-05 19:46:35:4635 [32minfo[39m: [32mReading Firebase credentials from environment...[39m
+2025-08-05 19:46:35:4635 [32minfo[39m: [32mParsing Firebase credentials...[39m
+2025-08-05 19:46:35:4635 [32minfo[39m: [32mFirebase project_id: banco-visionaria[39m
+2025-08-05 19:46:36:4636 [32minfo[39m: [32mFirebase Admin SDK initialized successfully.[39m
+2025-08-05 19:46:37:4637 [32minfo[39m: [32mFirebase initialized successfully.[39m
+2025-08-05 19:46:37:4637 [32minfo[39m: [32mAttempting to initialize Database...[39m
+2025-08-05 19:46:37:4637 [31merror[39m: [31mErro ao testar conexão PostgreSQL:[39m
+2025-08-05 19:46:37:4637 [32minfo[39m: [32mDatabase PostgreSQL inicializado com sucesso[39m
+2025-08-05 19:46:37:4637 [32minfo[39m: [32mDatabase initialized successfully.[39m
+2025-08-05 19:46:37:4637 [32minfo[39m: [32mServer is running on port 3006[39m
+2025-08-05 19:46:37:4637 [32minfo[39m: [32mEnvironment: development[39m
+2025-08-05 19:46:37:4637 [32minfo[39m: [32mCORS Origin: http://localhost:3000,http://localhost:3001,http://localhost:5173[39m
+2025-08-05 19:46:45:4645 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:46:45:4645 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:46:45:4645 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:46:46:4646 [31merror[39m: [31mErro ao validar token:[39m
+2025-08-05 19:46:46:4646 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:46:46:4646 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:46:46:4646 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:46:46:4646 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:46:54:4654 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:46:54:4654 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:46:54:4654 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:46:54:4654 [31merror[39m: [31mErro na autenticação: Decoding Firebase ID token failed. Make sure you passed the entire string JWT which represents an ID token. See https://firebase.google.com/docs/auth/admin/verify-id-tokens for details on how to retrieve an ID token.[39m
+2025-08-05 19:46:54:4654 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:46:54:4654 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:46:54:4654 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:46:54:4654 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:47:03:473 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:47:03:473 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:47:03:473 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:47:03:473 [31merror[39m: [31mErro na autenticação: Decoding Firebase ID token failed. Make sure you passed the entire string JWT which represents an ID token. See https://firebase.google.com/docs/auth/admin/verify-id-tokens for details on how to retrieve an ID token.[39m
+2025-08-05 19:47:03:473 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:47:03:473 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:47:03:473 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:47:03:473 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:48:00:480 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:48:00:480 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:48:00:480 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:48:00:480 [31merror[39m: [31mErro ao validar token:[39m
+2025-08-05 19:48:00:480 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:48:00:480 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:48:00:480 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:48:00:480 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:48:00:480 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:48:00:480 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:48:00:480 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:48:00:480 [31merror[39m: [31mErro ao validar token:[39m
+2025-08-05 19:48:00:480 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:48:00:480 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:48:00:480 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:48:00:480 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:48:00:480 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:48:00:480 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:48:00:480 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:48:23:4823 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:48:23:4823 [31merror[39m: [31mErro na autenticação: Decoding Firebase ID token failed. Make sure you passed the entire string JWT which represents an ID token. See https://firebase.google.com/docs/auth/admin/verify-id-tokens for details on how to retrieve an ID token.[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:48:23:4823 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:48:23:4823 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:48:23:4823 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:48:23:4823 [31merror[39m: [31mErro na autenticação: Decoding Firebase ID token failed. Make sure you passed the entire string JWT which represents an ID token. See https://firebase.google.com/docs/auth/admin/verify-id-tokens for details on how to retrieve an ID token.[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:48:23:4823 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:48:23:4823 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:48:23:4823 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:48:23:4823 [31merror[39m: [31mErro na autenticação: Decoding Firebase ID token failed. Make sure you passed the entire string JWT which represents an ID token. See https://firebase.google.com/docs/auth/admin/verify-id-tokens for details on how to retrieve an ID token.[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:48:23:4823 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mRequest completed[39m
+2025-08-05 19:48:23:4823 [33mwarn[39m: [33mRequest error[39m
+2025-08-05 19:48:23:4823 [34mdebug[39m: [34mRequisição sem origin permitida (health check/Postman)[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mIncoming request[39m
+2025-08-05 19:48:23:4823 [32minfo[39m: [32mRequest completed[39m

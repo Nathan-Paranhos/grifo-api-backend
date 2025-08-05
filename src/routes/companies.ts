@@ -7,6 +7,32 @@ import { z } from 'zod';
 
 const router = Router();
 
+/**
+ * @route GET /api/empresas
+ * @desc Lista informações básicas sobre empresas
+ * @access Private
+ */
+router.get('/',
+  authenticateToken,
+  generalLimiter,
+  (req, res) => {
+    res.json({
+      success: true,
+      data: {
+        message: 'Endpoint de empresas ativo',
+        availableEndpoints: [
+          'GET /api/empresas - Esta página',
+          'POST /api/empresas - Criar empresa',
+          'GET /api/empresas/:id - Obter empresa',
+          'PUT /api/empresas/:id - Atualizar empresa',
+          'DELETE /api/empresas/:id - Deletar empresa'
+        ]
+      },
+      message: 'API de empresas funcionando'
+    });
+  }
+);
+
 // Schemas de validação
 const createCompanySchema = z.object({
   body: z.object({

@@ -7,6 +7,17 @@ import { commonQuerySchema } from '../validators';
 const router = Router();
 
 /**
+ * @route GET /api/dashboard
+ * @desc Rota raiz do dashboard - redireciona para stats
+ * @access Private
+ */
+router.get('/', 
+  authenticateToken,
+  validateRequest({ query: commonQuerySchema }),
+  dashboardController.getStats
+);
+
+/**
  * @route GET /api/dashboard/stats
  * @desc Obtém estatísticas do dashboard
  * @access Private

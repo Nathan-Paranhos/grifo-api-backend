@@ -13,6 +13,36 @@ import { authenticateToken, requireEmpresa } from '../middlewares/auth';
 
 const router = Router();
 
+/**
+ * @route GET /api/reports
+ * @desc Lista as opções de relatórios disponíveis
+ * @access Private
+ */
+router.get('/',
+  authenticateToken,
+  requireEmpresa,
+  (req, res) => {
+    res.json({
+      success: true,
+      data: {
+        availableReports: [
+          {
+            endpoint: '/api/reports/dashboard-advanced',
+            description: 'Relatórios avançados do dashboard',
+            method: 'GET'
+          },
+          {
+            endpoint: '/api/reports/analytics',
+            description: 'Analytics e insights detalhados',
+            method: 'GET'
+          }
+        ]
+      },
+      message: 'Opções de relatórios disponíveis'
+    });
+  }
+);
+
 // Schema de validação para relatórios
 const reportsQuerySchema = z.object({
   dateFrom: z.string().optional(),

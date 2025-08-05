@@ -33,19 +33,11 @@ export const authenticateToken = async (
 
     // Verificar se o Firebase foi inicializado
     if (!isFirebaseInitialized()) {
-      logger.warn('Firebase não inicializado - modo desenvolvimento');
-      // Em modo desenvolvimento sem Firebase, criar um token mock
-      req.user = {
-        uid: 'dev-user-id',
-        email: 'dev@example.com',
-        empresaId: 'dev-empresa-id',
-        papel: 'admin',
-        claims: {
-          empresaId: 'dev-empresa-id',
-          papel: 'admin'
-        }
-      };
-      return next();
+      logger.error('Firebase não inicializado - configuração obrigatória para produção');
+      return res.status(500).json({
+        success: false,
+        error: 'Serviço de autenticação indisponível'
+      });
     }
 
     // Verificar token com Firebase Admin

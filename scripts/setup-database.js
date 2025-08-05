@@ -53,47 +53,7 @@ const setupDatabase = async () => {
     await dbClient.query(schemaSql);
     console.log('✅ Schema do banco de dados aplicado com sucesso');
     
-    // Inserir dados de exemplo (opcional)
-    const insertExampleData = process.argv.includes('--with-data');
-    
-    if (insertExampleData) {
-      console.log('📝 Inserindo dados de exemplo...');
-      
-      // Empresa de exemplo
-      const empresaResult = await dbClient.query(`
-        INSERT INTO empresas (nome, cnpj, email, telefone) 
-        VALUES ('Grifo Vistorias Demo', '12.345.678/0001-90', 'demo@grifovistorias.com', '(11) 99999-9999')
-        ON CONFLICT (cnpj) DO NOTHING
-        RETURNING id
-      `);
-      
-      if (empresaResult.rows.length > 0) {
-        const empresaId = empresaResult.rows[0].id;
-        console.log(`✅ Empresa demo criada: ${empresaId}`);
-        
-        // Usuário admin de exemplo
-        await dbClient.query(`
-          INSERT INTO usuarios (firebase_uid, empresa_id, email, nome, role) 
-          VALUES ('demo-admin-uid', $1, 'admin@grifovistorias.com', 'Admin Demo', 'admin')
-          ON CONFLICT (firebase_uid) DO NOTHING
-        `, [empresaId]);
-        
-        console.log('✅ Usuário admin demo criado');
-        
-        // Propriedade de exemplo
-        await dbClient.query(`
-          INSERT INTO propriedades (empresa_id, endereco, tipo) 
-          VALUES ($1, $2, 'Residencial')
-        `, [empresaId, JSON.stringify({
-          street: 'Rua das Flores, 123',
-          city: 'São Paulo',
-          state: 'SP',
-          zipCode: '01234-567'
-        })]);
-        
-        console.log('✅ Propriedade demo criada');
-      }
-    }
+    // Setup concluído - banco de dados pronto para produção
     
     await dbClient.end();
     console.log('🎉 Setup do banco de dados concluído com sucesso!');

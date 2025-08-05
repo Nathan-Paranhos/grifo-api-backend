@@ -222,9 +222,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Dados iniciais (opcional)
--- INSERT INTO empresas (nome, cnpj, email) VALUES 
--- ('Empresa Demo', '12.345.678/0001-90', 'demo@grifo.com');
+-- Schema pronto para produção
 
 -- Comentários sobre o schema
 COMMENT ON TABLE empresas IS 'Tabela principal de empresas/clientes do sistema';

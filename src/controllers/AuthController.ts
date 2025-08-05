@@ -34,15 +34,8 @@ export class AuthController {
 
       // Verificar se o Firebase foi inicializado
       if (!isFirebaseInitialized()) {
-        logger.warn('Firebase não inicializado - retornando dados mock para desenvolvimento');
-        return sendSuccess(res, {
-          uid: 'dev-user-id',
-          email: 'dev@example.com',
-          empresaId: 'dev-empresa-id',
-          papel: 'admin',
-          ativo: true,
-          nome: 'Usuário de Desenvolvimento'
-        });
+        logger.error('Firebase não inicializado - configuração obrigatória para produção');
+        return sendError(res, 'Serviço de autenticação indisponível', 500);
       }
 
       // Verificar token no Firebase
@@ -194,18 +187,18 @@ export class AuthController {
         throw createValidationError('Usuário já existe com este email');
       }
 
-      // Criar usuário no Firebase (se inicializado)
-      let firebaseUser;
-      if (isFirebaseInitialized()) {
-        firebaseUser = await admin.auth().createUser({
-          email,
-          password,
-          displayName: nome
-        });
-      } else {
-        logger.warn('Firebase não inicializado - criando usuário mock');
-        firebaseUser = { uid: `mock-${Date.now()}` };
+      // Verificar se o Firebase foi inicializado
+      if (!isFirebaseInitialized()) {
+        logger.error('Firebase não inicializado - configuração obrigatória para produção');
+        return sendError(res, 'Serviço de autenticação indisponível', 500);
       }
+
+      // Criar usuário no Firebase
+      const firebaseUser = await admin.auth().createUser({
+        email,
+        password,
+        displayName: nome
+      });
 
       // Criar usuário no banco de dados
       const userData = {

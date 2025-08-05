@@ -9,31 +9,35 @@ const router = Router();
 
 // Schemas de validação
 const verifyTokenSchema = z.object({
-  body: z.object({
-    token: z.string().min(1, 'Token é obrigatório')
-  })
+  token: z.string().min(1, 'Token é obrigatório')
 });
 
 const passwordResetSchema = z.object({
-  body: z.object({
-    email: z.string().email('Email inválido')
-  })
+  email: z.string().email('Email inválido')
+});
+
+const loginSchema = z.object({
+  firebaseToken: z.string().min(1, 'Token Firebase é obrigatório')
 });
 
 const updateAuthSettingsSchema = z.object({
-  body: z.object({
-    configuracoes: z.object({
-      notificacoes: z.boolean().optional(),
-      tema: z.enum(['light', 'dark']).optional(),
-      idioma: z.string().optional()
-    })
+  configuracoes: z.object({
+    notificacoes: z.boolean().optional(),
+    tema: z.enum(['light', 'dark']).optional(),
+    idioma: z.string().optional()
   })
 });
 
 // Rotas públicas (sem autenticação)
-router.post('/verify-token', 
+router.post('/verify-token',
   authLimiter,
   validateRequest({ body: verifyTokenSchema }),
+  authController.verifyToken
+);
+
+router.post('/login',
+  authLimiter,
+  validateRequest({ body: loginSchema }),
   authController.verifyToken
 );
 

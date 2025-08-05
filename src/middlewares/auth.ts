@@ -40,7 +40,10 @@ export const authenticateToken = async (
         email: 'dev@example.com',
         empresaId: 'dev-empresa-id',
         papel: 'admin',
-        claims: {}
+        claims: {
+          empresaId: 'dev-empresa-id',
+          papel: 'admin'
+        }
       };
       return next();
     }
@@ -48,8 +51,9 @@ export const authenticateToken = async (
     // Verificar token com Firebase Admin
     const decodedToken = await admin.auth().verifyIdToken(token);
     
-    // Extrair claims customizados
-    const { empresaId, papel } = decodedToken;
+    // Extrair claims customizados do token
+    const empresaId = decodedToken.empresaId || decodedToken.custom_claims?.empresaId;
+    const papel = decodedToken.papel || decodedToken.custom_claims?.papel || 'leitor';
     
     req.user = {
       uid: decodedToken.uid,

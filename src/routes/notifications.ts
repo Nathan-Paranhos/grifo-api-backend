@@ -88,7 +88,7 @@ router.get('/',
   validateRequest({ query: notificationsQuerySchema }),
   async (req: Request, res: Response) => {
     const { page = 1, limit = 10, read, type } = req.query as { page?: number; limit?: number; read?: boolean; type?: 'inspection' | 'contestation' | 'system' | 'reminder' };
-    const userId = req.user?.id;
+    const userId = req.user?.uid;
     const empresaId = req.user?.empresaId;
 
     if (!userId) {
@@ -211,7 +211,7 @@ router.put('/:id/read',
   validateRequest({ params: markAsReadSchema }),
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const userId = req.user?.id;
+    const userId = req.user?.uid;
     const empresaId = req.user?.empresaId;
 
     if (!userId || !empresaId) {
@@ -287,7 +287,7 @@ router.put('/:id/read',
  */
 router.put('/mark-all-read',
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user?.uid;
     const empresaId = req.user?.empresaId;
 
     if (!userId || !empresaId) {

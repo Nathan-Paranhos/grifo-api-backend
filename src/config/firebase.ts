@@ -26,27 +26,6 @@ export const initializeFirebase = async (): Promise<void> => {
     const serviceAccount = JSON.parse(credentialsJson);
     logger.info(`Firebase project_id: ${serviceAccount.project_id}`);
     
-    // Verificar se as credenciais são de teste/desenvolvimento
-    if (serviceAccount.private_key === 'test-private-key' || 
-        serviceAccount.project_id === 'test-project-id' || 
-        serviceAccount.client_email === 'test@test.com') {
-      logger.warn('Firebase credentials appear to be test/development credentials. Initializing Firebase with mock configuration.');
-      
-      // Inicializar Firebase com configuração mock para desenvolvimento
-      try {
-        admin.initializeApp({
-          projectId: 'mock-project-id',
-          // Usar configuração mínima para desenvolvimento
-        });
-        firebaseInitialized = true;
-        logger.info('Firebase initialized with mock configuration for development.');
-      } catch (error) {
-        logger.warn('Failed to initialize Firebase with mock configuration. Continuing without Firebase.');
-        firebaseInitialized = false;
-      }
-      return;
-    }
-
     if (admin.apps.length === 0) {
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
@@ -118,7 +97,7 @@ export const getDbSafe = (): admin.firestore.Firestore | null => {
 };
 
 // Função para setar custom claims no Firebase
-export const setCustomClaims = async (uid: string, empresaId: string, role: 'admin' | 'user') => {
+export const setCustomClaims = async (uid: string, empresaId: string, papel: 'admin' | 'corretor' | 'leitor') => {
   if (!firebaseInitialized) {
     throw new Error('Firebase Admin SDK não está inicializado');
   }
@@ -126,16 +105,16 @@ export const setCustomClaims = async (uid: string, empresaId: string, role: 'adm
   try {
     await admin.auth().setCustomUserClaims(uid, {
       empresaId,
-      role,
+      papel,
     });
 
-    logger.info(`✔ Claims setados para o UID ${uid}: empresaId=${empresaId}, role=${role}`);
+    logger.info(`✔ Claims setados para o UID ${uid}: empresaId=${empresaId}, papel=${papel}`);
     return { success: true, message: 'Claims setados com sucesso' };
   } catch (error: unknown) {
     logger.error('❌ Erro ao setar custom claims:', {
       uid,
       empresaId,
-      role,
+      papel,
       error: error instanceof Error ? error.message : String(error)
     });
     throw error;

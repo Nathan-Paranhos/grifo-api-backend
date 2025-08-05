@@ -152,7 +152,7 @@ router.post('/images',
     });
   },
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user?.uid;
     const empresaId = req.user?.empresaId;
     const category = req.body?.category || 'image';
 
@@ -292,7 +292,7 @@ router.post('/documents',
     });
   },
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user?.uid;
     const empresaId = req.user?.empresaId;
     const category = req.body?.category || 'document';
 
@@ -406,9 +406,9 @@ router.delete('/:id',
   validateRequest({ params: deleteFileSchema }),
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const userId = req.user?.id;
+    const userId = req.user?.uid;
     const empresaId = req.user?.empresaId;
-    const userRole = req.user?.role;
+    const userRole = req.user?.papel;
 
     if (!userId || !empresaId) {
       return sendError(res, 'Usuário não autenticado', 401);
@@ -516,7 +516,7 @@ router.delete('/:id',
 router.get('/',
   async (req: Request, res: Response) => {
     const { category, page = 1, limit = 10 } = req.query;
-    const userId = req.user?.id;
+    const userId = req.user?.uid;
     const empresaId = req.user?.empresaId;
 
     if (!userId || !empresaId) {

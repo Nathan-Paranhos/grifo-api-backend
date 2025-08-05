@@ -12,8 +12,8 @@ import admin from 'firebase-admin';
 // Extend the Express Request interface to include user property
 export interface Request extends ExpressRequest {
   user?: { 
-    id: string; 
-    role: string; 
+    uid: string; 
+    papel: string; 
     empresaId: string; // Adicionar empresaId
   };
 }
@@ -23,7 +23,7 @@ export const requireEmpresa = (req: Request, res: Response, next: NextFunction) 
   const empresaId = req.user?.empresaId;
   
   if (!empresaId || empresaId === 'default') {
-    logger.warn(`Acesso negado - usuário ${req.user?.id} sem empresa associada`);
+    logger.warn(`Acesso negado - usuário ${req.user?.uid} sem empresa associada`);
     return res.status(403).json({ 
       success: false,
       error: 'Usuário sem empresa associada. Entre em contato com o administrador.' 
@@ -100,7 +100,7 @@ const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || '7d';
 interface JWTPayload {
   uid: string;
   email?: string;
-  role: string;
+  papel: string;
   empresaId: string;
   iat?: number;
   exp?: number;
@@ -258,8 +258,8 @@ export const jwtAuthMiddleware = async (req: Request, res: Response, next: NextF
 
     // Anexar dados do usuário à requisição
     req.user = {
-      id: decoded.uid,
-      role: decoded.role,
+      uid: decoded.uid,
+      papel: decoded.papel,
       empresaId: decoded.empresaId
     };
 
@@ -371,7 +371,7 @@ export const auditLogger = (req: Request, res: Response, next: NextFunction) => 
     // Log apenas para operações sensíveis
     if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
       logger.info(`Audit: ${req.method} ${req.originalUrl}`, {
-        userId: req.user?.id,
+        userId: req.user?.uid,
         empresaId: req.user?.empresaId,
         ip: req.ip,
         userAgent: req.get('User-Agent'),
@@ -494,7 +494,7 @@ export async function authenticateToken(req: Request, res: Response, next: NextF
     }
 
     const userData = userDoc.data();
-    const role = userData?.role || 'user'; // 'user' como role padrão
+    const papel = userData?.papel || 'leitor'; // 'leitor' como papel padrão
     const empresaId = userData?.empresaId;
 
     if (!empresaId) {
@@ -504,8 +504,8 @@ export async function authenticateToken(req: Request, res: Response, next: NextF
 
     // Montar o objeto de usuário para a requisição
     req.user = {
-      id: uid,
-      role: role,
+      uid: uid,
+      papel: papel,
       empresaId: empresaId,
     };
 

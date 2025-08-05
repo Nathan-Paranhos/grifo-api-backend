@@ -7,6 +7,7 @@ import { Request } from '../config/security';
 import { db } from '../config/firebase';
 import { z } from 'zod';
 import { DashboardAdvancedData, PerformanceReport, AnalyticsData, PaginationOptions } from '../types';
+import { authenticateToken, requireEmpresa } from '../middlewares/auth';
 
 
 
@@ -146,10 +147,10 @@ async function getUsersData(empresaId: string) {
  *       500:
  *         description: Erro interno do servidor
  */
-router.get('/dashboard-advanced', validateRequest({ query: reportsQuerySchema }), async (req: Request, res: Response) => {
+router.get('/dashboard-advanced', authenticateToken, requireEmpresa, validateRequest({ query: reportsQuerySchema }), async (req: Request, res: Response) => {
     const { period, dateFrom, dateTo, vistoriadorId } = req.query as { period: string; dateFrom?: string; dateTo?: string; vistoriadorId?: string };
     const empresaId = req.user?.empresaId;
-    const userId = req.user?.id;
+    const userId = req.user?.uid;
 
     if (!empresaId || !userId) {
       return sendError(res, 'Usuário não autenticado', 401);
@@ -312,11 +313,13 @@ router.get('/dashboard-advanced', validateRequest({ query: reportsQuerySchema })
  *         description: Erro interno do servidor
  */
 router.get('/performance',
+  authenticateToken,
+  requireEmpresa,
   validateRequest({ query: reportsQuerySchema }),
   async (req: Request, res: Response) => {
     const { period, vistoriadorId } = req.query as { period: string; vistoriadorId?: string };
     const empresaId = req.user?.empresaId;
-    const userId = req.user?.id;
+    const userId = req.user?.uid;
 
     if (!empresaId || !userId) {
       return sendError(res, 'Usuário não autenticado', 401);
@@ -499,13 +502,15 @@ router.get('/performance',
  *         description: Erro interno do servidor
  */
 router.get('/analytics',
+  authenticateToken,
+  requireEmpresa,
   validateRequest({ 
     query: reportsQuerySchema.merge(paginationSchema)
   }),
   async (req: Request, res: Response) => {
     const { period, page, limit } = req.query as unknown as { period: string; page: number; limit: number };
     const empresaId = req.user?.empresaId;
-    const userId = req.user?.id;
+    const userId = req.user?.uid;
 
     if (!empresaId || !userId) {
       return sendError(res, 'Usuário não autenticado', 401);

@@ -25,9 +25,10 @@ export class AuthController {
    */
   verifyToken = async (req: Request, res: Response) => {
     try {
-      const { token } = req.body;
+      const { token, firebaseToken } = req.body;
+      const authToken = token || firebaseToken;
 
-      if (!token) {
+      if (!authToken) {
         throw createValidationError('Token é obrigatório');
       }
 
@@ -45,7 +46,7 @@ export class AuthController {
       }
 
       // Verificar token no Firebase
-      const decodedToken = await admin.auth().verifyIdToken(token);
+      const decodedToken = await admin.auth().verifyIdToken(authToken);
       
       // Buscar dados do usuário no Firestore
       const user = await this.getUserService().getUserById(decodedToken.uid);
@@ -56,6 +57,15 @@ export class AuthController {
 
       if (!user.ativo) {
         throw createAuthError('Usuário desativado');
+      }
+
+      // Verificar e atualizar custom claims se necessário
+      const currentClaims = decodedToken.empresaId && decodedToken.papel;
+      if (!currentClaims || decodedToken.empresaId !== user.empresaId || decodedToken.papel !== user.papel) {
+        await admin.auth().setCustomUserClaims(decodedToken.uid, {
+          empresaId: user.empresaId,
+          papel: user.papel
+        });
       }
 
       // Atualizar último login

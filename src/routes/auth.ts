@@ -67,7 +67,7 @@ router.post('/register',
 router.post('/refresh-token',
   authLimiter,
   validateRequest({ body: refreshTokenSchema }),
-  authController.refreshToken
+  authController.refreshTokenPublic
 );
 
 // Rotas protegidas (com autenticação)

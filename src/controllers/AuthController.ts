@@ -130,7 +130,51 @@ export class AuthController {
   };
 
   /**
-   * Refresh token (renovar claims customizados)
+   * Refresh token público (para renovar token expirado)
+   */
+  refreshTokenPublic = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { refreshToken } = req.body;
+
+      if (!refreshToken) {
+        throw createValidationError('Refresh token é obrigatório');
+      }
+
+      // Verificar se o Firebase foi inicializado
+      if (!isFirebaseInitialized()) {
+        logger.error('Firebase não inicializado - configuração obrigatória para produção');
+        return sendError(res, 'Serviço de autenticação indisponível', 500);
+      }
+
+      // No Firebase, o refresh é feito no lado do cliente
+      // Aqui apenas validamos se o token ainda é válido
+      try {
+        const decodedToken = await admin.auth().verifyIdToken(refreshToken);
+        
+        // Buscar dados do usuário
+        const user = await this.getUserService().getUserById(decodedToken.uid);
+        
+        if (!user || !user.ativo) {
+          throw createAuthError('Usuário não encontrado ou desativado');
+        }
+
+        logger.info(`Token renovado:`, { uid: decodedToken.uid });
+        
+        return sendSuccess(res, {
+          uid: decodedToken.uid,
+          email: decodedToken.email,
+          valid: true
+        }, 'Token ainda válido');
+      } catch (error) {
+        throw createAuthError('Token inválido ou expirado');
+      }
+    } catch (error: unknown) {
+      next(error);
+    }
+  };
+
+  /**
+   * Refresh token (renovar claims customizados) - para usuários autenticados
    */
   refreshToken = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {

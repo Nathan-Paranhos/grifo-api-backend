@@ -1273,6 +1273,32 @@ app.options('*', (req, res) => {
   res.sendStatus(200);
 });
 
+// Root endpoint - redireciona para documentação
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Bem-vindo à Grifo API Backend',
+    version: '1.0.0',
+    description: 'API completa para Grifo Vistorias - Supabase Integration',
+    documentation: {
+      swagger: '/functions/v1/docs',
+      openapi_spec: '/functions/v1/docs/spec'
+    },
+    available_endpoints: {
+      health: '/health',
+      api_info: '/api',
+      rest: '/rest/v1/*',
+      rpc: '/rest/v1/rpc/*',
+      functions: '/functions/v1/*',
+      graphql: '/graphql/v1',
+      storage: '/storage/v1/*'
+    },
+    links: {
+      portal: 'https://grifo-portal-v1.netlify.app',
+      app: 'https://app.grifovistorias.com'
+    }
+  });
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({
@@ -1281,6 +1307,7 @@ app.use('*', (req, res) => {
     path: req.originalUrl,
     timestamp: new Date().toISOString(),
     message: 'Verifique a documentação da API',
+    documentation: '/functions/v1/docs',
     available_endpoints: {
       health: '/health',
       api_info: '/api',

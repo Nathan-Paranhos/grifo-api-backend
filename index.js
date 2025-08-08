@@ -227,93 +227,137 @@ app.post('/rest/v1/empresas', authenticateToken, requireSuperAdmin, async (req, 
 
 app.patch('/rest/v1/empresas', authenticateToken, requireSuperAdmin, async (req, res) => {
   try {
+    // Validação básica
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({ error: 'Dados inválidos' });
+    }
+    
     let query = supabase.from('empresas').update(req.body);
     
-    // Aplicar filtros da query string
-    Object.keys(req.query).forEach(key => {
-      if (key.includes('=')) {
-        const [field, operator] = key.split('=');
-        const value = req.query[key];
-        
-        if (operator === 'eq') {
-          query = query.eq(field, value);
-        }
-      }
-    });
+    // Aplicar filtros para identificar registros a serem atualizados
+    query = parseFilters(req.query, query);
     
     const { data, error } = await query.select();
     
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, details: error.details });
+    }
+    
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: 'Nenhuma empresa encontrada para atualização' });
     }
     
     res.json(data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em PATCH /rest/v1/empresas:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
   }
 });
+
+// Função auxiliar para parsing de filtros
+const parseFilters = (query, supabaseQuery) => {
+  Object.keys(query).forEach(key => {
+    if (key.includes('=')) {
+      const [field, operator] = key.split('=');
+      const value = query[key];
+      
+      switch (operator) {
+        case 'eq':
+          supabaseQuery = supabaseQuery.eq(field, value);
+          break;
+        case 'neq':
+          supabaseQuery = supabaseQuery.neq(field, value);
+          break;
+        case 'gt':
+          supabaseQuery = supabaseQuery.gt(field, value);
+          break;
+        case 'gte':
+          supabaseQuery = supabaseQuery.gte(field, value);
+          break;
+        case 'lt':
+          supabaseQuery = supabaseQuery.lt(field, value);
+          break;
+        case 'lte':
+          supabaseQuery = supabaseQuery.lte(field, value);
+          break;
+        case 'like':
+          supabaseQuery = supabaseQuery.like(field, value);
+          break;
+        case 'in':
+          supabaseQuery = supabaseQuery.in(field, value.split(','));
+          break;
+      }
+    }
+  });
+  return supabaseQuery;
+};
+
+// Função auxiliar para paginação
+const parsePagination = (req, query) => {
+  const range = req.headers.range;
+  if (range) {
+    const [start, end] = range.split('-').map(Number);
+    query = query.range(start, end);
+  }
+  return query;
+};
 
 // Usuários
 app.get('/rest/v1/usuarios', authenticateToken, async (req, res) => {
   try {
-    let query = supabase.from('usuarios').select('*');
+    let query = supabase.from('usuarios').select(req.query.select || '*', { count: 'exact' });
     
     // RLS: filtrar por empresa_id se não for superadmin
     if (req.user.role !== 'service_role' && req.user.app_metadata?.role !== 'superadmin') {
       query = query.eq('empresa_id', req.user.empresa_id);
     }
     
-    // Aplicar filtros da query string
-    Object.keys(req.query).forEach(key => {
-      if (key.includes('=')) {
-        const [field, operator] = key.split('=');
-        const value = req.query[key];
-        
-        switch (operator) {
-          case 'eq':
-            query = query.eq(field, value);
-            break;
-          case 'neq':
-            query = query.neq(field, value);
-            break;
-          case 'like':
-            query = query.like(field, value);
-            break;
-          case 'in':
-            query = query.in(field, value.split(','));
-            break;
-        }
-      }
-    });
+    // Aplicar filtros
+    query = parseFilters(req.query, query);
     
-    // Paginação
-    const range = req.headers.range;
-    if (range) {
-      const [start, end] = range.split('-').map(Number);
-      query = query.range(start, end);
+    // Aplicar ordenação
+    if (req.query.order) {
+      const orderParts = req.query.order.split('.');
+      const field = orderParts[0];
+      const direction = orderParts[1] === 'desc' ? false : true;
+      query = query.order(field, { ascending: direction });
     }
+    
+    // Aplicar paginação
+    query = parsePagination(req, query);
     
     const { data, error, count } = await query;
     
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, details: error.details });
     }
     
-    // Headers de resposta
+    // Headers de resposta para paginação
+    const range = req.headers.range;
     if (range) {
-      const [start, end] = range.split('-').map(Number);
-      res.set('Content-Range', `${start}-${Math.min(end, data.length - 1)}/${count || data.length}`);
-      res.status(206);
+      const matches = range.match(/^(\d+)-(\d+)$/);
+      if (matches && data) {
+        const start = parseInt(matches[1]);
+        const end = Math.min(parseInt(matches[2]), start + data.length - 1);
+        res.set('Content-Range', `${start}-${end}/${count || '*'}`);
+        res.status(206);
+      }
     }
     
-    res.json(data);
+    res.json(data || []);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em /rest/v1/usuarios:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
   }
 });
 
 app.post('/rest/v1/usuarios', authenticateToken, async (req, res) => {
   try {
+    // Validação básica
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({ error: 'Dados inválidos' });
+    }
+    
     // Garantir que empresa_id seja do usuário logado (exceto superadmin)
     if (req.user.role !== 'service_role' && req.user.app_metadata?.role !== 'superadmin') {
       req.body.empresa_id = req.user.empresa_id;
@@ -326,17 +370,23 @@ app.post('/rest/v1/usuarios', authenticateToken, async (req, res) => {
       .single();
     
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, details: error.details });
     }
     
     res.status(201).json(data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em POST /rest/v1/usuarios:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
   }
 });
 
 app.patch('/rest/v1/usuarios', authenticateToken, async (req, res) => {
   try {
+    // Validação básica
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({ error: 'Dados inválidos' });
+    }
+    
     let query = supabase.from('usuarios').update(req.body);
     
     // RLS: filtrar por empresa_id se não for superadmin
@@ -344,96 +394,82 @@ app.patch('/rest/v1/usuarios', authenticateToken, async (req, res) => {
       query = query.eq('empresa_id', req.user.empresa_id);
     }
     
-    // Aplicar filtros da query string
-    Object.keys(req.query).forEach(key => {
-      if (key.includes('=')) {
-        const [field, operator] = key.split('=');
-        const value = req.query[key];
-        
-        if (operator === 'eq') {
-          query = query.eq(field, value);
-        }
-      }
-    });
+    // Aplicar filtros para identificar registros a serem atualizados
+    query = parseFilters(req.query, query);
     
     const { data, error } = await query.select();
     
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, details: error.details });
+    }
+    
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: 'Nenhum usuário encontrado para atualização' });
     }
     
     res.json(data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em PATCH /rest/v1/usuarios:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
   }
 });
 
 // Imóveis
 app.get('/rest/v1/imoveis', authenticateToken, async (req, res) => {
   try {
-    let query = supabase.from('imoveis').select('*');
+    let query = supabase.from('imoveis').select(req.query.select || '*', { count: 'exact' });
     
     // RLS: filtrar por empresa_id se não for superadmin
     if (req.user.role !== 'service_role' && req.user.app_metadata?.role !== 'superadmin') {
       query = query.eq('empresa_id', req.user.empresa_id);
     }
     
-    // Aplicar filtros da query string
-    Object.keys(req.query).forEach(key => {
-      if (key === 'select') {
-        query = supabase.from('imoveis').select(req.query[key]);
-        return;
-      }
-      
-      if (key.includes('=')) {
-        const [field, operator] = key.split('=');
-        const value = req.query[key];
-        
-        switch (operator) {
-          case 'eq':
-            query = query.eq(field, value);
-            break;
-          case 'neq':
-            query = query.neq(field, value);
-            break;
-          case 'like':
-            query = query.like(field, value);
-            break;
-          case 'in':
-            query = query.in(field, value.split(','));
-            break;
-        }
-      }
-    });
+    // Aplicar filtros
+    query = parseFilters(req.query, query);
     
-    // Paginação
-    const range = req.headers.range;
-    if (range) {
-      const [start, end] = range.split('-').map(Number);
-      query = query.range(start, end);
+    // Aplicar ordenação
+    if (req.query.order) {
+      const orderParts = req.query.order.split('.');
+      const field = orderParts[0];
+      const direction = orderParts[1] === 'desc' ? false : true;
+      query = query.order(field, { ascending: direction });
     }
+    
+    // Aplicar paginação
+    query = parsePagination(req, query);
     
     const { data, error, count } = await query;
     
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, details: error.details });
     }
     
-    // Headers de resposta
+    // Headers de resposta para paginação
+    const range = req.headers.range;
     if (range) {
-      const [start, end] = range.split('-').map(Number);
-      res.set('Content-Range', `${start}-${Math.min(end, data.length - 1)}/${count || data.length}`);
-      res.status(206);
+      const matches = range.match(/^(\d+)-(\d+)$/);
+      if (matches && data) {
+        const start = parseInt(matches[1]);
+        const end = Math.min(parseInt(matches[2]), start + data.length - 1);
+        res.set('Content-Range', `${start}-${end}/${count || '*'}`);
+        res.status(206);
+      }
     }
     
-    res.json(data);
+    res.json(data || []);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em /rest/v1/imoveis:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
   }
 });
 
 app.post('/rest/v1/imoveis', authenticateToken, async (req, res) => {
   try {
+    // Validação básica
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({ error: 'Dados inválidos' });
+    }
+    
     // Garantir que empresa_id seja do usuário logado (exceto superadmin)
     if (req.user.role !== 'service_role' && req.user.app_metadata?.role !== 'superadmin') {
       req.body.empresa_id = req.user.empresa_id;
@@ -446,17 +482,23 @@ app.post('/rest/v1/imoveis', authenticateToken, async (req, res) => {
       .single();
     
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, details: error.details });
     }
     
     res.status(201).json(data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em POST /rest/v1/imoveis:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
   }
 });
 
 app.patch('/rest/v1/imoveis', authenticateToken, async (req, res) => {
   try {
+    // Validação básica
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({ error: 'Dados inválidos' });
+    }
+    
     let query = supabase.from('imoveis').update(req.body);
     
     // RLS: filtrar por empresa_id se não for superadmin
@@ -464,27 +506,23 @@ app.patch('/rest/v1/imoveis', authenticateToken, async (req, res) => {
       query = query.eq('empresa_id', req.user.empresa_id);
     }
     
-    // Aplicar filtros da query string
-    Object.keys(req.query).forEach(key => {
-      if (key.includes('=')) {
-        const [field, operator] = key.split('=');
-        const value = req.query[key];
-        
-        if (operator === 'eq') {
-          query = query.eq(field, value);
-        }
-      }
-    });
+    // Aplicar filtros para identificar registros a serem atualizados
+    query = parseFilters(req.query, query);
     
     const { data, error } = await query.select();
     
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, details: error.details });
+    }
+    
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: 'Nenhum imóvel encontrado para atualização' });
     }
     
     res.json(data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em PATCH /rest/v1/imoveis:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
   }
 });
 
@@ -524,75 +562,59 @@ app.delete('/rest/v1/imoveis', authenticateToken, async (req, res) => {
 // Vistorias
 app.get('/rest/v1/vistorias', authenticateToken, async (req, res) => {
   try {
-    let query = supabase.from('vistorias').select('*');
+    let query = supabase.from('vistorias').select(req.query.select || '*', { count: 'exact' });
     
     // RLS: filtrar por empresa_id se não for superadmin
     if (req.user.role !== 'service_role' && req.user.app_metadata?.role !== 'superadmin') {
       query = query.eq('empresa_id', req.user.empresa_id);
     }
     
-    // Aplicar filtros da query string
-    Object.keys(req.query).forEach(key => {
-      if (key === 'select') {
-        query = supabase.from('vistorias').select(req.query[key]);
-        return;
-      }
-      
-      if (key.includes('=')) {
-        const [field, operator] = key.split('=');
-        const value = req.query[key];
-        
-        switch (operator) {
-          case 'eq':
-            query = query.eq(field, value);
-            break;
-          case 'neq':
-            query = query.neq(field, value);
-            break;
-          case 'like':
-            query = query.like(field, value);
-            break;
-          case 'in':
-            query = query.in(field, value.split(','));
-            break;
-          case 'gte':
-            query = query.gte(field, value);
-            break;
-          case 'lte':
-            query = query.lte(field, value);
-            break;
-        }
-      }
-    });
+    // Aplicar filtros
+    query = parseFilters(req.query, query);
     
-    // Paginação
-    const range = req.headers.range;
-    if (range) {
-      const [start, end] = range.split('-').map(Number);
-      query = query.range(start, end);
+    // Aplicar ordenação
+    if (req.query.order) {
+      const orderParts = req.query.order.split('.');
+      const field = orderParts[0];
+      const direction = orderParts[1] === 'desc' ? false : true;
+      query = query.order(field, { ascending: direction });
     }
+    
+    // Aplicar paginação
+    query = parsePagination(req, query);
     
     const { data, error, count } = await query;
     
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, details: error.details });
     }
     
-    // Headers de resposta
+    // Headers de resposta para paginação
+    const range = req.headers.range;
     if (range) {
-      const [start, end] = range.split('-').map(Number);
-      res.set('Content-Range', `${start}-${Math.min(end, data.length - 1)}/${count || data.length}`);
-      res.status(206);
+      const matches = range.match(/^(\d+)-(\d+)$/);
+      if (matches && data) {
+        const start = parseInt(matches[1]);
+        const end = Math.min(parseInt(matches[2]), start + data.length - 1);
+        res.set('Content-Range', `${start}-${end}/${count || '*'}`);
+        res.status(206);
+      }
     }
     
-    res.json(data);
+    res.json(data || []);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em /rest/v1/vistorias:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
   }
 });
 
 app.post('/rest/v1/vistorias', authenticateToken, async (req, res) => {
   try {
+    // Validação básica
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({ error: 'Dados inválidos' });
+    }
+    
     // Garantir que empresa_id seja do usuário logado (exceto superadmin)
     if (req.user.role !== 'service_role' && req.user.app_metadata?.role !== 'superadmin') {
       req.body.empresa_id = req.user.empresa_id;
@@ -605,17 +627,23 @@ app.post('/rest/v1/vistorias', authenticateToken, async (req, res) => {
       .single();
     
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, details: error.details });
     }
     
     res.status(201).json(data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em POST /rest/v1/vistorias:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
   }
 });
 
 app.patch('/rest/v1/vistorias', authenticateToken, async (req, res) => {
   try {
+    // Validação básica
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({ error: 'Dados inválidos' });
+    }
+    
     let query = supabase.from('vistorias').update(req.body);
     
     // RLS: filtrar por empresa_id se não for superadmin
@@ -623,91 +651,82 @@ app.patch('/rest/v1/vistorias', authenticateToken, async (req, res) => {
       query = query.eq('empresa_id', req.user.empresa_id);
     }
     
-    // Aplicar filtros da query string
-    Object.keys(req.query).forEach(key => {
-      if (key.includes('=')) {
-        const [field, operator] = key.split('=');
-        const value = req.query[key];
-        
-        if (operator === 'eq') {
-          query = query.eq(field, value);
-        }
-      }
-    });
+    // Aplicar filtros para identificar registros a serem atualizados
+    query = parseFilters(req.query, query);
     
     const { data, error } = await query.select();
     
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, details: error.details });
+    }
+    
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: 'Nenhuma vistoria encontrada para atualização' });
     }
     
     res.json(data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em PATCH /rest/v1/vistorias:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
   }
 });
 
 // Contestações
 app.get('/rest/v1/contestacoes', authenticateToken, async (req, res) => {
   try {
-    let query = supabase.from('contestacoes').select('*');
+    let query = supabase.from('contestacoes').select(req.query.select || '*', { count: 'exact' });
     
     // RLS: filtrar por empresa_id se não for superadmin
     if (req.user.role !== 'service_role' && req.user.app_metadata?.role !== 'superadmin') {
       query = query.eq('empresa_id', req.user.empresa_id);
     }
     
-    // Aplicar filtros da query string
-    Object.keys(req.query).forEach(key => {
-      if (key.includes('=')) {
-        const [field, operator] = key.split('=');
-        const value = req.query[key];
-        
-        switch (operator) {
-          case 'eq':
-            query = query.eq(field, value);
-            break;
-          case 'neq':
-            query = query.neq(field, value);
-            break;
-          case 'like':
-            query = query.like(field, value);
-            break;
-          case 'in':
-            query = query.in(field, value.split(','));
-            break;
-        }
-      }
-    });
+    // Aplicar filtros
+    query = parseFilters(req.query, query);
     
-    // Paginação
-    const range = req.headers.range;
-    if (range) {
-      const [start, end] = range.split('-').map(Number);
-      query = query.range(start, end);
+    // Aplicar ordenação
+    if (req.query.order) {
+      const orderParts = req.query.order.split('.');
+      const field = orderParts[0];
+      const direction = orderParts[1] === 'desc' ? false : true;
+      query = query.order(field, { ascending: direction });
     }
+    
+    // Aplicar paginação
+    query = parsePagination(req, query);
     
     const { data, error, count } = await query;
     
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, details: error.details });
     }
     
-    // Headers de resposta
+    // Headers de resposta para paginação
+    const range = req.headers.range;
     if (range) {
-      const [start, end] = range.split('-').map(Number);
-      res.set('Content-Range', `${start}-${Math.min(end, data.length - 1)}/${count || data.length}`);
-      res.status(206);
+      const matches = range.match(/^(\d+)-(\d+)$/);
+      if (matches && data) {
+        const start = parseInt(matches[1]);
+        const end = Math.min(parseInt(matches[2]), start + data.length - 1);
+        res.set('Content-Range', `${start}-${end}/${count || '*'}`);
+        res.status(206);
+      }
     }
     
-    res.json(data);
+    res.json(data || []);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em /rest/v1/contestacoes:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
   }
 });
 
 app.post('/rest/v1/contestacoes', authenticateToken, async (req, res) => {
   try {
+    // Validação básica
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({ error: 'Dados inválidos' });
+    }
+    
     // Garantir que empresa_id seja do usuário logado (exceto superadmin)
     if (req.user.role !== 'service_role' && req.user.app_metadata?.role !== 'superadmin') {
       req.body.empresa_id = req.user.empresa_id;
@@ -720,12 +739,47 @@ app.post('/rest/v1/contestacoes', authenticateToken, async (req, res) => {
       .single();
     
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, details: error.details });
     }
     
     res.status(201).json(data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em POST /rest/v1/contestacoes:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
+  }
+});
+
+app.patch('/rest/v1/contestacoes', authenticateToken, async (req, res) => {
+  try {
+    // Validação básica
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({ error: 'Dados inválidos' });
+    }
+    
+    let query = supabase.from('contestacoes').update(req.body);
+    
+    // RLS: filtrar por empresa_id se não for superadmin
+    if (req.user.role !== 'service_role' && req.user.app_metadata?.role !== 'superadmin') {
+      query = query.eq('empresa_id', req.user.empresa_id);
+    }
+    
+    // Aplicar filtros para identificar registros a serem atualizados
+    query = parseFilters(req.query, query);
+    
+    const { data, error } = await query.select();
+    
+    if (error) {
+      return res.status(400).json({ error: error.message, details: error.details });
+    }
+    
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: 'Nenhuma contestação encontrada para atualização' });
+    }
+    
+    res.json(data);
+  } catch (error) {
+    console.error('Erro em PATCH /rest/v1/contestacoes:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
   }
 });
 
@@ -734,6 +788,11 @@ app.post('/rest/v1/contestacoes', authenticateToken, async (req, res) => {
 app.post('/rest/v1/rpc/dashboard_kpis', authenticateToken, async (req, res) => {
   try {
     const { empresa } = req.body;
+    
+    // Validação de empresa_id
+    if (!empresa) {
+      return res.status(400).json({ error: 'empresa é obrigatório' });
+    }
     
     // Verificar se o usuário tem acesso à empresa (exceto superadmin)
     if (req.user.role !== 'service_role' && req.user.app_metadata?.role !== 'superadmin') {
@@ -745,18 +804,24 @@ app.post('/rest/v1/rpc/dashboard_kpis', authenticateToken, async (req, res) => {
     const { data, error } = await supabase.rpc('dashboard_kpis', { empresa });
     
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, details: error.details });
     }
     
-    res.json(data);
+    res.json(data || {});
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em RPC dashboard_kpis:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
   }
 });
 
 app.post('/rest/v1/rpc/usage_stats', authenticateToken, async (req, res) => {
   try {
-    const { empresa } = req.body;
+    const { empresa, periodo } = req.body;
+    
+    // Validação de parâmetros
+    if (!empresa) {
+      return res.status(400).json({ error: 'empresa é obrigatório' });
+    }
     
     // Verificar se o usuário tem acesso à empresa (exceto superadmin)
     if (req.user.role !== 'service_role' && req.user.app_metadata?.role !== 'superadmin') {
@@ -765,15 +830,16 @@ app.post('/rest/v1/rpc/usage_stats', authenticateToken, async (req, res) => {
       }
     }
     
-    const { data, error } = await supabase.rpc('usage_stats', { empresa });
+    const { data, error } = await supabase.rpc('usage_stats', { empresa, periodo: periodo || '30d' });
     
     if (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, details: error.details });
     }
     
-    res.json(data);
+    res.json(data || {});
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em RPC usage_stats:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
   }
 });
 
@@ -781,10 +847,24 @@ app.post('/rest/v1/rpc/usage_stats', authenticateToken, async (req, res) => {
 
 app.post('/functions/v1/create_tenant', authenticateToken, requireSuperAdmin, async (req, res) => {
   try {
-    const { nome, cnpj } = req.body;
+    const { nome, cnpj, email, plano } = req.body;
     
+    // Validação de entrada
     if (!nome || !cnpj) {
       return res.status(400).json({ error: 'Nome e CNPJ são obrigatórios' });
+    }
+    
+    // Validar formato do CNPJ (básico)
+    if (cnpj && cnpj.replace(/\D/g, '').length !== 14) {
+      return res.status(400).json({ error: 'CNPJ deve ter 14 dígitos' });
+    }
+    
+    // Validar email se fornecido
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'Formato de email inválido' });
+      }
     }
     
     // Criar empresa
@@ -793,6 +873,8 @@ app.post('/functions/v1/create_tenant', authenticateToken, requireSuperAdmin, as
       .insert({
         nome,
         cnpj,
+        email,
+        plano: plano || 'basico',
         ativa: true,
         created_at: new Date().toISOString()
       })
@@ -800,12 +882,24 @@ app.post('/functions/v1/create_tenant', authenticateToken, requireSuperAdmin, as
       .single();
     
     if (empresaError) {
-      return res.status(400).json({ error: empresaError.message });
+      return res.status(400).json({ 
+        error: 'Erro ao criar empresa', 
+        details: empresaError.message 
+      });
     }
     
-    res.json({ empresa_id: empresa.id });
+    res.status(201).json({ 
+      empresa_id: empresa.id,
+      nome: empresa.nome,
+      cnpj: empresa.cnpj,
+      status: 'criada'
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro em create_tenant:', error);
+    res.status(500).json({ 
+      error: 'Erro interno do servidor', 
+      details: error.message 
+    });
   }
 });
 
@@ -902,6 +996,70 @@ app.post('/functions/v1/drive_sync', async (req, res) => {
 
 // ===== STORAGE =====
 
+// Upload de arquivos
+app.post('/storage/v1/object/:bucket/*', authenticateToken, upload.single('file'), async (req, res) => {
+  try {
+    const bucket = req.params.bucket;
+    const filePath = req.params[0];
+    
+    // Validações
+    if (!bucket) {
+      return res.status(400).json({ error: 'Nome do bucket é obrigatório' });
+    }
+    
+    if (!filePath) {
+      return res.status(400).json({ error: 'Caminho do arquivo é obrigatório' });
+    }
+    
+    if (!req.file) {
+      return res.status(400).json({ error: 'Nenhum arquivo enviado' });
+    }
+    
+    // Validar tamanho do arquivo (já tratado pelo Multer, mas verificação adicional)
+    if (req.file.size > 10 * 1024 * 1024) { // 10MB
+      return res.status(400).json({ error: 'Arquivo muito grande (máximo 10MB)' });
+    }
+    
+    // RLS: Adicionar empresa_id ao path (exceto superadmin)
+    let finalPath = filePath;
+    if (req.user.role !== 'service_role' && req.user.app_metadata?.role !== 'superadmin') {
+      const empresaId = req.user.app_metadata?.empresa_id;
+      if (!empresaId) {
+        return res.status(400).json({ error: 'Empresa não identificada' });
+      }
+      finalPath = `${empresaId}/${filePath}`;
+    }
+    
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(finalPath, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: false
+      });
+    
+    if (error) {
+      return res.status(400).json({ 
+        error: 'Erro ao fazer upload', 
+        details: error.message 
+      });
+    }
+    
+    res.json({
+      Key: data.path,
+      id: data.id,
+      fullPath: data.fullPath,
+      size: req.file.size,
+      mimetype: req.file.mimetype
+    });
+  } catch (error) {
+    console.error('Erro em upload:', error);
+    res.status(500).json({ 
+      error: 'Erro interno do servidor', 
+      details: error.message 
+    });
+  }
+});
+
 app.post('/storage/v1/object/vistorias/:empresa/:vistoria/:filename', authenticateToken, upload.single('file'), async (req, res) => {
   try {
     const { empresa, vistoria, filename } = req.params;
@@ -936,6 +1094,64 @@ app.post('/storage/v1/object/vistorias/:empresa/:vistoria/:filename', authentica
   }
 });
 
+// Listar arquivos
+app.get('/storage/v1/object/list/:bucket', authenticateToken, async (req, res) => {
+  try {
+    const bucket = req.params.bucket;
+    const { prefix, limit, offset } = req.query;
+    
+    // Validações
+    if (!bucket) {
+      return res.status(400).json({ error: 'Nome do bucket é obrigatório' });
+    }
+    
+    // RLS: Filtrar por empresa_id (exceto superadmin)
+    let searchPrefix = prefix || '';
+    if (req.user.role !== 'service_role' && req.user.app_metadata?.role !== 'superadmin') {
+      const empresaId = req.user.app_metadata?.empresa_id;
+      if (!empresaId) {
+        return res.status(400).json({ error: 'Empresa não identificada' });
+      }
+      searchPrefix = `${empresaId}/${prefix || ''}`;
+    }
+    
+    // Validar parâmetros de paginação
+    const parsedLimit = limit ? Math.min(parseInt(limit), 1000) : 100;
+    const parsedOffset = offset ? Math.max(parseInt(offset), 0) : 0;
+    
+    if (isNaN(parsedLimit) || isNaN(parsedOffset)) {
+      return res.status(400).json({ error: 'Parâmetros limit e offset devem ser números' });
+    }
+    
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .list(searchPrefix, {
+        limit: parsedLimit,
+        offset: parsedOffset
+      });
+    
+    if (error) {
+      return res.status(400).json({ 
+        error: 'Erro ao listar arquivos', 
+        details: error.message 
+      });
+    }
+    
+    res.json({
+      files: data || [],
+      count: data?.length || 0,
+      limit: parsedLimit,
+      offset: parsedOffset
+    });
+  } catch (error) {
+    console.error('Erro em listar arquivos:', error);
+    res.status(500).json({ 
+      error: 'Erro interno do servidor', 
+      details: error.message 
+    });
+  }
+});
+
 app.get('/storage/v1/object/list/vistorias/:empresa/:vistoria', authenticateToken, async (req, res) => {
   try {
     const { empresa, vistoria } = req.params;
@@ -963,24 +1179,67 @@ app.get('/storage/v1/object/list/vistorias/:empresa/:vistoria', authenticateToke
 
 // ===== GRAPHQL PROXY =====
 
-app.post('/graphql/v1', authenticateToken, async (req, res) => {
+app.all('/graphql/v1', authenticateToken, async (req, res) => {
   try {
-    // Proxy para o endpoint GraphQL do Supabase
-    const response = await fetch(`${supabaseUrl}/graphql/v1`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': req.headers.authorization,
-        'apikey': req.headers.apikey || supabaseAnonKey,
-        'Content-Profile': req.headers['content-profile'] || 'public'
-      },
-      body: JSON.stringify(req.body)
+    const supabaseUrl = process.env.SUPABASE_URL;
+    
+    if (!supabaseUrl) {
+      return res.status(500).json({ error: 'Configuração do Supabase não encontrada' });
+    }
+    
+    const graphqlUrl = `${supabaseUrl}/graphql/v1`;
+    
+    // Validar se é uma requisição GraphQL válida
+    if (req.method === 'POST' && (!req.body || !req.body.query)) {
+      return res.status(400).json({ 
+        error: 'Query GraphQL é obrigatória',
+        details: 'Requisições POST devem conter um campo "query"'
+      });
+    }
+    
+    // Headers para o Supabase
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': req.headers.authorization || `Bearer ${process.env.SUPABASE_ANON_KEY}`,
+      'apikey': process.env.SUPABASE_ANON_KEY
+    };
+    
+    // RLS: Adicionar empresa_id como variável (exceto superadmin)
+    let body = req.body;
+    if (req.method === 'POST' && req.user.role !== 'service_role' && req.user.app_metadata?.role !== 'superadmin') {
+      const empresaId = req.user.app_metadata?.empresa_id;
+      if (empresaId) {
+        if (body.variables && typeof body.variables === 'object') {
+          body.variables.empresa_id = empresaId;
+        } else {
+          body.variables = { empresa_id: empresaId };
+        }
+      }
+    }
+    
+    const response = await fetch(graphqlUrl, {
+      method: req.method,
+      headers,
+      body: req.method === 'POST' ? JSON.stringify(body) : undefined
     });
     
+    if (!response.ok) {
+      const errorText = await response.text();
+      return res.status(response.status).json({ 
+        error: 'Erro na requisição GraphQL',
+        details: errorText
+      });
+    }
+    
     const data = await response.json();
+    
     res.status(response.status).json(data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro no proxy GraphQL:', error);
+    res.status(500).json({ 
+      error: 'Erro interno do servidor', 
+      details: error.message 
+    });
   }
 });
 
@@ -990,18 +1249,37 @@ app.use((error, req, res, next) => {
   
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ error: 'Arquivo muito grande' });
+      return res.status(413).json({ error: 'Arquivo muito grande. Máximo 10MB.' });
     }
-    return res.status(400).json({ error: error.message });
+    return res.status(400).json({ error: 'Erro no upload: ' + error.message });
   }
   
-  res.status(500).json({ error: 'Erro interno do servidor' });
+  if (error.type === 'entity.parse.failed') {
+    return res.status(400).json({ error: 'JSON inválido' });
+  }
+  
+  res.status(500).json({ 
+    error: 'Erro interno do servidor',
+    message: process.env.NODE_ENV === 'development' ? error.message : 'Erro interno'
+  });
+});
+
+// Handler OPTIONS para CORS
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, apikey, Range');
+  res.header('Access-Control-Expose-Headers', 'Content-Range');
+  res.sendStatus(200);
 });
 
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({
     error: 'Endpoint não encontrado',
+    method: req.method,
+    path: req.originalUrl,
+    timestamp: new Date().toISOString(),
     message: 'Verifique a documentação da API',
     available_endpoints: {
       health: '/health',

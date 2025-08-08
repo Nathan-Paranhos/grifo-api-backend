@@ -1,8 +1,28 @@
-# Grifo API Backend - Production Ready
+# Grifo API Backend - Supabase Edge Functions
 
-## 🚀 Deploy no Render
+## ⚠️ Importante: Projeto Supabase
 
-Este projeto está configurado para deploy automático no Render.
+Este é um projeto **Supabase Edge Functions**, não uma aplicação Node.js tradicional. As funções devem ser deployadas diretamente no Supabase, não em plataformas como Render.
+
+## 🚀 Deploy Correto
+
+### Opção 1: Deploy no Supabase (Recomendado)
+```bash
+# Instalar Supabase CLI
+npm install -g supabase
+
+# Login no Supabase
+supabase login
+
+# Linkar ao projeto
+supabase link --project-ref YOUR_PROJECT_REF
+
+# Deploy das funções
+supabase functions deploy
+```
+
+### Opção 2: Deploy no Render (Alternativo)
+Se você quiser usar o Render, este projeto está configurado com um package.json básico.
 
 ### Configuração de Variáveis de Ambiente
 

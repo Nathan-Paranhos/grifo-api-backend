@@ -1,0 +1,32 @@
+{
+  "name": "grifo-api-backend",
+  "version": "1.0.0",
+  "description": "Grifo API Backend - Production Ready for Render deployment",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'Build completed - Supabase Edge Functions project'",
+    "start": "echo 'This is a Supabase Edge Functions project. Deploy functions using: supabase functions deploy'",
+    "dev": "supabase start",
+    "deploy": "supabase functions deploy"
+  },
+  "keywords": [
+    "supabase",
+    "edge-functions",
+    "typescript",
+    "api",
+    "backend"
+  ],
+  "author": "Nathan Paranhos",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nathan-Paranhos/grifo-api-backend.git"
+  }
+}

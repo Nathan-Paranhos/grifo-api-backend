@@ -1,27 +1,131 @@
-# 🏢 Grifo API Backend
+# Grifo Mobile API - Multi-Tenant Supabase
 
-> **Sistema completo de backend para gerenciamento de vistorias imobiliárias**
+API multi-tenant para gerenciamento de vistorias imobiliárias, conectando aplicativo móvel (Flutter) e portal web (Lovable).
 
-API backend robusta e escalável para o sistema Grifo, responsável por gerenciar toda a lógica de negócio, autenticação de usuários, persistência de dados e integração com aplicativo móvel e portal web.
+## 🏗️ Arquitetura
 
-## 🚀 Tecnologias
+### Stack Tecnológica
 
-- **Node.js** - Runtime JavaScript
-- **TypeScript** - Superset tipado do JavaScript
-- **Express.js** - Framework web
-- **Firebase Firestore** - Banco de dados NoSQL
-- **Firebase Admin** - Autenticação e storage
-- **JWT** - Autenticação via tokens
-- **Swagger** - Documentação da API
-- **Winston** - Sistema de logs
-- **Zod** - Validação de schemas
+| Camada | Tecnologia | Observação |
+|--------|------------|------------|
+| Gateway | PostgREST (/rest/v1/*) & pg_graphql (/graphql/v1) | CRUD auto-gerado |
+| Auth | Supabase Auth (Google OAuth) | Metadados no JWT |
+| Banco | Postgres 15 | RLS habilitado |
+| Lógica extra | Edge Functions (Deno + TypeScript) | RPC, webhooks |
+| Storage | Supabase Storage | /vistorias/{empresa_id}/{vistoria_id}/... |
+| DevOps | GitHub Actions | migrations, deploy |
 
-[![Deploy Status](https://img.shields.io/badge/deploy-active-brightgreen)](https://grifo-api.onrender.com)
-[![Node.js](https://img.shields.io/badge/node.js-18+-green)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/typescript-5.3+-blue)](https://www.typescriptlang.org/)
-[![Firebase](https://img.shields.io/badge/firebase-integrated-orange)](https://firebase.google.com/)
-[![API Docs](https://img.shields.io/badge/docs-swagger-green)](https://grifo-api.onrender.com/api-docs)
-[![License](https://img.shields.io/badge/license-ISC-blue)](./LICENSE)
+### Modelo de Dados
+
+- **empresas**: Tenants do sistema
+- **usuarios**: Usuários com roles (superadmin, admin, corretor, leitura)
+- **imoveis**: Propriedades para vistoria
+- **vistorias**: Inspeções realizadas
+- **contestacoes**: Contestações de vistorias
+
+## 🔐 Segurança
+
+### Row Level Security (RLS)
+
+Todas as tabelas possuem RLS habilitado com:
+
+1. **Bypass para Superadmin**: Acesso irrestrito
+2. **Isolamento por Empresa**: Dados visíveis apenas para a empresa do usuário
+3. **Controle de Inserção**: Novos registros restritos à empresa do usuário
+
+### JWT Claims
+
+```json
+{
+  "sub": "user-uid",
+  "email": "user@empresa.com",
+  "empresa_id": "uuid-da-empresa",
+  "role": "admin"
+}
+```
+
+## 🚀 Configuração
+
+### Pré-requisitos
+
+- Node.js 18+
+- Supabase CLI
+- Docker (opcional)
+
+### Instalação
+
+```bash
+# Clonar repositório
+git clone <repo-url>
+cd grifo-mobile
+
+# Instalar dependências
+npm install
+
+# Configurar Supabase
+cp .env.example .env
+# Editar .env com suas credenciais
+
+# Iniciar Supabase local
+supabase start
+
+# Aplicar migrações
+supabase db push
+
+
+```
+
+### Variáveis de Ambiente
+
+```env
+# Supabase
+SUPABASE_URL=your-project-url
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# Google OAuth
+SUPABASE_AUTH_GOOGLE_CLIENT_ID=your-google-client-id
+SUPABASE_AUTH_GOOGLE_SECRET=your-google-secret
+
+# API
+PORT=3000
+NODE_ENV=development
+
+# JWT
+JWT_SECRET=your-jwt-secret
+```
+
+## 🔍 Destaques Técnicos
+
+### 🔐 Firebase Admin SDK
+- Autenticação segura com tokens JWT
+- Integração completa com Firestore
+- Gerenciamento de usuários e permissões
+- Validação de tokens em tempo real
+
+### 📤 Multer (Upload de Arquivos)
+- Upload seguro de fotos de vistorias
+- Validação de tipos de arquivo
+- Controle de tamanho e qualidade
+- Processamento em memória para otimização
+
+### 📄 Puppeteer (Geração de PDF)
+- Geração automatizada de relatórios
+- Templates HTML personalizáveis
+- Suporte a gráficos e imagens
+- Configurações flexíveis de formato
+
+### ☁️ Google Drive API (Upload Automatizado)
+- Armazenamento seguro na nuvem
+- Organização automática em pastas
+- Links públicos para compartilhamento
+- Backup automático de relatórios
+
+### 📚 Swagger (Documentação: /api-docs)
+- Documentação interativa completa
+
+- Esquemas de dados detalhados
+- Exemplos de requisições e respostas
 
 ## 🔗 Links Rápidos
 
@@ -38,7 +142,7 @@ API backend robusta e escalável para o sistema Grifo, responsável por gerencia
 - ✅ **Autenticação Firebase**: Integrada e testada
 - ✅ **Deploy Automático**: Ativo no Render.com
 - ✅ **Documentação**: Swagger UI + docs técnicas
-- ✅ **Testes**: Scripts de validação completos
+
 - ✅ **Portal Integration**: Biblioteca React pronta
 - ✅ **Docker**: Containerização configurada
 - 🔄 **Monitoramento**: Logs estruturados (Winston)
@@ -318,7 +422,7 @@ A API utiliza **Firebase Authentication** com **Admin SDK** para validação de 
 
 ### **Desenvolvimento Local**
 ```env
-# .env.development - Desabilita auth para testes
+# .env.development - Desabilita auth para desenvolvimento
 BYPASS_AUTH=true
 ```
 
@@ -537,26 +641,7 @@ LOG_LEVEL=debug
 LOG_LEVEL=info
 ```
 
-## 🧪 Testes
 
-### **Scripts de Teste Disponíveis**
-```bash
-# Testes da API
-node test-api-simple.js          # Testes básicos
-node test-complete.js             # Testes completos
-node test-parametros-completo.js  # Validação de parâmetros
-
-# Testes PowerShell (Windows)
-.\test-100-percent-complete.ps1   # Cobertura completa
-.\test-with-auth.ps1              # Testes com autenticação
-```
-
-### **Cobertura de Testes**
-- ✅ **Health Checks**: Endpoints de saúde
-- ✅ **Autenticação**: Validação de tokens
-- ✅ **Validação**: Schemas e parâmetros
-- ✅ **CRUD Operations**: Operações básicas
-- ✅ **Error Handling**: Tratamento de erros
 
 ## 🔗 Integração com Portal
 
@@ -708,7 +793,7 @@ cp render.yaml render.yaml.backup
 - **TypeScript**: Tipagem obrigatória
 - **ESLint**: Seguir regras de linting
 - **Conventional Commits**: Padrão de mensagens
-- **Testes**: Incluir testes para novas funcionalidades
+
 - **Documentação**: Atualizar docs quando necessário
 
 ### **Estrutura de Commits**
@@ -718,7 +803,7 @@ fix: correção de bug
 docs: atualização de documentação
 style: formatação de código
 refactor: refatoração
-test: adição de testes
+
 chore: tarefas de manutenção
 ```
 
@@ -739,7 +824,7 @@ chore: tarefas de manutenção
 - [ ] Upload de arquivos (imagens, documentos)
 - [ ] Sistema de notificações push
 - [ ] Cache Redis para performance
-- [ ] Testes automatizados (Jest)
+
 
 #### v2.2.0 - Q2 2024
 - [ ] Monitoramento avançado (Prometheus)
@@ -789,7 +874,7 @@ Este projeto está licenciado sob a **ISC License** - veja o arquivo [LICENSE](.
 - **Linhas de Código**: ~5,000+ (TypeScript)
 - **Endpoints**: 25+ endpoints RESTful
 - **Dependências**: 15+ bibliotecas principais
-- **Cobertura de Testes**: Em desenvolvimento
+
 - **Uptime**: 99.9% (últimos 30 dias)
 - **Tempo de Resposta**: <200ms (média)
 

@@ -1,16 +1,16 @@
-# Render Blueprint for Grifo API
+# Render Blueprint for Grifo API Backend
 # This file defines the infrastructure and deployment configuration for Render
 
 services:
   # Main API Service
   - type: web
-    name: grifo-api
+    name: grifo-api-backend
     runtime: node
     plan: starter # Can be upgraded to standard/pro as needed
     region: oregon # Choose region closest to your users
     buildCommand: npm ci
     startCommand: npm start
-    healthCheckPath: /api/health
+    healthCheckPath: /api/v1/health
     
     # Auto-deploy settings
     autoDeploy: true
@@ -48,15 +48,15 @@ services:
       - key: LOG_FORMAT
         value: "json"
       
-      # Supabase Configuration (set these in Render dashboard)
+      # Supabase Configuration
       - key: SUPABASE_URL
-        sync: false # Set manually in dashboard
+        value: https://fsvwifbvehdhlufauahj.supabase.co
       
       - key: SUPABASE_ANON_KEY
-        sync: false # Set manually in dashboard
+        sync: false # Set manually in dashboard for security
       
       - key: SUPABASE_SERVICE_ROLE_KEY
-        sync: false # Set manually in dashboard
+        sync: false # Set manually in dashboard for security
       
       # Optional: Database URL if using external database
       # - key: DATABASE_URL
@@ -109,10 +109,10 @@ services:
     
     # Health check configuration
     healthCheck:
-      path: /api/health
-      initialDelaySeconds: 30
-      periodSeconds: 10
-      timeoutSeconds: 5
+      path: /api/v1/health
+      initialDelaySeconds: 45
+      periodSeconds: 15
+      timeoutSeconds: 10
       failureThreshold: 3
     
     # Resource limits
@@ -193,11 +193,13 @@ previewsExpireAfterDays: 7
 # Build settings
 buildFilter:
   paths:
-    - api-grifo/**
+    - api/**
   ignoredPaths:
     - "*.md"
-    - docs/**
-    - tests/**
+    - "docs/**"
+    - "tests/**"
+    - "*.log"
+    - ".env*"
     - .github/**
 
 # Monitoring and alerting

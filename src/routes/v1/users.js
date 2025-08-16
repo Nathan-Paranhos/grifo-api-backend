@@ -91,7 +91,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const { page = 1, limit = 10, search, status } = req.query;
     const offset = (page - 1) * limit;
-    const empresaId = req.userData.empresa_id;
+    const empresaId = req.user.app_metadata.empresa_id;
 
     let query = supabase
       .from('app_users')
@@ -188,7 +188,7 @@ router.post(
       .from('app_users')
       .insert({
         ...userData,
-        supabase_uid: authUser.user.id,
+        auth_user_id: authUser.user.id,
         status: 'active',
         created_at: new Date().toISOString()
       })
@@ -234,7 +234,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const { page = 1, limit = 10, search, role, status } = req.query;
     const offset = (page - 1) * limit;
-    const empresaId = req.userData.empresa_id;
+    const empresaId = req.user.app_metadata.empresa_id;
 
     let query = supabase
       .from('portal_users')
@@ -314,7 +314,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const userType = req.userType;
-    const userData = req.userData;
+    const userData = req.user;
 
     // Users can only view their own data unless they're admin/manager
     if (
@@ -445,7 +445,7 @@ router.put(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
-    const userData = req.userData;
+    const userData = req.user;
 
     // Users can only update their own data unless they're admin/manager
     const canUpdate =
@@ -558,7 +558,7 @@ router.delete(
   validateRequest(userSchemas.getUser),
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const userData = req.userData;
+    const userData = req.user;
 
     // Prevent self-deletion
     if (userData.id === id) {
@@ -572,25 +572,25 @@ router.delete(
 
     const { data: appUser } = await supabase
       .from('app_users')
-      .select('id, empresa_id, supabase_uid')
+      .select('id, empresa_id, auth_user_id')
       .eq('id', id)
       .single();
 
     if (appUser) {
       tableName = 'app_users';
       user = appUser;
-      supabaseUid = appUser.supabase_uid;
+      supabaseUid = appUser.auth_user_id;
     } else {
       const { data: portalUser } = await supabase
         .from('portal_users')
-        .select('id, empresa_id, supabase_uid')
+        .select('id, empresa_id, auth_user_id')
         .eq('id', id)
         .single();
 
       if (portalUser) {
         tableName = 'portal_users';
         user = portalUser;
-        supabaseUid = portalUser.supabase_uid;
+        supabaseUid = portalUser.auth_user_id;
       }
     }
 
@@ -652,7 +652,7 @@ router.put(
   validateRequest(userSchemas.updateProfile),
   asyncHandler(async (req, res) => {
     const updateData = req.body;
-    const userData = req.userData;
+    const userData = req.user;
     const userType = req.userType;
 
     const tableName = userType === 'app_user' ? 'app_users' : 'portal_users';

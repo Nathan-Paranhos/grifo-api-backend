@@ -137,9 +137,9 @@ router.get(
       search
     } = req.query;
     const offset = (page - 1) * limit;
-    const empresaId = req.userData.empresa_id;
+    const empresaId = req.user.app_metadata.empresa_id;
     const userType = req.userType;
-    const userData = req.userData;
+    const userData = req.user;
 
     let query = supabase
       .from('vistorias')
@@ -157,16 +157,11 @@ router.get(
           id,
           endereco,
           cidade,
-          tipo_imovel
+          tipo
         ),
-        portal_users!vistorias_vistoriador_id_fkey(
+        users!vistorias_vistoriador_id_fkey(
           id,
-          name,
-          email
-        ),
-        app_users!vistorias_solicitante_id_fkey(
-          id,
-          name,
+          nome,
           email
         )
       `,
@@ -248,9 +243,9 @@ router.get(
   validateRequest(inspectionSchemas.getInspection),
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const empresaId = req.userData.empresa_id;
+    const empresaId = req.user.app_metadata.empresa_id;
     const userType = req.userType;
-    const userData = req.userData;
+    const userData = req.user;
 
     let query = supabase
       .from('vistorias')
@@ -270,22 +265,12 @@ router.get(
           cidade,
           estado,
           cep,
-          tipo_imovel,
-          proprietario_nome,
-          proprietario_email,
-          proprietario_telefone
+          tipo
         ),
-        portal_users!vistorias_vistoriador_id_fkey(
+        users!vistorias_vistoriador_id_fkey(
           id,
-          name,
-          email,
-          phone
-        ),
-        app_users!vistorias_solicitante_id_fkey(
-          id,
-          name,
-          email,
-          phone
+          nome,
+          email
         ),
         itens_vistoria(
           id,
@@ -345,8 +330,8 @@ router.post(
   validateRequest(inspectionSchemas.createInspection),
   asyncHandler(async (req, res) => {
     const inspectionData = req.body;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.app_metadata.empresa_id;
+    const userId = req.user.id;
     const userType = req.userType;
 
     // Verify property belongs to company
@@ -463,10 +448,10 @@ router.put(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.app_metadata.empresa_id;
+    const userId = req.user.id;
     const userType = req.userType;
-    const userData = req.userData;
+    const userData = req.user;
 
     // Get current inspection
     const { data: currentInspection, error: fetchError } = await supabase
@@ -599,10 +584,10 @@ router.patch(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { status, observacoes } = req.body;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.app_metadata.empresa_id;
+    const userId = req.user.id;
     const userType = req.userType;
-    const userData = req.userData;
+    const userData = req.user;
 
     // Get current inspection
     const { data: currentInspection, error: fetchError } = await supabase
@@ -897,9 +882,9 @@ router.get(
   '/stats',
   authSupabase,
   asyncHandler(async (req, res) => {
-    const empresaId = req.userData.empresa_id;
+    const empresaId = req.user.app_metadata.empresa_id;
     const userType = req.userType;
-    const userData = req.userData;
+    const userData = req.user;
 
     let baseQuery = supabase
       .from('vistorias')

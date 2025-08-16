@@ -160,8 +160,8 @@ router.post(
       is_public: isPublic = false
     } = req.body;
     const files = req.files;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.app_metadata.empresa_id;
+    const userId = req.user.id;
     const userType = req.userType;
 
     if (!files || files.length === 0) {
@@ -192,7 +192,7 @@ router.post(
           userType === 'app_user'
             ? vistoria.solicitante_id === userId
             : vistoria.vistoriador_id === userId ||
-              ['admin', 'manager'].includes(req.userData.role);
+              ['admin', 'manager'].includes(req.user.role);
 
         if (!hasAccess) {
           throw new AuthorizationError(
@@ -215,7 +215,7 @@ router.post(
         const hasAccess =
           userType === 'app_user'
             ? contestacao.solicitante_id === userId
-            : ['admin', 'manager'].includes(req.userData.role);
+            : ['admin', 'manager'].includes(req.user.role);
 
         if (!hasAccess) {
           throw new AuthorizationError(
@@ -364,10 +364,10 @@ router.get(
   asyncHandler(async (req, res) => {
     const { context, context_id: contextId, page = 1, limit = 20 } = req.query;
     const offset = (page - 1) * limit;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.app_metadata.empresa_id;
+    const userId = req.user.id;
     const userType = req.userType;
-    const userData = req.userData;
+    const userData = req.user;
 
     let query = supabase
       .from('uploads')
@@ -461,10 +461,10 @@ router.get(
   validateRequest(uploadSchemas.getFile),
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.app_metadata.empresa_id;
+    const userId = req.user.id;
     const userType = req.userType;
-    const userData = req.userData;
+    const userData = req.user;
 
     const query = supabase
       .from('uploads')
@@ -546,10 +546,10 @@ router.put(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.app_metadata.empresa_id;
+    const userId = req.user.id;
     const userType = req.userType;
-    const userData = req.userData;
+    const userData = req.user;
 
     // Get current upload
     const { data: currentUpload, error: fetchError } = await supabase
@@ -630,10 +630,10 @@ router.delete(
   validateRequest(uploadSchemas.deleteFile),
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.app_metadata.empresa_id;
+    const userId = req.user.id;
     const userType = req.userType;
-    const userData = req.userData;
+    const userData = req.user;
 
     // Get current upload
     const { data: currentUpload, error: fetchError } = await supabase
@@ -711,10 +711,10 @@ router.get(
   '/stats',
   authSupabase,
   asyncHandler(async (req, res) => {
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.app_metadata.empresa_id;
+    const userId = req.user.id;
     const userType = req.userType;
-    const userData = req.userData;
+    const userData = req.user;
 
     let baseQuery = supabase
       .from('uploads')

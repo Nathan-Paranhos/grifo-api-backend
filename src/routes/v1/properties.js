@@ -197,7 +197,18 @@ router.get(
       estado
     } = req.query;
     const offset = (page - 1) * limit;
-    const empresaId = req.userData.empresa_id;
+    console.log('DEBUG - req.user:', req.user);
+    console.log('DEBUG - req.user type:', typeof req.user);
+    
+    if (!req.user) {
+      throw new AuthenticationError('Usuário não autenticado');
+    }
+    
+    if (!req.user.empresa_id) {
+      throw new AuthenticationError('Empresa não identificada para o usuário');
+    }
+    
+    const empresaId = req.user.empresa_id;
 
     let query = supabase
       .from('imoveis')
@@ -208,18 +219,8 @@ router.get(
         cidade,
         estado,
         cep,
-        tipo_imovel,
-        area_total,
-        area_construida,
-        quartos,
-        banheiros,
-        vagas_garagem,
-        valor_estimado,
-        proprietario_nome,
-        proprietario_email,
-        proprietario_telefone,
-        status,
-        coordenadas,
+        tipo,
+        codigo,
         created_at,
         updated_at
       `,
@@ -251,11 +252,25 @@ router.get(
       query = query.eq('estado', estado);
     }
 
+    logger.info('Executing properties query with params:', {
+      empresaId,
+      page,
+      limit,
+      search,
+      status
+    });
+
     const { data: properties, error, count } = await query;
 
     if (error) {
-      logger.error('Error fetching properties:', error);
-      throw new AppError('Erro ao buscar propriedades', 500);
+      logger.error('Supabase error details:', {
+        error,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
+      throw new AppError(`Erro ao buscar propriedades: ${error.message}`, 500);
     }
 
     res.json({
@@ -298,7 +313,7 @@ router.get(
   validateRequest(propertySchemas.getProperty),
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const empresaId = req.userData.empresa_id;
+    const empresaId = req.user.empresa_id;
 
     const { data: property, error } = await supabase
       .from('imoveis')
@@ -309,19 +324,8 @@ router.get(
         cidade,
         estado,
         cep,
-        tipo_imovel,
-        area_total,
-        area_construida,
-        quartos,
-        banheiros,
-        vagas_garagem,
-        valor_estimado,
-        proprietario_nome,
-        proprietario_email,
-        proprietario_telefone,
-        observacoes,
-        status,
-        coordenadas,
+        tipo,
+        codigo,
         created_at,
         updated_at,
         vistorias(
@@ -394,8 +398,8 @@ router.post(
   validateRequest(propertySchemas.createProperty),
   asyncHandler(async (req, res) => {
     const propertyData = req.body;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.empresa_id;
+    const userId = req.user.id;
 
     const { data: property, error } = await supabase
       .from('imoveis')
@@ -455,8 +459,8 @@ router.put(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.empresa_id;
+    const userId = req.user.id;
 
     // Check if property exists and belongs to the company
     const { data: existingProperty, error: fetchError } = await supabase
@@ -527,8 +531,8 @@ router.delete(
   validateRequest(propertySchemas.getProperty),
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.empresa_id;
+    const userId = req.user.id;
 
     // Check if property exists and belongs to the company
     const { data: existingProperty, error: fetchError } = await supabase
@@ -610,7 +614,7 @@ router.get(
   validateRequest(propertySchemas.getProperty),
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const empresaId = req.userData.empresa_id;
+    const empresaId = req.user.empresa_id;
     const { page = 1, limit = 10, status } = req.query;
     const offset = (page - 1) * limit;
 
@@ -693,7 +697,7 @@ router.get(
   '/stats',
   authSupabase,
   asyncHandler(async (req, res) => {
-    const empresaId = req.userData.empresa_id;
+    const empresaId = req.user.app_metadata.empresa_id;
 
     // Get various stats in parallel
     const [totalResult, activeResult, typeStatsResult, cityStatsResult] =

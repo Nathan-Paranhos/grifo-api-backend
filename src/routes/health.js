@@ -139,6 +139,61 @@ router.get(
  *       403:
  *         $ref: '#/components/responses/ForbiddenError'
  */
+/**
+ * @swagger
+ * /api/health/env-check:
+ *   get:
+ *     tags: [Health]
+ *     summary: Verificar variáveis de ambiente
+ *     description: |
+ *       Endpoint para verificar se as variáveis de ambiente críticas
+ *       estão configuradas corretamente. Não requer autenticação.
+ *     responses:
+ *       200:
+ *         description: Status das variáveis de ambiente
+ */
+router.get(
+  '/env-check',
+  asyncHandler(async (req, res) => {
+    const envCheck = {
+      supabase_url: {
+        configured: !!process.env.SUPABASE_URL,
+        value: process.env.SUPABASE_URL ? process.env.SUPABASE_URL.substring(0, 30) + '...' : 'NOT_SET'
+      },
+      supabase_anon_key: {
+        configured: !!process.env.SUPABASE_ANON_KEY,
+        length: process.env.SUPABASE_ANON_KEY ? process.env.SUPABASE_ANON_KEY.length : 0
+      },
+      supabase_service_key: {
+        configured: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+        length: process.env.SUPABASE_SERVICE_ROLE_KEY ? process.env.SUPABASE_SERVICE_ROLE_KEY.length : 0
+      },
+      jwt_secret: {
+        configured: !!process.env.JWT_SECRET,
+        length: process.env.JWT_SECRET ? process.env.JWT_SECRET.length : 0
+      },
+      node_env: process.env.NODE_ENV || 'NOT_SET',
+      port: process.env.PORT || 'NOT_SET',
+      render_service: process.env.RENDER_SERVICE_NAME || 'NOT_SET'
+    };
+
+    const allConfigured = envCheck.supabase_url.configured && 
+                         envCheck.supabase_anon_key.configured && 
+                         envCheck.supabase_service_key.configured && 
+                         envCheck.jwt_secret.configured;
+
+    res.json({
+      status: allConfigured ? 'healthy' : 'degraded',
+      timestamp: new Date().toISOString(),
+      environment_variables: envCheck,
+      summary: {
+        all_configured: allConfigured,
+        missing_count: Object.values(envCheck).filter(v => typeof v === 'object' && !v.configured).length
+      }
+    });
+  })
+);
+
 router.get(
   '/detailed',
   authSupabase,

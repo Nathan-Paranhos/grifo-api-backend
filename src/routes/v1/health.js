@@ -280,9 +280,9 @@ router.get(
     };
 
     // Add database metrics if authenticated
-    if (req.userData) {
+    if (req.user) {
       try {
-        const empresaId = req.userData.empresa_id;
+        const empresaId = req.user.app_metadata.empresa_id;
 
         const [vistoriasCount, contestacoesCount, imoveisCount, usersCount] =
           await Promise.all([

@@ -26,6 +26,8 @@ import { swaggerSpec, swaggerUi } from './config/swagger.js';
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
 import { securityHeaders } from './middleware/security.js';
+import { authSupabase } from './middleware/auth.js';
+import { resolveTenant } from './middleware/tenant.js';
 // Auth middlewares are imported in route files as needed
 
 // Import routes
@@ -50,7 +52,7 @@ const limiter = rateLimit({
   legacyHeaders: false
 });
 
-// Security middleware
+// Security middleware with comprehensive headers
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -63,7 +65,15 @@ app.use(
         scriptSrc: ["'self'"],
         connectSrc: ["'self'", 'https://api.grifo.com', 'https://*.supabase.co']
       }
-    }
+    },
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true
+    },
+    frameguard: { action: 'deny' },
+    noSniff: true,
+    xssFilter: true
   })
 );
 

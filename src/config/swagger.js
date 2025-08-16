@@ -1,7 +1,6 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
-// Swagger definition
 const swaggerDefinition = {
   openapi: '3.0.0',
   info: {
@@ -32,23 +31,14 @@ const swaggerDefinition = {
       - \`500\`: Erro interno do servidor
     `,
     contact: {
-      name: 'Nathan Paranhos',
-      email: 'nathan@grifo.com'
+      name: 'Nathan Paranhos'
     },
-    license: {
-      name: 'MIT',
-      url: 'https://opensource.org/licenses/MIT'
-    }
   },
   servers: [
     {
       url: 'https://grifo-api.onrender.com',
       description: 'Production server'
     },
-    {
-      url: 'https://grifo-api.onrender.com',
-      description: 'Development server'
-    }
   ],
   components: {
     securitySchemes: {
@@ -443,16 +433,12 @@ const swaggerDefinition = {
   ]
 };
 
-// Options for swagger-jsdoc
 const options = {
   definition: swaggerDefinition,
   apis: ['./src/routes/*.js', './src/controllers/*.js', './src/models/*.js']
 };
 
-// Initialize swagger-jsdoc
 export const swaggerSpec = swaggerJsdoc(options);
-
-// Export swagger UI
 export { swaggerUi };
 
 export default { swaggerSpec, swaggerUi };

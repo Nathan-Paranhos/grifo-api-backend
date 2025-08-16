@@ -198,6 +198,138 @@ export function errorHandler(err, req, res, _next) {
     details: err.details || null
   };
 
+  // Log error with request context
+  const errorContext = {
+    url: req.originalUrl,
+    method: req.method,
+    ip: req.ip,
+    userAgent: req.get('User-Agent'),
+    userId: req.user?.id,
+    companyId: req.user?.company_id,
+    body: req.method !== 'GET' ? req.body : undefined,
+    query: req.query,
+    params: req.params
+  };
+
+  logger.error('Error occurred', {
+    error: err.message,
+    stack: err.stack,
+    path: req.path,
+    method: req.method,
+    userId: req.user?.id,
+    statusCode: err.statusCode
+  });
+
+  // Authentication errors - 401
+  if (err instanceof AuthenticationError || err.name === 'AuthenticationError') {
+    return res.status(401).json({
+      success: false,
+      error: err.message || 'Não autenticado',
+      code: 'AUTHENTICATION_ERROR',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  // Authorization errors - 403
+  if (err instanceof AuthorizationError || err.name === 'AuthorizationError') {
+    return res.status(403).json({
+      success: false,
+      error: err.message || 'Acesso negado',
+      code: 'AUTHORIZATION_ERROR',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  // JWT errors - 401
+  if (err.name === 'JsonWebTokenError') {
+    return res.status(401).json({
+      success: false,
+      error: 'Token inválido',
+      code: 'INVALID_TOKEN',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  if (err.name === 'TokenExpiredError') {
+    return res.status(401).json({
+      success: false,
+      error: 'Token expirado',
+      code: 'EXPIRED_TOKEN',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  // Validation errors - 400
+  if (err instanceof ValidationError || err.name === 'ValidationError') {
+    return res.status(400).json({
+      success: false,
+      error: err.message || 'Dados inválidos',
+      code: 'VALIDATION_ERROR',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  // Not found errors - 404
+  if (err instanceof NotFoundError || err.name === 'NotFoundError') {
+    return res.status(404).json({
+      success: false,
+      error: err.message || 'Recurso não encontrado',
+      code: 'NOT_FOUND',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  // Conflict errors - 409
+  if (err instanceof ConflictError || err.name === 'ConflictError') {
+    return res.status(409).json({
+      success: false,
+      error: err.message || 'Conflito de dados',
+      code: 'CONFLICT_ERROR',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  // Rate limit errors - 429
+  if (err instanceof RateLimitError || err.name === 'RateLimitError') {
+    return res.status(429).json({
+      success: false,
+      error: err.message || 'Muitas tentativas',
+      code: 'RATE_LIMIT_ERROR',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  // Mongoose bad ObjectId
+  if (err.name === 'CastError') {
+    return res.status(404).json({
+      success: false,
+      error: 'Recurso não encontrado',
+      code: 'INVALID_ID',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  // Mongoose duplicate key
+  if (err.code === 11000) {
+    return res.status(409).json({
+      success: false,
+      error: 'Recurso duplicado',
+      code: 'DUPLICATE_RESOURCE',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  // Mongoose validation error
+  if (err.name === 'ValidationError') {
+    const message = Object.values(err.errors).map(val => val.message);
+    return res.status(400).json({
+      success: false,
+      error: message.join(', '),
+      code: 'MONGOOSE_VALIDATION_ERROR',
+      timestamp: new Date().toISOString()
+    });
+  }
+
   // Handle different error types
   if (err instanceof ZodError) {
     const zodError = formatZodError(err);
@@ -239,19 +371,6 @@ export function errorHandler(err, req, res, _next) {
       details: { originalError: err.code }
     };
   }
-
-  // Log error details
-  const errorContext = {
-    url: req.originalUrl,
-    method: req.method,
-    ip: req.ip,
-    userAgent: req.get('User-Agent'),
-    userId: req.user?.id,
-    companyId: req.user?.company_id,
-    body: req.method !== 'GET' ? req.body : undefined,
-    query: req.query,
-    params: req.params
-  };
 
   // Don't log validation errors and 404s as errors (they're expected)
   if (error.statusCode >= 500) {

@@ -14,6 +14,18 @@ import { authSupabase } from '../../middleware/auth.js';
 
 const router = express.Router();
 
+// DEBUG: Endpoint temporário para verificar configurações
+router.get('/debug/config', (req, res) => {
+  res.json({
+    supabase_url: process.env.SUPABASE_URL || 'NOT_SET',
+    supabase_anon_key_length: process.env.SUPABASE_ANON_KEY ? process.env.SUPABASE_ANON_KEY.length : 0,
+    supabase_service_key_length: process.env.SUPABASE_SERVICE_ROLE_KEY ? process.env.SUPABASE_SERVICE_ROLE_KEY.length : 0,
+    jwt_secret_length: process.env.JWT_SECRET ? process.env.JWT_SECRET.length : 0,
+    node_env: process.env.NODE_ENV || 'NOT_SET',
+    port: process.env.PORT || 'NOT_SET'
+  });
+});
+
 // Validation schemas
 const authSchemas = {
   appLogin: {
@@ -126,7 +138,14 @@ router.post(
       throw new AuthenticationError('Credenciais inválidas');
     }
 
-    // Get user data from app_users table
+    // DEBUG: Log the auth user ID for debugging
+    authLogger.info('DEBUG: Supabase Auth successful', {
+      email,
+      supabaseUid: authData.user.id,
+      ip: req.ip
+    });
+
+    // Get user data from app_users table (without forcing INNER JOIN)
     const { data: appUser, error: userError } = await supabase
       .from('app_users')
       .select(
@@ -134,23 +153,42 @@ router.post(
         id,
         nome,
         email,
-        phone,
-        status,
         empresa_id,
-        empresas!inner(
-          id,
-          nome
-        )
+        role,
+        ativo,
+        auth_user_id
       `
       )
       .eq('auth_user_id', authData.user.id)
       .eq('ativo', true)
       .single();
 
+    // DEBUG: Log detailed query results
+    authLogger.info('DEBUG: app_users query result', {
+      email,
+      supabaseUid: authData.user.id,
+      userError: userError ? userError.message : null,
+      userErrorCode: userError ? userError.code : null,
+      userErrorDetails: userError ? userError.details : null,
+      appUserFound: !!appUser,
+      appUserData: appUser ? {
+        id: appUser.id,
+        nome: appUser.nome,
+        email: appUser.email,
+        empresa_id: appUser.empresa_id,
+        ativo: appUser.ativo,
+        auth_user_id: appUser.auth_user_id
+      } : null,
+      ip: req.ip
+    });
+
     if (userError || !appUser) {
       authLogger.warn('App login failed - user not found in app_users', {
         email,
         supabaseUid: authData.user.id,
+        userError: userError ? userError.message : 'No error message',
+        userErrorCode: userError ? userError.code : 'No error code',
+        userErrorDetails: userError ? userError.details : 'No error details',
         ip: req.ip
       });
       throw new AuthenticationError('Usuário não encontrado ou inativo');
@@ -180,6 +218,17 @@ router.post(
       companyId: appUser.empresa_id
     });
 
+    // Get company data separately if needed
+    let companyData = null;
+    if (appUser.empresa_id) {
+      const { data: empresa } = await supabase
+        .from('empresas')
+        .select('id, nome')
+        .eq('id', appUser.empresa_id)
+        .single();
+      companyData = empresa;
+    }
+
     res.json({
       success: true,
       message: 'Login realizado com sucesso',
@@ -189,15 +238,13 @@ router.post(
         expires_at: authData.session.expires_at,
         user: {
           id: appUser.id,
-          name: appUser.name,
+          nome: appUser.nome,
           email: appUser.email,
-          phone: appUser.phone,
           user_type: 'app_user',
-          company: {
-            id: appUser.empresas.id,
-            name: appUser.empresas.name,
-            slug: appUser.empresas.slug
-          }
+          company: companyData ? {
+            id: companyData.id,
+            nome: companyData.nome
+          } : null
         }
       }
     });
@@ -238,6 +285,8 @@ router.post(
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
+
+
     authLogger.info('Portal login attempt', { email, ip: req.ip });
 
     // Authenticate with Supabase Auth
@@ -267,7 +316,7 @@ router.post(
         permissions,
         ativo,
         empresa_id,
-        empresas!inner(
+        empresas(
           id,
           nome
         )
@@ -297,6 +346,30 @@ router.post(
     //     'Empresa inativa. Entre em contato com o suporte.'
     //   );
     // }
+
+    // Update user app_metadata with company info
+    const { error: updateError } = await supabase.auth.admin.updateUserById(
+      authData.user.id,
+      {
+        app_metadata: {
+          ...authData.user.app_metadata,
+          user_type: 'portal_user',
+          user_id: portalUser.id,
+          empresa_id: portalUser.empresa_id,
+          empresa_slug: 'default',
+          role: portalUser.role,
+          nome: portalUser.nome,
+          permissions: portalUser.permissions || []
+        }
+      }
+    );
+
+    if (updateError) {
+      authLogger.warn('Failed to update user metadata', {
+        userId: portalUser.id,
+        error: updateError.message
+      });
+    }
 
     // Update last login
     await supabase
@@ -423,19 +496,17 @@ router.get(
         .select(
           `
           id,
-          name,
+          nome,
           email,
           role,
-          permissions,
-          status,
           empresa_id,
           empresas!inner(
             id,
-            name
+            nome
           )
         `
         )
-        .eq('supabase_uid', user.id)
+        .eq('auth_user_id', user.id)
         .single();
 
       if (error || !portalUser) {

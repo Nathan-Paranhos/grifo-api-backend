@@ -54,7 +54,7 @@ export const authSupabase = asyncHandler(async (req, res, next) => {
     const { data: { user }, error } = await supabase.auth.getUser(token);
 
     if (error || !user) {
-      logger.warn('Token inválido ou expirado', { error: error?.message });
+      logger.warn('Token inválido ou expirado', { error: error?.message, token: token.substring(0, 10) + '...' });
       throw new AuthenticationError('Token inválido ou expirado');
     }
 
@@ -74,53 +74,19 @@ export const authSupabase = asyncHandler(async (req, res, next) => {
       isAnonymous: false
     };
 
-    // User authenticated successfully
-
+    logger.info('User authenticated successfully', { userId: user.id, email: user.email });
     next();
   } catch (error) {
-    // Authentication error handled silently
+    logger.error('Authentication failed', { error: error.message, token: token.substring(0, 10) + '...' });
+    if (error instanceof AuthenticationError) {
+      throw error;
+    }
     throw new AuthenticationError('Falha na autenticação');
   }
 });
 
-/**
- * Middleware para resolver tenant
- */
-export const resolveTenant = asyncHandler(async (req, res, next) => {
-  const tenantSlug = req.params.tenant || req.headers['x-tenant'] || req.query.tenant;
-  
-  if (!tenantSlug) {
-    throw new ValidationError('Tenant não especificado');
-  }
-
-  try {
-    const { data: empresa, error } = await supabase
-      .from('empresas')
-      .select('id, nome, slug, ativo, configuracoes')
-      .eq('slug', tenantSlug)
-      .eq('ativo', true)
-      .single();
-
-    if (error || !empresa) {
-      logger.warn('Tenant não encontrado', { tenant: tenantSlug });
-      throw new ValidationError('Empresa não encontrada ou inativa');
-    }
-
-    req.tenant = {
-      id: empresa.id,
-      nome: empresa.nome,
-      slug: empresa.slug,
-      configuracoes: empresa.configuracoes || {}
-    };
-
-    // Tenant resolved successfully
-
-    next();
-  } catch (error) {
-    // Tenant resolution error handled silently
-    throw error;
-  }
-});
+// Middleware de tenant movido para ./tenant.js
+// Use: import { resolveTenant, requireTenantAccess } from './tenant.js';
 
 /**
  * Middleware para verificar roles
@@ -130,6 +96,7 @@ export const requireRole = (roles) => {
   
   return asyncHandler(async (req, res, next) => {
     if (!req.user) {
+      logger.warn('Tentativa de acesso sem autenticação', { path: req.path, method: req.method });
       throw new AuthenticationError('Usuário não autenticado');
     }
 
@@ -143,8 +110,14 @@ export const requireRole = (roles) => {
 
     const userRole = req.user.role;
     if (!userRole || !allowedRoles.includes(userRole)) {
-      // Access denied - insufficient role
-      throw new AuthorizationError('Permissões insuficientes');
+      logger.warn('Tentativa de acesso com role insuficiente', { 
+        userId: req.user.id, 
+        userRole, 
+        requiredRoles: allowedRoles,
+        path: req.path,
+        method: req.method
+      });
+      throw new AuthorizationError(`Acesso negado. Role necessária: ${allowedRoles.join(' ou ')}`);
     }
 
     next();
@@ -159,6 +132,7 @@ export const requirePermission = (permissions) => {
   
   return asyncHandler(async (req, res, next) => {
     if (!req.user) {
+      logger.warn('Tentativa de acesso sem autenticação', { path: req.path, method: req.method });
       throw new AuthenticationError('Usuário não autenticado');
     }
 
@@ -176,8 +150,14 @@ export const requirePermission = (permissions) => {
     );
 
     if (!hasPermission) {
-      // Access denied - insufficient permissions
-      throw new AuthorizationError('Permissões insuficientes');
+      logger.warn('Tentativa de acesso com permissões insuficientes', {
+        userId: req.user.id,
+        userPermissions,
+        requiredPermissions,
+        path: req.path,
+        method: req.method
+      });
+      throw new AuthorizationError(`Permissão necessária: ${requiredPermissions.join(' ou ')}`);
     }
 
     next();

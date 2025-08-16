@@ -3,6 +3,46 @@ import { ValidationError } from './errorHandler.js';
 import { logger } from '../config/logger.js';
 
 /**
+ * Simple validation middleware for body only
+ * @param {z.ZodSchema} schema - Zod schema for validation
+ * @returns {Function} Express middleware
+ */
+export function validation(schema) {
+  return async (req, res, next) => {
+    try {
+      req.body = await schema.parseAsync(req.body);
+      next();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const validationErrors = formatZodErrors(error);
+        logger.warn('Validation failed', { errors: validationErrors, path: req.path });
+        throw new ValidationError('Dados inválidos', validationErrors);
+      }
+      throw error;
+    }
+  };
+}
+
+/**
+ * Format Zod errors into a more readable format
+ * @param {z.ZodError} error - Zod validation error
+ * @returns {Object} Formatted errors
+ */
+function formatZodErrors(error) {
+  const errors = {};
+  
+  error.issues.forEach(issue => {
+    const path = issue.path.join('.');
+    if (!errors[path]) {
+      errors[path] = [];
+    }
+    errors[path].push(issue.message);
+  });
+  
+  return errors;
+}
+
+/**
  * Validation middleware factory
  * Creates middleware to validate request data using Zod schemas
  * @param {Object} schemas - Object containing validation schemas
@@ -83,33 +123,7 @@ export function validateRequest(schemas = {}) {
   };
 }
 
-/**
- * Format Zod validation errors into a more readable format
- * @param {z.ZodError} zodError - Zod validation error
- * @returns {Object} Formatted errors
- */
-function formatZodErrors(zodError) {
-  const errors = {};
-
-  zodError.errors.forEach(error => {
-    const path = error.path.length > 0 ? error.path.join('.') : '_general';
-
-    if (!errors[path]) {
-      errors[path] = [];
-    }
-
-    errors[path].push(error.message);
-  });
-
-  // Convert arrays with single items to strings
-  Object.keys(errors).forEach(key => {
-    if (errors[key].length === 1) {
-      errors[key] = errors[key][0];
-    }
-  });
-
-  return errors;
-}
+// Função formatZodErrors já definida acima
 
 /**
  * Common validation schemas

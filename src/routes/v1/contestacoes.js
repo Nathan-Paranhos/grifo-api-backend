@@ -124,9 +124,9 @@ router.get(
       search
     } = req.query;
     const offset = (page - 1) * limit;
-    const empresaId = req.userData.empresa_id;
+    const empresaId = req.user.app_metadata.empresa_id;
     const userType = req.userType;
-    const userData = req.userData;
+    const userData = req.user;
 
     let query = supabase
       .from('contestacoes')
@@ -243,9 +243,9 @@ router.get(
   validateRequest(contestacaoSchemas.getContestacao),
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const empresaId = req.userData.empresa_id;
+    const empresaId = req.user.app_metadata.empresa_id;
     const userType = req.userType;
-    const userData = req.userData;
+    const userData = req.user;
 
     let query = supabase
       .from('contestacoes')
@@ -343,8 +343,8 @@ router.post(
   validateRequest(contestacaoSchemas.createContestacao),
   asyncHandler(async (req, res) => {
     const contestacaoData = req.body;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.app_metadata.empresa_id;
+    const userId = req.user.id;
 
     // Verify inspection belongs to company and user
     const { data: vistoria, error: vistoriaError } = await supabase
@@ -477,8 +477,8 @@ router.put(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.app_metadata.empresa_id;
+    const userId = req.user.id;
 
     // Get current contestacao
     const { data: currentContestacao, error: fetchError } = await supabase
@@ -564,8 +564,8 @@ router.post(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { resposta, status, observacoes } = req.body;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.app_metadata.empresa_id;
+    const userId = req.user.id;
 
     // Get current contestacao
     const { data: currentContestacao, error: fetchError } = await supabase
@@ -672,8 +672,8 @@ router.patch(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
-    const empresaId = req.userData.empresa_id;
-    const userId = req.userData.id;
+    const empresaId = req.user.app_metadata.empresa_id;
+    const userId = req.user.id;
 
     // Get current contestacao
     const { data: currentContestacao, error: fetchError } = await supabase
@@ -755,9 +755,9 @@ router.get(
   '/stats',
   authSupabase,
   asyncHandler(async (req, res) => {
-    const empresaId = req.userData.empresa_id;
+    const empresaId = req.user.app_metadata.empresa_id;
     const userType = req.userType;
-    const userData = req.userData;
+    const userData = req.user;
 
     let baseQuery = supabase
       .from('contestacoes')

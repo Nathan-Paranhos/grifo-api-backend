@@ -334,7 +334,7 @@ router.post(
       .insert({
         ...memberData,
         empresa_id: id,
-        supabase_uid: authUser.user.id,
+        auth_user_id: authUser.user.id,
         status: 'active',
         created_at: new Date().toISOString()
       })
@@ -476,7 +476,7 @@ router.delete(
     // Check if member exists and belongs to the company
     const { data: existingMember, error: fetchError } = await supabase
       .from('portal_users')
-      .select('id, supabase_uid')
+      .select('id, auth_user_id')
       .eq('id', memberId)
       .eq('empresa_id', id)
       .single();
@@ -486,7 +486,7 @@ router.delete(
     }
 
     // Prevent self-deletion
-    if (req.userType === 'portal_user' && req.userData.id === memberId) {
+    if (req.userType === 'portal_user' && req.user.id === memberId) {
       throw new AuthorizationError('Você não pode remover a si mesmo');
     }
 
@@ -503,8 +503,8 @@ router.delete(
     }
 
     // Delete from Supabase Auth
-    if (existingMember.supabase_uid) {
-      await supabase.auth.admin.deleteUser(existingMember.supabase_uid);
+    if (existingMember.auth_user_id) {
+      await supabase.auth.admin.deleteUser(existingMember.auth_user_id);
     }
 
     logger.info('Company member deleted successfully', {
